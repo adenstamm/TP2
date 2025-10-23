@@ -15,8 +15,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +25,11 @@ import entityClasses.Post;
 import entityClasses.Reply;
 
 /*******
- * <p> Title: ViewRole2Home Class. </p>
+ * <p> Title: ViewDiscussion Class. </p>
  * 
- * <p> Description: The Java/FX-based Role2 Home Page.  The page is a stub for some role needed for
- * the application.  The widgets on this page are likely the minimum number and kind for other role
- * pages that may be needed.</p>
+ * <p> Description: The Java/FX-based Discussion Home Page.  The page is a stub for some role needed for
+ * the application. This gives the user a way of creating posts and replies as well as interacting 
+ * with other students.</p>
  * 
  * <p> Copyright: Lynn Robert Carter © 2025 </p>
  * 
@@ -62,15 +60,11 @@ public class ViewDiscussion {
 	protected static Label label_PageTitle = new Label();
 	protected static Label label_UserDetails = new Label();
 	protected static Label label_CreatePost = new Label();
-	private static TextArea text_PostText = new TextArea();
 	protected static Button button_Post = new Button("Post");
 	protected static VBox postContainer = new VBox(10);
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
-	
-	// GUI ARea 2: This is a stub, so there are no widgets here.  For an actual role page, this are
-	// would contain the widgets needed for the user to play the assigned role.
 	
 	
 	
@@ -146,8 +140,9 @@ public class ViewDiscussion {
 		theStage.show();											// Display it to the user
 	}
 	
+	
 	/**********
-	 * <p> Method: ViewRole2Home() </p>
+	 * <p> Method: ViewDiscussion() </p>
 	 * 
 	 * <p> Description: This method initializes all the elements of the graphical user interface.
 	 * This method determines the location, size, font, color, and change and event handlers for
@@ -202,6 +197,15 @@ public class ViewDiscussion {
 	        line_Separator4, button_BackToHome, button_Quit, scrollPane);
 	}
 	
+	/**********
+	 * <p> Method: buildPostContainer() </p>
+	 * 
+	 * <p> Description: This method creates the gui elements that allow a user to
+	 * write and publish a new post. This is a separate part from where posts and
+	 * replies are shown.</p>
+	 * 
+	 */
+	
 	protected static void buildPostContainer() {
 		
 		Label label_CreatePost = new Label("Create a Post:");
@@ -223,6 +227,19 @@ public class ViewDiscussion {
         displayPosts();
 	}
 	
+	/**********
+	 * <p> Method: displayPosts() </p>
+	 * 
+	 * <p> Description: This method creates the gui elements that shows the posts in the
+	 * discussion page. It shows the user that made the most, the time a post was written,
+	 * and the contents of the post. It also shows buttons such as like, and mark as read to
+	 * interact with posts made by other students. </p>
+	 * 
+	 * This method reads the contents of the database to see the posts and replies. Once someone
+	 * makes a post, reply, or likes or marks something as read, it refreshes and reads the 
+	 * database again.</p>
+	 * 
+	 */
 	protected static void displayPosts() {
 		List<Post> posts = new ArrayList<>();
 		posts = applicationMain.FoundationsMain.database.getAllPosts();
@@ -257,6 +274,16 @@ public class ViewDiscussion {
 			}
 		}
 	}
+	
+	/**********
+	 * <p> Method: displayRepliesForPost(post Post) </p>
+	 * 
+	 * <p> Description: This method creates the gui elements that show the replies for a 
+	 * given post. This method is called for every post in the database. It searches through
+	 * the replies in the database for those that are tied to the post's ID number. Users are 
+	 * able to likes replies as well as mark them as read.</p>
+	 * 
+	 */
 	
 	protected static void displayRepliesForPost(Post post) {
 		

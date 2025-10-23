@@ -38,12 +38,24 @@ public class ControllerDiscussion {
 	/**********
 	 * <p> Method: doSelectThread() </p>
 	 * 
-	 * <p> Description: THis method should change which posts are displayed </p>
+	 * <p> Description: This method should change which posts are displayed </p>
 	 * 
 	 * 
 	 * 
 	 */
 	protected static void doSelectThread() {
+		return;
+	}
+	
+	/**********
+	 * <p> Method: performEdit() </p>
+	 * 
+	 * <p> Description: This method should allow you to change the post text </p>
+	 * 
+	 * 
+	 * 
+	 */
+	protected static void performEdit(Post post) {
 		return;
 	}
 

@@ -1708,6 +1708,24 @@ public class Database {
 	    }
 	}
 	
+	/*******
+	 * <p> Method: setPostText(Post post, String update)</p>
+	 * 
+	 * <p> Description: Given a string and post, update the text</p>
+	 * 
+	 * @throws SQLException if there is an issues accessing the database.
+	 * 
+	 */
+	public void setPostText(Post post, String update) throws SQLException {
+		int postID = post.getPostID();
+	    String query = "UPDATE postDB SET postText = ? WHERE postid = ?";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        
+        pstmt.setString(1, update);
+        pstmt.setInt(2, postID);
+        System.out.println("Updating");
+        pstmt.executeUpdate();
+	}
 	
 	/*******
 	 * <p> Debugging method</p>

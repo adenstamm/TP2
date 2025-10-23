@@ -294,7 +294,7 @@ public class ViewDiscussion {
 		        
 		        HBox postLabel = new HBox(20); 
 		 		postLabel.setAlignment(Pos.CENTER_LEFT);
-		        
+		        if(!post.getSoftDelete()) {
 				Label label_User = new Label("User: " + post.getUserName());
 				// + "  " + post.getPostTime() + "  Likes: " + likesNum);
 				label_User.setFont(new Font("Arial", 20));
@@ -307,13 +307,14 @@ public class ViewDiscussion {
 				label_Created.setFont(new Font("Arial", 18));
 				
 				Label label_Likes = new Label("Likes: " + likesNum);
-				label_Likes.setFont(new Font("Arial", 18));
+				label_Likes.setFont(new Font("Arial", 18)); 
+				
 				
 				Region spacer = new Region();
 				HBox.setHgrow(spacer, Priority.ALWAYS);
 				
 				postLabel.getChildren().addAll(label_User, spacer, label_Thread, label_Created, label_Likes);
-				
+		        
 				
 				Label postTextLabel = new Label(post.getPostText());
 		        postTextLabel.setFont(new Font("Arial", 16));
@@ -321,30 +322,89 @@ public class ViewDiscussion {
 		        postTextLabel.setPadding(new Insets(5, 10, 5, 10));
 		       
 		        singlePostBox.getChildren().addAll(postLabel, postTextLabel);
+		        } else {
+		        	Label label_deleted = new Label("This post was deleted.");
+		        	label_deleted.setFont(new Font("Arial", 20));
+		        	postLabel.setAlignment(Pos.CENTER);
+					postLabel.getChildren().addAll(label_deleted);
+					singlePostBox.getChildren().addAll(postLabel);
+		        }
 		        
 		        HBox buttons = new HBox(0); 
 		 		buttons.setAlignment(Pos.BASELINE_LEFT);
 		 		
+		 		HBox editPost = new HBox(10); 
+		 		editPost.setAlignment(Pos.BASELINE_LEFT);
+		 		
 		        if(!post.getSoftDelete() ) {
 		        	
-		        	/*buttons.setPadding(new Insets(0, 10, 0, 10));
+		        	buttons.setPadding(new Insets(0, 10, 0, 10));
 		        	Button button_openReply = new Button("Create a Reply");
 		        	button_openReply.setOnAction((event) -> {
-			        	openReply();});
+		        		button_openReply.setDisable(true);
+		        		TextArea text_createReply = new TextArea();
+		        		text_createReply.setPrefRowCount(5);
+		        		text_createReply.setWrapText(true);
+		        		text_createReply.setMaxWidth(width);
+		        		editPost.getChildren().add(text_createReply);
+		        	
+		        	    Button button_reply = new Button("Reply");
+		        	    button_reply.setOnAction(ev -> {
+		        	    	entityClasses.ManageReply.storeReply(post, theUser, text_createReply.getText()); 
+		        	    	button_openReply.setDisable(false);
+		        	    	postContainer.getChildren().clear();
+	                        buildPostContainer();
+		        	    });
+		        	    setupButtonUI(button_reply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+		        	    editPost.setMargin(button_reply, new Insets(0, 10, 0, 10));
+		        	    editPost.getChildren().add(button_reply);
+                    });
+		        	
 			        setupButtonUI(button_openReply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
 			        buttons.setMargin(button_openReply, new Insets(0, 10, 0, 10));
 			        buttons.getChildren().addAll(button_openReply);
-			        		
+			        	
 			        if(post.getUserName() != theDatabase.getCurrentUsername()) {
-				        Button button_like = new Button("Like");
-				        button_like.setOnAction((event) -> {
-				        	ControllerDiscussion.performDeletePost(post);});
-				        setupButtonUI(button_like, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-				        buttons.setMargin(button_like, new Insets(0, 10, 0, 10));
-				        buttons.getChildren().addAll(button_like);
+			        	Button button_Like = new Button("Like");
+				        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser); 
+				                                postContainer.getChildren().clear(); buildPostContainer();});
+				        setupButtonUI(button_Like, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+				        buttons.setMargin(button_Like, new Insets(0, 10, 0, 10));
+				        buttons.getChildren().addAll(button_Like);
 			        }
-			        */      
+			              
 			        if(post.getUserName() == theDatabase.getCurrentUsername()) {
+			        	Button button_editPost = new Button("Edit Post");
+			        	button_editPost.setOnAction((event) -> {
+			        		button_editPost.setDisable(true);
+			        		TextArea text_editPost = new TextArea();
+			        		text_editPost.setPrefRowCount(5);
+			        		text_editPost.setWrapText(true);
+			        		text_editPost.setMaxWidth(width);
+			        		editPost.getChildren().add(text_editPost);
+			        	
+			        	    Button button_saveChanges = new Button("Save Changes");
+			        	    button_saveChanges.setOnAction(ev -> {
+			        	    	button_editPost.setDisable(false);
+			        	    	String updatedText = text_editPost.getText();
+			        	    	if (!updatedText.isEmpty()) {
+			        	    		try {
+			                        theDatabase.setPostText(post, updatedText);}
+			        	    		catch (SQLException e) {
+			        	    			e.printStackTrace();
+			        	    		}
+			                        postContainer.getChildren().clear();
+			                        buildPostContainer();
+			                    }
+			        	    });	
+			        	    setupButtonUI(button_saveChanges, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+			        	    editPost.setMargin(button_saveChanges, new Insets(0, 10, 0, 10));
+			        	    editPost.getChildren().add(button_saveChanges);
+			        	});
+				        setupButtonUI(button_editPost, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+				        buttons.setMargin(button_editPost, new Insets(0, 10, 0, 10));
+				        buttons.getChildren().addAll(button_editPost);
+				        
 				        Button button_deletePost = new Button("Delete Post");
 				        button_deletePost.setOnAction((event) -> {
 				        	ControllerDiscussion.performDeletePost(post);});
@@ -352,7 +412,7 @@ public class ViewDiscussion {
 				        buttons.setMargin(button_deletePost, new Insets(0, 10, 0, 10));
 				        buttons.getChildren().addAll(button_deletePost);
 		        	}
-			        singlePostBox.getChildren().addAll(buttons);
+			        singlePostBox.getChildren().addAll(buttons, editPost);
 		        } 
 		        postContainer.getChildren().add(singlePostBox);
 		        displayRepliesForPost(post);
@@ -364,7 +424,7 @@ public class ViewDiscussion {
 	
 	protected static void displayRepliesForPost(Post post) {
 		int postID = post.getPostID();
-		if(!post.getSoftDelete()) {
+		/* if(!post.getSoftDelete()) {
 			TextArea text_ReplyText = new TextArea();
 	        text_ReplyText.setPrefRowCount(5);
 	        text_ReplyText.setWrapText(true);
@@ -384,7 +444,7 @@ public class ViewDiscussion {
 	        buttons.getChildren().addAll(button_Reply, button_Like);
 	        
 	        postContainer.getChildren().addAll(text_ReplyText, buttons);
-		}
+		}*/
 		
 		
         List<Reply> replies = new ArrayList<>();
@@ -484,26 +544,78 @@ public class ViewDiscussion {
 		        HBox buttons = new HBox(0); 
 		 		buttons.setAlignment(Pos.BASELINE_LEFT);
 		 		
-		        if(!post.getSoftDelete() ) {
+		 		HBox editPost = new HBox(10); 
+		 		editPost.setAlignment(Pos.BASELINE_LEFT);
+		 		
+		 		if(!post.getSoftDelete() ) {
 		        	
-		        	/*buttons.setPadding(new Insets(0, 10, 0, 10));
+		        	buttons.setPadding(new Insets(0, 10, 0, 10));
 		        	Button button_openReply = new Button("Create a Reply");
 		        	button_openReply.setOnAction((event) -> {
-			        	openReply();});
+		        		button_openReply.setDisable(true);
+		        		TextArea text_createReply = new TextArea();
+		        		text_createReply.setPrefRowCount(5);
+		        		text_createReply.setWrapText(true);
+		        		text_createReply.setMaxWidth(width);
+		        		editPost.getChildren().add(text_createReply);
+		        	
+		        	    Button button_reply = new Button("Reply");
+		        	    button_reply.setOnAction(ev -> {
+		        	    	entityClasses.ManageReply.storeReply(post, theUser, text_createReply.getText()); 
+		        	    	button_openReply.setDisable(false);
+		        	    	postContainer.getChildren().clear();
+	                        buildPostContainer();
+		        	    });
+		        	    setupButtonUI(button_reply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+		        	    editPost.setMargin(button_reply, new Insets(0, 10, 0, 10));
+		        	    editPost.getChildren().add(button_reply);
+                    });
+		        	
 			        setupButtonUI(button_openReply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
 			        buttons.setMargin(button_openReply, new Insets(0, 10, 0, 10));
 			        buttons.getChildren().addAll(button_openReply);
-			        		
+			        	
 			        if(post.getUserName() != theDatabase.getCurrentUsername()) {
-				        Button button_like = new Button("Like");
-				        button_like.setOnAction((event) -> {
-				        	ControllerDiscussion.performDeletePost(post);});
-				        setupButtonUI(button_like, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-				        buttons.setMargin(button_like, new Insets(0, 10, 0, 10));
-				        buttons.getChildren().addAll(button_like);
+			        	Button button_Like = new Button("Like");
+				        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser); 
+				                                postContainer.getChildren().clear(); buildPostContainer();});
+				        setupButtonUI(button_Like, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+				        buttons.setMargin(button_Like, new Insets(0, 10, 0, 10));
+				        buttons.getChildren().addAll(button_Like);
 			        }
-			        */
+			              
 			        if(post.getUserName() == theDatabase.getCurrentUsername()) {
+			        	Button button_editPost = new Button("Edit Post");
+			        	button_editPost.setOnAction((event) -> {
+			        		button_editPost.setDisable(true);
+			        		TextArea text_editPost = new TextArea();
+			        		text_editPost.setPrefRowCount(5);
+			        		text_editPost.setWrapText(true);
+			        		text_editPost.setMaxWidth(width);
+			        		editPost.getChildren().add(text_editPost);
+			        	
+			        	    Button button_saveChanges = new Button("Save Changes");
+			        	    button_saveChanges.setOnAction(ev -> {
+			        	    	button_editPost.setDisable(false);
+			        	    	String updatedText = text_editPost.getText();
+			        	    	if (!updatedText.isEmpty()) {
+			        	    		try {
+			                        theDatabase.setPostText(post, updatedText);}
+			        	    		catch (SQLException e) {
+			        	    			e.printStackTrace();
+			        	    		}
+			                        postContainer.getChildren().clear();
+			                        buildPostContainer();
+			                    }
+			        	    });	
+			        	    setupButtonUI(button_saveChanges, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+			        	    editPost.setMargin(button_saveChanges, new Insets(0, 10, 0, 10));
+			        	    editPost.getChildren().add(button_saveChanges);
+			        	});
+				        setupButtonUI(button_editPost, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+				        buttons.setMargin(button_editPost, new Insets(0, 10, 0, 10));
+				        buttons.getChildren().addAll(button_editPost);
+				        
 				        Button button_deletePost = new Button("Delete Post");
 				        button_deletePost.setOnAction((event) -> {
 				        	ControllerDiscussion.performDeletePost(post);});
@@ -511,7 +623,7 @@ public class ViewDiscussion {
 				        buttons.setMargin(button_deletePost, new Insets(0, 10, 0, 10));
 				        buttons.getChildren().addAll(button_deletePost);
 		        	}
-			        singlePostBox.getChildren().addAll(buttons);
+			        singlePostBox.getChildren().addAll(buttons, editPost);
 		        } 
 		        postContainer.getChildren().add(singlePostBox);
 		        displayRepliesForPost(post);
@@ -521,6 +633,9 @@ public class ViewDiscussion {
 		}
 	}
 	
+	
+	
+
 	/*protected static void openReply() {
 		TextArea text_ReplyText = new TextArea();
 	    text_ReplyText.setPrefRowCount(5);
@@ -535,6 +650,8 @@ public class ViewDiscussion {
 	                            postContainer.getChildren().clear(); buildPostContainer();});	
 		}
 	}*/
+	
+	
 	
 	
 	

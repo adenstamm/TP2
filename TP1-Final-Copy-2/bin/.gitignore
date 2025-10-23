@@ -1,4 +1,8 @@
+/guiDiscussion/
+/guiManageInvites/
+/database/
 /applicationMain/
+<<<<<<< Updated upstream
 /database/
 /entityClasses/
 /guiAddRemoveRoles/
@@ -15,3 +19,7 @@
 /guiTools/
 /guiUserLogin/
 /guiUserUpdate/
+=======
+/guiFirstAdmin/
+/entityClasses/
+>>>>>>> Stashed changes

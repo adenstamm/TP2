@@ -28,6 +28,7 @@ public class Post {
     private String postTime;
     private int postID;
     private String thread;
+    private boolean softDelete;
     
     /*****
      * <p> Method: Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, int views,
@@ -48,7 +49,9 @@ public class Post {
      */
     // Constructor to initialize a new Reply object with replyUser, replyText, and role.
     
-    public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, int views, String postTime, int postID, String thread) {
+    public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, 
+    		boolean staffRole, String likes, int views, String postTime, int postID, 
+    		String thread, boolean softDelete) {
     	this.mainUser = mainUser;
     	this.postText = postText;
     	this.adminRole = adminRole;
@@ -59,6 +62,7 @@ public class Post {
     	this.postTime = postTime;
     	this.postID = postID;
     	this.thread = thread;
+    	this.softDelete = softDelete;
     }
     
    
@@ -180,6 +184,20 @@ public class Post {
     }
     
     /*****
+     * <p> Method: void setSoftDelete(boolean softDelete) </p>
+     * 
+     * <p> Description: This setter defines the softDelete attribute. </p>
+     * 
+     * @param softDelete is a boolean value that defines whether the post has been "deleted"
+     * 
+     */
+    
+    public void setSoftDelete(boolean softDelete) {
+    	this.softDelete = softDelete;
+    }
+    
+    
+    /*****
      * <p> Method: String getUserName() </p>
      * 
      * <p> Description: This getter returns the UserName. </p>
@@ -298,6 +316,20 @@ public class Post {
     // Gets the current value of the Thread attribute.
     
     public String getThread() { return thread; }
+    
+    /*****
+     * <p> Method: void getSoftDelete() </p>
+     * 
+     * <p> Description: This getter grabs the softDelete attribute. </p>
+     * 
+     * @return softDelete is a boolean value that defines whether the post has been "deleted"
+     * it should be false, but changes to true after deletepost in database
+     * 
+     */
+    
+    public boolean getSoftDelete() {
+    	return softDelete;
+    }
     
 }
 

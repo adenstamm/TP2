@@ -35,7 +35,7 @@ public class ManagePost {
      * 
      */
 	
-	public static void storePost(User mainUser, String postText, String thread) {
+	public static void storePost(User mainUser, String postText, String thread, boolean softDelete) {
 		if(mainUser.getUserName().isEmpty()) {
 			System.out.println("Error: The post needs to have a username attached to it.");
 			return;
@@ -52,7 +52,7 @@ public class ManagePost {
 			String likes = "";
 			int views = 0;
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
-			LocalDateTime Time = LocalDateTime.now().plusDays(1).plusHours(0).plusMinutes(0);
+			LocalDateTime Time = LocalDateTime.now();
 			String postTime = Time.format(formatter);
 			List<Post> posts = new ArrayList<>();
 			posts = applicationMain.FoundationsMain.database.getAllPosts();
@@ -62,7 +62,8 @@ public class ManagePost {
 				thread = "General";
 			}
 			
-			Post post = new Post(Username, postText, adminRole, studentRole, staffRole, likes, views, postTime, postID, thread);
+			Post post = new Post(Username, postText, adminRole, studentRole, staffRole, 
+					likes, views, postTime, postID, thread, softDelete);
 			System.out.println(postText);
 			try {
 			applicationMain.FoundationsMain.database.register(post);
@@ -126,21 +127,21 @@ public class ManagePost {
 		User user1 = new User("IanJohnson", "123456aA.", "", "", "", "", "", true, false, false, "", false);
 		User user2 = new User("", "123456aA.", "", "", "", "", "", true, false, false, "", false);
 			
-		Post post0 = new Post("", "", true, false, false, "", 0, "", 0, "General");
-		Post post1 = new Post("", "", true, false, false, "", 0, "", 1, "General");
-		Post post2 = new Post("", "", true, false, false, "", 0, "", 2, "General");
-		Post post3 = new Post("", "", true, false, false, "", 0, "", 50, "General");
+		Post post0 = new Post("", "", true, false, false, "", 0, "", 0, "General", false);
+		Post post1 = new Post("", "", true, false, false, "", 0, "", 1, "General", false);
+		Post post2 = new Post("", "", true, false, false, "", 0, "", 2, "General", false);
+		Post post3 = new Post("", "", true, false, false, "", 0, "", 50, "General", false);
 		
 		System.out.println("Registering the first post test case.");
-		storePost(user2, "This is the first test case.", "General");
+		storePost(user2, "This is the first test case.", "General", false);
 		System.out.println("Registering the second post test case.");
-		storePost(user1, "This is the second test case.", "General");
+		storePost(user1, "This is the second test case.", "General", false);
 		System.out.println("Registering the third post test case.");
-		storePost(user1, "", "General");
+		storePost(user1, "", "General", false);
 		System.out.println("Registering the fourth post test case.");
-		storePost(user2, "", "General");
+		storePost(user2, "", "General", false);
 		System.out.println("Registering the fifth post test case.");
-		storePost(user1, "This is the fifth test case", "General");
+		storePost(user1, "This is the fifth test case", "General", false);
 		
 		System.out.println("Registering the first reply test case.");
 		ManageReply.storeReply(post1, user2, "This is the first test case.");

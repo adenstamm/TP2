@@ -66,7 +66,7 @@ public class ControllerManageInvites {
 	}
 	
 	/**********
-	 * <p> Method: performDeleteUser() </p>
+	 * <p> Method: performDeleteInvite() </p>
 	 * 
 	 * <p> Description: This method adds a new role to the list of role in the ComboBox select
 	 * list. </p>

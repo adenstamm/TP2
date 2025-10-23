@@ -24,7 +24,7 @@ public class Post {
     private boolean studentRole;
     private boolean staffRole;
     private String likes;
-    private int views;
+    private String views;
     private String postTime;
     private int postID;
     private String thread;
@@ -48,7 +48,7 @@ public class Post {
      */
     // Constructor to initialize a new Reply object with replyUser, replyText, and role.
     
-    public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, int views, String postTime, int postID, String thread) {
+    public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, String views, String postTime, int postID, String thread) {
     	this.mainUser = mainUser;
     	this.postText = postText;
     	this.adminRole = adminRole;
@@ -136,7 +136,7 @@ public class Post {
      * 
      */
     
-    public void setViews(int views) {
+    public void setViews(String views) {
     	this.views = views;
     }
     
@@ -213,7 +213,7 @@ public class Post {
      */
     // Gets the current value of the Views attribute.
     
-    public int getViews() { return views; }
+    public String getViews() { return views; }
     
     /*****
      * <p> Method: String getPostText() </p>

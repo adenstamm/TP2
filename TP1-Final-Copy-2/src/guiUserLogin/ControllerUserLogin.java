@@ -73,8 +73,8 @@ public class ControllerUserLogin {
     	                theDatabase.getCurrentPreferredFirstName(),
     	                theDatabase.getCurrentEmailAddress(),
     	                theDatabase.getCurrentAdminRole(),
-    	                theDatabase.getCurrentNewRole1(),
-    	                theDatabase.getCurrentNewRole2(),
+    	                theDatabase.getCurrentStudentRole(),
+    	                theDatabase.getCurrentStaffRole(),
     	                "",                 // no OTP to carry forward
     	                false               // hasOneTimePassword now false
     	            ), false
@@ -102,7 +102,7 @@ public class ControllerUserLogin {
     			theDatabase.getCurrentMiddleName(), theDatabase.getCurrentLastName(), 
     			theDatabase.getCurrentPreferredFirstName(), theDatabase.getCurrentEmailAddress(), 
     			theDatabase.getCurrentAdminRole(), 
-    			theDatabase.getCurrentNewRole1(), theDatabase.getCurrentNewRole2(), theDatabase.getOneTimePassword(username), theDatabase.getCurrentHasOneTimePassword());
+    			theDatabase.getCurrentStudentRole(), theDatabase.getCurrentStaffRole(), theDatabase.getOneTimePassword(username), theDatabase.getCurrentHasOneTimePassword());
     	
     	// See which home page dispatch to use
 		int numberOfRoles = theDatabase.getNumberOfRoles(user);		
@@ -116,15 +116,15 @@ public class ControllerUserLogin {
 				if (loginResult) {
 					guiAdminHome.ViewAdminHome.displayAdminHome(theStage, user);
 				}
-			} else if (user.getNewRole1()) {
-				loginResult = theDatabase.loginRole1(user);
+			} else if (user.getStudentRole()) {
+				loginResult = theDatabase.loginStudent(user);
 				if (loginResult) {
-					guiRole1.ViewRole1Home.displayRole1Home(theStage, user);
+					guiStudent.ViewStudentHome.displayStudentHome(theStage, user);
 				}
-			} else if (user.getNewRole2()) {
-				loginResult = theDatabase.loginRole2(user);
+			} else if (user.getStaffRole()) {
+				loginResult = theDatabase.loginStaff(user);
 				if (loginResult) {
-					guiRole2.ViewRole2Home.displayRole2Home(theStage, user);
+					guiStaff.ViewStaffHome.displayStaffHome(theStage, user);
 				}
 				// Other roles
 			} else {

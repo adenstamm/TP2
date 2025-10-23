@@ -170,7 +170,8 @@ public class Database {
 	        + "likes VARCHAR(2000), "
 	        + "views INT DEFAULT 0, "
 	        + "postID INT DEFAULT 0,"
-	        + "thread VARCHAR(30)"
+	        + "thread VARCHAR(30),"
+	        + "tags VARCHAR(512)"
 	        + ")";
 	    statement.execute(postTable);
 
@@ -288,8 +289,8 @@ public class Database {
 	public void register(Post post) throws SQLException {
 
 		String insertPost = "INSERT INTO postDB (mainUser, postText, adminRole, studentRole, "
-				+ "staffRole, likes, views, postTime, postID, thread) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "staffRole, likes, views, postTime, postID, thread, tags) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement pstmt = connection.prepareStatement(insertPost)) {
 			currentPostUsername = post.getUserName();
 			pstmt.setString(1, currentPostUsername);
@@ -320,6 +321,9 @@ public class Database {
 			
 			currentThread = post.getThread();
 			pstmt.setString(10, currentThread);
+			
+			String currentTags = post.getTags();
+			pstmt.setString(11, currentTags);
 
 			pstmt.executeUpdate();
 		}
@@ -476,8 +480,41 @@ public class Database {
 	                    rs.getInt("views"),
 	                    rs.getString("postTime"),
 	                    rs.getInt("postID"),
-	                    rs.getString("thread")
+	                    rs.getString("thread"),
+	                    rs.getString("tags")
 	                    );
+	                postList.add(post);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            return null;
+	        }
+	        return postList;
+	    }
+	    
+	    public List<Post> getPostsByTag(String tag) {
+	        List<Post> postList = new ArrayList<>();
+	        String query = "SELECT * FROM postDB WHERE tags LIKE ?";
+	        
+	        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	            pstmt.setString(1, "%" + tag + "%");
+	            
+	            ResultSet rs = pstmt.executeQuery();
+	            
+	            while (rs.next()) {
+	                Post post = new Post(
+	                    rs.getString("mainUser"),
+	                    rs.getString("postText"),
+	                    rs.getBoolean("adminRole"),
+	                    rs.getBoolean("studentRole"),
+	                    rs.getBoolean("staffRole"),
+	                    rs.getString("likes"),
+	                    rs.getInt("views"),
+	                    rs.getString("postTime"),
+	                    rs.getInt("postID"),
+	                    rs.getString("thread"),
+	                    rs.getString("tags")
+	                );
 	                postList.add(post);
 	            }
 	        } catch (SQLException e) {

@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
@@ -65,6 +66,13 @@ public class ViewDiscussion {
 	private static TextArea text_PostText = new TextArea();
 	protected static Button button_Post = new Button("Post");
 	protected static VBox postContainer = new VBox(10);
+	
+	// UI Elements for search
+	private static TextField text_SearchTags = new TextField();
+	private static Button button_Search = new Button("Search");
+	private static Button button_ClearSearch = new Button("Clear");
+	
+	private static TextField text_PostTags = new TextField();
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
@@ -173,7 +181,7 @@ public class ViewDiscussion {
 		label_UserDetails.setText("User: " + theUser.getUserName());
 		setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
 		
-		buildPostContainer();
+		buildPostContainer(null);
         
         
         ScrollPane scrollPane = new ScrollPane(postContainer);
@@ -202,32 +210,76 @@ public class ViewDiscussion {
 	        line_Separator4, button_BackToHome, button_Quit, scrollPane);
 	}
 	
-	protected static void buildPostContainer() {
+	protected static void buildPostContainer(String searchTag) {
 		
+		// --- Create Search Box ---
+		HBox searchBox = new HBox(10);
+		searchBox.setPadding(new Insets(5));
+		searchBox.setAlignment(Pos.CENTER_LEFT);
+		text_SearchTags.setPromptText("Search by tag...");
+		if (searchTag != null) {
+			text_SearchTags.setText(searchTag);
+		}
+		
+		button_Search.setOnAction((event) -> { 
+			String tag = text_SearchTags.getText();
+			postContainer.getChildren().clear();
+			buildPostContainer(tag);
+		});
+		
+		button_ClearSearch.setOnAction((event) -> {
+			text_SearchTags.clear();
+			postContainer.getChildren().clear();
+			buildPostContainer(null);
+		});
+		
+		searchBox.getChildren().addAll(new Label("Search Tags:"), text_SearchTags, button_Search, button_ClearSearch);
+		
+		// --- Create "Create Post" Box ---
 		Label label_CreatePost = new Label("Create a Post:");
 		label_CreatePost.setFont(new Font("Arial", 20));
 		
 		TextArea text_PostText = new TextArea();
 		text_PostText.setPromptText("Enter your Post");
-		text_PostText.setPrefRowCount(5);
+		text_PostText.setPrefRowCount(3);
 		text_PostText.setWrapText(true);
 		text_PostText.setMaxWidth(width);
+		
+		// Add the new Tags field
+		text_PostTags.setPromptText("Enter tags, separated by commas (e.g., java, sql, fxml)");
+		text_PostTags.setMaxWidth(width);
 		
 		postContainer.setSpacing(10);
 		
 		Button button_Post = new Button("Post");
-        button_Post.setOnAction((event) -> {entityClasses.ManagePost.storePost(theUser, text_PostText.getText(), "General"); 
-                                postContainer.getChildren().clear(); buildPostContainer();});
+        button_Post.setOnAction((event) -> {
+        	// Pass the tags text to storePost
+        	entityClasses.ManagePost.storePost(theUser, text_PostText.getText(), "General", text_PostTags.getText()); 
+        	text_PostText.clear();	// Clear fields after posting
+        	text_PostTags.clear();
+            postContainer.getChildren().clear(); 
+            buildPostContainer(null); // Refresh with no search
+        });
         
-        postContainer.getChildren().addAll(label_CreatePost, text_PostText, button_Post);
-        displayPosts();
+        // Add all elements to the container
+        postContainer.getChildren().addAll(searchBox, new Separator(), label_CreatePost, text_PostText, text_PostTags, button_Post);
+        displayPosts(searchTag);
 	}
 	
-	protected static void displayPosts() {
-		List<Post> posts = new ArrayList<>();
-		posts = applicationMain.FoundationsMain.database.getAllPosts();
+	protected static void displayPosts(String searchTag) {
+		List<Post> posts;
+		
+		// Decide whether to get all posts or search by tag
+		if (searchTag != null && !searchTag.isEmpty()) {
+			posts = applicationMain.FoundationsMain.database.getPostsByTag(searchTag);
+		} else {
+			posts = applicationMain.FoundationsMain.database.getAllPosts();
+		}
         
 		if(posts.size() == 0) {
+			if (searchTag != null && !searchTag.isEmpty()) {
+				postContainer.getChildren().add(new Label("No posts found with tag: " + searchTag));
+			}
 			return;
 		} else {
 			for(Post post : posts){
@@ -248,33 +300,41 @@ public class ViewDiscussion {
 		        postTextLabel.setFont(new Font("Arial", 14));
 		        postTextLabel.setWrapText(true);
 		        
+		        // --- ADDED BLOCK to display tags ---
+		        String tags = post.getTags();
+		        Label tagsLabel = new Label("Tags: " + (tags != null && !tags.isEmpty() ? tags : "None"));
+		        tagsLabel.setFont(new Font("Arial", 12));
+		        tagsLabel.setStyle("-fx-font-style: italic;");
+		        // --- END OF ADDED BLOCK ---
 		        
-		        singlePostBox.getChildren().addAll(label_User, postTextLabel);
+		        singlePostBox.getChildren().addAll(label_User, postTextLabel, tagsLabel); // Add tagsLabel
 		        postContainer.getChildren().add(singlePostBox);
-		        displayRepliesForPost(post);
+		        
+		        // Pass searchTag to displayRepliesForPost
+		        displayRepliesForPost(post, searchTag); 
 		        
 		        postContainer.getChildren().addAll(new Separator());
 			}
 		}
 	}
 	
-	protected static void displayRepliesForPost(Post post) {
+	protected static void displayRepliesForPost(Post post, String searchTag) {
 		
 		TextArea text_ReplyText = new TextArea();
-        text_ReplyText.setPrefRowCount(5);
+        text_ReplyText.setPrefRowCount(3);
         text_ReplyText.setWrapText(true);
         text_ReplyText.setMaxWidth(width);
         int postID = post.getPostID();
         
         HBox buttons = new HBox(5);
         
-        Button button_Reply = new Button("Post Reply");
+        Button button_Reply = new Button("Reply");
         button_Reply.setOnAction((event) -> {entityClasses.ManageReply.storeReply(post, theUser, text_ReplyText.getText()); 
-                                postContainer.getChildren().clear(); buildPostContainer();});
+                                postContainer.getChildren().clear(); buildPostContainer(searchTag);});
         
         Button button_Like = new Button("Like");
         button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser); 
-                                postContainer.getChildren().clear(); buildPostContainer();});
+                                postContainer.getChildren().clear(); buildPostContainer(searchTag);});
         
         buttons.getChildren().addAll(button_Reply, button_Like);
         

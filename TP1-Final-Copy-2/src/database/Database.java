@@ -75,7 +75,7 @@ public class Database {
     private boolean currentPostStaffRole;
     private int currentPostID;
     private String currentPostLikes;
-    private int currentPostViews;
+    private String currentPostViews;
     private String currentPostTime;
     private String currentThread;
     
@@ -168,7 +168,7 @@ public class Database {
 	        + "staffRole BOOLEAN DEFAULT FALSE, "
 	        + "postTime VARCHAR(24), "
 	        + "likes VARCHAR(2000), "
-	        + "views INT DEFAULT 0, "
+	        + "views VARCHAR(2000), "
 	        + "postID INT DEFAULT 0,"
 	        + "thread VARCHAR(30)"
 	        + ")";
@@ -286,10 +286,10 @@ public class Database {
 	}
 	
 	public void register(Post post) throws SQLException {
-
 		String insertPost = "INSERT INTO postDB (mainUser, postText, adminRole, studentRole, "
 				+ "staffRole, likes, views, postTime, postID, thread) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				
 		try (PreparedStatement pstmt = connection.prepareStatement(insertPost)) {
 			currentPostUsername = post.getUserName();
 			pstmt.setString(1, currentPostUsername);
@@ -310,7 +310,7 @@ public class Database {
 			pstmt.setString(6, currentPostLikes);
 			
 			currentPostViews = post.getViews();
-			pstmt.setInt(7, currentPostViews);
+			pstmt.setString(7, currentPostViews);
 			
 			currentPostTime = post.getPostTime();
 			pstmt.setString(8, currentPostTime);
@@ -473,7 +473,7 @@ public class Database {
 	                    rs.getBoolean("studentRole"),
 	                    rs.getBoolean("staffRole"),
 	                    rs.getString("likes"),
-	                    rs.getInt("views"),
+	                    rs.getString("views"),
 	                    rs.getString("postTime"),
 	                    rs.getInt("postID"),
 	                    rs.getString("thread")
@@ -525,10 +525,14 @@ public class Database {
 	    	String[] items = likes.split(" ");
 	    	Collections.addAll(likeList, items);
 	    	
+	    	if (items.length == 0) likeList.add("");
+	    	
 	    	return likeList;
 	    }
 	    
 	    public void registerLikes(ArrayList<String> likedBy, Post post) throws SQLException {
+	    	System.out.println("likedby size: " + likedBy.size());
+	    	System.out.println(likedBy);
 	    	String likes = "";
 	        for(String user : likedBy) {
 	        	likes += user + " ";
@@ -537,6 +541,33 @@ public class Database {
 	        PreparedStatement pstmt = connection.prepareStatement(sql);
 	        
 	        pstmt.setString(1, likes);
+	        pstmt.setInt(2, post.getPostID());
+	        System.out.println("Updating");
+	        pstmt.executeUpdate();
+	    }
+	    
+	    public ArrayList<String> getViewsToList(Post post){
+	    	ArrayList<String> viewList = new ArrayList<String>();
+	    	
+	    	String views = post.getViews();
+	    	
+	    	String[] items = views.split(" ");
+	    	Collections.addAll(viewList, items);
+	    	
+	    	if (items.length == 0) viewList.add("");
+	    	
+	    	return viewList;
+	    }
+	    
+	    public void registerViews(ArrayList<String> viewedBy, Post post) throws SQLException {
+	    	String views = "";
+	        for(String user : viewedBy) {
+	        	views += user + " ";
+	        }
+	        String sql = "UPDATE postDB SET views = ? WHERE postID = ?";
+	        PreparedStatement pstmt = connection.prepareStatement(sql);
+	        
+	        pstmt.setString(1, views);
 	        pstmt.setInt(2, post.getPostID());
 	        System.out.println("Updating");
 	        pstmt.executeUpdate();

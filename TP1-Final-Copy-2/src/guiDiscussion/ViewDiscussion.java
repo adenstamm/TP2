@@ -67,7 +67,8 @@ public class ViewDiscussion {
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
 	
-	
+	protected static Button button_YourPosts = new Button("Your Posts");
+	protected static Button button_UnreadPosts = new Button("Unread Posts");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
@@ -243,6 +244,51 @@ public class ViewDiscussion {
         
         postContainer.getChildren().addAll(label_CreatePost, text_PostText, button_Post);
         displayPosts();
+	}
+	
+	protected static void enterUserPosts() {
+		postContainer.getChildren().clear();
+		button_YourPosts.setVisible(false);
+		Button button_Back = new Button("Back");
+		setupButtonUI(button_Back, "Dialog", 18, 250, Pos.CENTER, 580, 540);
+		boolean flag = false;
+		for (var child : theRootPane.getChildren()) {
+			if ("Back_User".equals(child.getId()))
+				return;
+		}
+		
+		if (!flag) {
+			button_Back.setId("Back_User");
+			button_Back.setOnAction((event) -> {button_YourPosts.setVisible(true); 
+        							postContainer.getChildren().clear();
+        							buildPostContainer();	
+        							theRootPane.getChildren().remove(button_Back);});
+			theRootPane.getChildren().add(button_Back);
+		}
+		displayUsersPosts();
+	}
+	
+	protected static void enterUnreadPosts() {
+		System.out.println("in");
+		postContainer.getChildren().clear();
+		button_UnreadPosts.setVisible(false);
+		Button button_Back = new Button("Back");
+		setupButtonUI(button_Back, "Dialog", 18, 250, Pos.CENTER, 580, 540);
+		boolean flag = false;
+		for (var child : theRootPane.getChildren()) {
+			if ("Back_Unread".equals(child.getId()))
+				return;
+		}
+		
+		if (!flag) {
+			button_Back.setId("Back_Unread");
+			button_Back.setOnAction((event) -> {button_UnreadPosts.setVisible(true); 
+        							postContainer.getChildren().clear();
+        							buildPostContainer();	
+        							theRootPane.getChildren().remove(button_Back);});
+			theRootPane.getChildren().add(button_Back);
+		}
+		displayUnreadPosts();
 	}
 	
 	/**********

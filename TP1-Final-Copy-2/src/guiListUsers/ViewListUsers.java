@@ -66,8 +66,8 @@ public class ViewListUsers {
                 String lastName = u.getLastName() != null ? u.getLastName() : "N/A";
                 String email = u.getEmailAddress() != null ? u.getEmailAddress() : "N/A";
                 boolean r1 = u.getAdminRole();
-                boolean r2 = u.getNewRole1();
-                boolean r3 = u.getNewRole2();
+                boolean r2 = u.getStudentRole();
+                boolean r3 = u.getStaffRole();
                 String role = "";
                 
                 if (r1) {
@@ -144,18 +144,18 @@ public class ViewListUsers {
         // Username
         String username = (user.getUserName() != null && !user.getUserName().isEmpty()) ? user.getUserName() : "N/A";
         boolean r1 = user.getAdminRole();
-        boolean r2 = user.getNewRole1();
-        boolean r3 = user.getNewRole2();
+        boolean r2 = user.getStudentRole();
+        boolean r3 = user.getStaffRole();
         String role = "";
         
         if (r1) {
         	role += "Admin ";
         }
         if (r2) {
-        	role += "Role 1 ";
+        	role += "Student ";
         }
         if (r3) {
-        	role += "Role 2";
+        	role += "Staff";
         }
         
         if (role.length() == 0) {

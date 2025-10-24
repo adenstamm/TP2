@@ -1,6 +1,8 @@
-package guiRole1;
+package guiStudent;
 
-public class ControllerRole1Home {
+import guiAdminHome.ViewAdminHome;
+
+public class ControllerStudentHome {
 
 	/*-*******************************************************************************************
 
@@ -22,7 +24,7 @@ public class ControllerRole1Home {
 	 * 
 	 */
 	protected static void performLogout() {
-		guiUserLogin.ViewUserLogin.displayUserLogin(ViewRole1Home.theStage);
+		guiUserLogin.ViewUserLogin.displayUserLogin(ViewStudentHome.theStage);
 	}
 	
 	
@@ -36,5 +38,11 @@ public class ControllerRole1Home {
 	 */	
 	protected static void performQuit() {
 		System.exit(0);
+	}
+	
+	protected static void goToDiscussion() {
+		
+		guiDiscussion.ViewDiscussion.displayDiscussion(ViewStudentHome.theStage, 
+				ViewStudentHome.theUser);
 	}
 }

@@ -76,7 +76,7 @@ public class ManagePost {
 	/*****
      * <p> Method: void registerLike(Post post, User user) </p>
      * 
-     * <p> Description: This method adds a like to a post given the users that have liked this post before </p>
+     * <p> Description: This method adds or removes a like to a post given the users that have liked this post before </p>
      * 
      * @param post the post that the user is liking
      * 
@@ -90,14 +90,53 @@ public class ManagePost {
 		likesList = applicationMain.FoundationsMain.database.getLikesToList(post);
 		System.out.println("Registering " + user.getUserName());
 		if(likesList.contains(user.getUserName())) {
-			System.out.println("Already Liked");
-			return;
-		} else {
+			likesList.remove(user.getUserName());
+			try {
+				applicationMain.FoundationsMain.database.registerLikes(likesList, post);
+			} catch(SQLException e) {
+					System.out.println("Failed to register like.");
+			}	
+		} 
+		else {
 			likesList.add(user.getUserName());
 			try {
 			applicationMain.FoundationsMain.database.registerLikes(likesList, post);
 			} catch(SQLException e) {
 				System.out.println("Failed to register like.");
+			}
+		}
+	}
+	
+	/*****
+     * <p> Method: void registerView(Post post, User user) </p>
+     * 
+     * <p> Description: This method adds or removes a view to a post given the users that have liked this post before </p>
+     * 
+     * @param post the post that the user is viewing
+     * 
+     * @param user the user that is viewing the post
+     * 
+     * 
+     */
+	
+	public static void registerView(Post post, User user) {
+		ArrayList<String> viewsList = applicationMain.FoundationsMain.database.getViewsToList(post);
+		System.out.println("Registering " + user.getUserName());
+		if(viewsList.contains(user.getUserName())) {
+			viewsList.remove(user.getUserName());
+
+			try {
+				applicationMain.FoundationsMain.database.registerViews(viewsList, post);
+			} catch(SQLException e) {
+					System.out.println("Failed to register view.");
+			}	
+		} 
+		else {
+			viewsList.add(user.getUserName());
+			try {
+			applicationMain.FoundationsMain.database.registerViews(viewsList, post);
+			} catch(SQLException e) {
+				System.out.println("Failed to register views.");
 			}
 		}
 	}
@@ -119,40 +158,4 @@ public class ManagePost {
 			System.out.println("Failed to delete Post");
 		}
 	}
-	
-	// This is a temporary method for registering the test cases
-	public static void registerTestCases() {
-		
-		User user1 = new User("IanJohnson", "123456aA.", "", "", "", "", "", true, false, false, "", false);
-		User user2 = new User("", "123456aA.", "", "", "", "", "", true, false, false, "", false);
-			
-		Post post0 = new Post("", "", true, false, false, "", 0, "", 0, "General", "");
-		Post post1 = new Post("", "", true, false, false, "", 0, "", 1, "General", "");
-		Post post2 = new Post("", "", true, false, false, "", 0, "", 2, "General", "");
-		Post post3 = new Post("", "", true, false, false, "", 0, "", 50, "General", "");
-		
-		System.out.println("Registering the first post test case.");
-		storePost(user2, "This is the first test case.", "General", ""); // <-- ADD , ""
-		System.out.println("Registering the second post test case.");
-		storePost(user1, "This is the second test case.", "General", ""); // <-- ADD , ""
-		System.out.println("Registering the third post test case.");
-		storePost(user1, "", "General", ""); // <-- ADD , ""
-		System.out.println("Registering the fourth post test case.");
-		storePost(user2, "", "General", ""); // <-- ADD , ""
-		System.out.println("Registering the fifth post test case.");
-		storePost(user1, "This is the fifth test case", "General", ""); // <-- ADD , ""
-		
-		System.out.println("Registering the first reply test case.");
-		ManageReply.storeReply(post1, user2, "This is the first test case.");
-		System.out.println("Registering the second reply test case.");
-		ManageReply.storeReply(post0, user1, "This is the second test case.");
-		System.out.println("Registering the third reply test case.");
-		ManageReply.storeReply(post1, user1, "This is the third test case");
-		System.out.println("Registering the fourth reply test case.");
-		ManageReply.storeReply(post2, user2, "");
-		System.out.println("Registering the fifth reply test case.");
-		ManageReply.storeReply(post3, user1, "This is the fifth test case.");
-			
-	}
-	
 }

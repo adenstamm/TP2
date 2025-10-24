@@ -218,7 +218,7 @@ public class ViewDiscussion {
         
         theRootPane.getChildren().addAll(
 			label_PageTitle, label_UserDetails, line_Separator1,
-	        line_Separator4, button_BackToHome, button_Quit, scrollPane);
+	        line_Separator4, button_BackToHome, button_Quit, button_YourPosts, button_UnreadPosts, scrollPane);
 	}
 	
 	protected static void buildPostContainer(String searchTag) {
@@ -302,7 +302,7 @@ public class ViewDiscussion {
 			button_Back.setId("Back_User");
 			button_Back.setOnAction((event) -> {button_YourPosts.setVisible(true); 
         							postContainer.getChildren().clear();
-        							buildPostContainer();	
+        							buildPostContainer(null);
         							theRootPane.getChildren().remove(button_Back);});
 			theRootPane.getChildren().add(button_Back);
 		}
@@ -325,7 +325,7 @@ public class ViewDiscussion {
 			button_Back.setId("Back_Unread");
 			button_Back.setOnAction((event) -> {button_UnreadPosts.setVisible(true); 
         							postContainer.getChildren().clear();
-        							buildPostContainer();	
+        							buildPostContainer(null);	
         							theRootPane.getChildren().remove(button_Back);});
 			theRootPane.getChildren().add(button_Back);
 		}
@@ -380,7 +380,7 @@ public class ViewDiscussion {
 		        
 		        Button button_Reply = new Button("Post Reply");
 		        button_Reply.setOnAction((event) -> {entityClasses.ManageReply.storeReply(post, theUser, text_ReplyText.getText()); 
-		                                displayRepliesForPost(post);});
+		                                displayRepliesForPost(post, null);});
 		        
 		        Button button_Like = new Button("Like");
 		        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser);
@@ -400,8 +400,8 @@ public class ViewDiscussion {
 		        buttons.getChildren().addAll(button_Reply, button_Like, button_View);
 		        
 		        postContainer.getChildren().add(singlePostBox);
-		        postContainer.getChildren().addAll(text_ReplyText, buttons, tagsLabel);
-		        displayRepliesForPost(post);
+		        postContainer.getChildren().addAll(text_ReplyText, tagsLabel, buttons);
+		        displayRepliesForPost(post, null);
 		        postContainer.getChildren().addAll(new Separator());
 		        
 
@@ -420,17 +420,17 @@ public class ViewDiscussion {
         
         HBox buttons = new HBox(5);
         
-        Button button_Reply = new Button("Reply");
-        button_Reply.setOnAction((event) -> {entityClasses.ManageReply.storeReply(post, theUser, text_ReplyText.getText()); 
-                                postContainer.getChildren().clear(); buildPostContainer(searchTag);});
+//        Button button_Reply = new Button("Reply");
+//        button_Reply.setOnAction((event) -> {entityClasses.ManageReply.storeReply(post, theUser, text_ReplyText.getText()); 
+//                                postContainer.getChildren().clear(); buildPostContainer(searchTag);});
+//        
+//        Button button_Like = new Button("Like");
+//        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser); 
+//                                postContainer.getChildren().clear(); buildPostContainer(searchTag);});
         
-        Button button_Like = new Button("Like");
-        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser); 
-                                postContainer.getChildren().clear(); buildPostContainer(searchTag);});
+//        buttons.getChildren().addAll(button_Reply, button_Like);
         
-        buttons.getChildren().addAll(button_Reply, button_Like);
-        
-        postContainer.getChildren().addAll(text_ReplyText, buttons);
+//        postContainer.getChildren().addAll(buttons);
         
         List<Reply> replies = new ArrayList<>();
         try {
@@ -598,7 +598,7 @@ public class ViewDiscussion {
 		        
 		        Button button_Reply = new Button("Post Reply");
 		        button_Reply.setOnAction((event) -> {entityClasses.ManageReply.storeReply(post, theUser, text_ReplyText.getText()); 
-		                                displayRepliesForPost(post);});
+		                                displayRepliesForPost(post, null);});
 		        
 		        Button button_Like = new Button("Like");
 		        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser);
@@ -612,7 +612,7 @@ public class ViewDiscussion {
 		        
 		        postContainer.getChildren().add(singlePostBox);
 		        postContainer.getChildren().addAll(text_ReplyText, buttons);
-		        displayRepliesForPost(post);
+		        displayRepliesForPost(post, null);
 		        postContainer.getChildren().addAll(new Separator());
 			}
 		}
@@ -661,7 +661,7 @@ public class ViewDiscussion {
 		        
 		        Button button_Reply = new Button("Post Reply");
 		        button_Reply.setOnAction((event) -> {entityClasses.ManageReply.storeReply(post, theUser, text_ReplyText.getText()); 
-		                                displayRepliesForPost(post);});
+		                                displayRepliesForPost(post, null);});
 		        
 		        Button button_Like = new Button("Like");
 		        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser);
@@ -675,7 +675,7 @@ public class ViewDiscussion {
 		        
 		        postContainer.getChildren().add(singlePostBox);
 		        postContainer.getChildren().addAll(text_ReplyText, buttons);
-		        displayRepliesForPost(post);
+		        displayRepliesForPost(post, null);
 		        postContainer.getChildren().addAll(new Separator());
 			}
 		}

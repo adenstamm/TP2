@@ -47,10 +47,10 @@ public class ManagePost {
 			
 			String Username = mainUser.getUserName();
 			boolean adminRole = mainUser.getAdminRole();
-			boolean studentRole = mainUser.getNewRole1();
-			boolean staffRole = mainUser.getNewRole2();
+			boolean studentRole = mainUser.getStudentRole();
+			boolean staffRole = mainUser.getStaffRole();
 			String likes = "";
-			int views = 0;
+			String views = "";
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
 			LocalDateTime Time = LocalDateTime.now().plusDays(1).plusHours(0).plusMinutes(0);
 			String postTime = Time.format(formatter);

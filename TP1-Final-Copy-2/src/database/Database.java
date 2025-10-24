@@ -508,7 +508,7 @@ public class Database {
 	                    rs.getBoolean("studentRole"),
 	                    rs.getBoolean("staffRole"),
 	                    rs.getString("likes"),
-	                    rs.getInt("views"),
+	                    rs.getString("views"),
 	                    rs.getString("postTime"),
 	                    rs.getInt("postID"),
 	                    rs.getString("thread"),

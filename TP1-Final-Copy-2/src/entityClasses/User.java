@@ -26,8 +26,8 @@ public class User {
     private String preferredFirstName;
     private String emailAddress;
     private boolean adminRole;
-    private boolean role1;
-    private boolean role2;
+    private boolean studentRole;
+    private boolean staffRole;
     private String oneTimePassword;
     private boolean hasOneTimePassword;
     
@@ -69,8 +69,8 @@ public class User {
         this.preferredFirstName = pfn;
         this.emailAddress = ea;
         this.adminRole = r1;
-        this.role1 = r2;
-        this.role2 = r3;
+        this.studentRole = r2;
+        this.staffRole = r3;
         this.oneTimePassword = otp;
         this.hasOneTimePassword = hotp;
     }
@@ -91,30 +91,30 @@ public class User {
 
     
     /*****
-     * <p> Method: void setRole1User(boolean role) </p>
+     * <p> Method: void setStudentRole(boolean role) </p>
      * 
      * <p> Description: This setter defines the role1 attribute. </p>
      * 
      * @param role is a boolean that specifies if this user in playing role1.
      * 
      */
-    // Sets the role1 user.
-    public void setRole1User(boolean role) {
-    	this.role1=role;
+    // Sets the student user.
+    public void setStudentRole(boolean role) {
+    	this.studentRole=role;
     }
 
     
     /*****
-     * <p> Method: void setRole2User(boolean role) </p>
+     * <p> Method: void setStaffRole(boolean role) </p>
      * 
-     * <p> Description: This setter defines the role2 attribute. </p>
+     * <p> Description: This setter defines the staffRole attribute. </p>
      * 
-     * @param role is a boolean that specifies if this user in playing role2.
+     * @param role is a boolean that specifies if this user in playing staffRole.
      * 
      */
-    // Sets the role2 user.
-    public void setRole2User(boolean role) {
-    	this.role2=role;
+    // Sets the staffRole user.
+    public void setStaffRole(boolean role) {
+    	this.staffRole=role;
     }
 
     
@@ -235,19 +235,19 @@ public class User {
 	 *
      */
     // Gets the current value of the role1 attribute.
-	public boolean getNewRole1() { return role1; }
+	public boolean getStudentRole() { return studentRole; }
 
     
     /*****
-     * <p> Method: String getRole2() </p>
+     * <p> Method: String getStaffRole() </p>
      * 
-     * <p> Description: This getter returns the value of the role2 attribute. </p>
+     * <p> Description: This getter returns the value of the staffRole attribute. </p>
      * 
      * @return a String of "TRUE" or "FALSE" based on state of the attribute
 	 *
      */
-    // Gets the current value of the role2 attribute.
-    public boolean getNewRole2() { return role2; }
+    // Gets the current value of the staffRole attribute.
+    public boolean getStaffRole() { return staffRole; }
 
         
     /*****
@@ -262,8 +262,8 @@ public class User {
     public int getNumRoles() {
     	int numRoles = 0;
     	if (adminRole) numRoles++;
-    	if (role1) numRoles++;
-    	if (role2) numRoles++;
+    	if (studentRole) numRoles++;
+    	if (staffRole) numRoles++;
     	return numRoles;
     }
 }

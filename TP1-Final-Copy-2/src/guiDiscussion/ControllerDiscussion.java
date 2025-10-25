@@ -1,6 +1,11 @@
 package guiDiscussion;
 
+import java.util.Optional;
+
+import entityClasses.Post;
 import entityClasses.User;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 
@@ -68,5 +73,34 @@ public class ControllerDiscussion {
 		}
  	}
 	
+	/**********
+	 * <p> Method: doSelectThread() </p>
+	 * 
+	 * <p> Description: This method should change which posts are displayed </p>
+	 * 
+	 * 
+	 * 
+	 */
+	protected static void doSelectThread() {
+		return;
+	}
+	
+	protected static void performDeletePost(Post post) {
+
+		// Create alert window to confirm user choice
+		Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+		confirmDialog.setTitle("Confirm Deletion");
+		confirmDialog.setHeaderText("Are you sure you want to delete this post?");
+		confirmDialog.setContentText("This action cannot be undone.");
+
+		// Show the dialog and capture the result
+		Optional<ButtonType> result = confirmDialog.showAndWait();
+		
+		// If confirmed, delete account
+		if (result.isPresent() && result.get() == ButtonType.OK) {
+			entityClasses.ManagePost.deletePost(post);
+			ViewDiscussion.refreshPosts();
+		}
+	}
 	
 }

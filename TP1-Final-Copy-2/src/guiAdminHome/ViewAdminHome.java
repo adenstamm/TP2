@@ -164,7 +164,7 @@ public class ViewAdminHome {
 		// Establish the references to the GUI and the current user
 		theStage = ps;
 		theUser = user;
-		
+
 		// If not yet established, populate the static aspects of the GUI
 		if (theView == null) theView = new ViewAdminHome();		// Instantiate singleton if needed
 		
@@ -210,7 +210,7 @@ public class ViewAdminHome {
 		// GUI Area 1
 		label_PageTitle.setText("Admin Home Page");
 		setupLabelUI(label_PageTitle, "Arial", 28, width, Pos.CENTER, 0, 5);
-
+		
 		label_UserDetails.setText("User: " + theUser.getUserName());
 		setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
 		

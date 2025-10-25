@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>TP1-Final1</name>
+	<name>TP1-Final-Copy-2</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -10,19 +10,13 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1758239980669</id>
+			<id>1761271673602</id>
 			<name></name>
 			<type>30</type>
 			<matcher>

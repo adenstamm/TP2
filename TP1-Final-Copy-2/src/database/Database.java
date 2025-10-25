@@ -78,6 +78,7 @@ public class Database {
     private String currentPostViews;
     private String currentPostTime;
     private String currentThread;
+    private boolean currentSoftDelete;
     
     private String replyUser;
     private String replyText;
@@ -162,7 +163,7 @@ public class Database {
 	    String postTable = "CREATE TABLE IF NOT EXISTS postDB ("
 	        + "id INT AUTO_INCREMENT PRIMARY KEY, "
 	        + "mainUser VARCHAR(255), "
-	        + "postText VARCHAR(255), "
+	        + "postText VARCHAR(1023), "
 	        + "adminRole BOOLEAN DEFAULT FALSE, "
 	        + "studentRole BOOLEAN DEFAULT FALSE, "
 	        + "staffRole BOOLEAN DEFAULT FALSE, "
@@ -170,7 +171,8 @@ public class Database {
 	        + "likes VARCHAR(2000), "
 	        + "views VARCHAR(2000), "
 	        + "postID INT DEFAULT 0,"
-	        + "thread VARCHAR(30),"
+	        + "thread VARCHAR(255),"
+	        + "softDelete BOOLEAN DEFAULT FALSE"
 	        + "tags VARCHAR(512)"
 	        + ")";
 	    statement.execute(postTable);
@@ -179,7 +181,7 @@ public class Database {
 	    String replyTable = "CREATE TABLE IF NOT EXISTS replyDB ("
 	        + "id INT AUTO_INCREMENT PRIMARY KEY, "
 	        + "replyUser VARCHAR(255), "
-	        + "replyText VARCHAR(255), "
+	        + "replyText VARCHAR(1023), "
 	        + "replyTime VARCHAR(24), "
 	        + "likes INT DEFAULT 0, "
 	        + "views INT DEFAULT 0, "
@@ -189,6 +191,11 @@ public class Database {
 	        + "postId INT"
 	        + ")";
 	    statement.execute(replyTable);
+	    
+	    //Threads Table
+	    String threadsTable = "CREATE TABLE IF NOT EXISTS threadsDB ("
+	            + "threads VARCHAR(255) PRIMARY KEY)";
+	    statement.execute(threadsTable);
 	    
 	}
 
@@ -288,8 +295,8 @@ public class Database {
 	
 	public void register(Post post) throws SQLException {
 		String insertPost = "INSERT INTO postDB (mainUser, postText, adminRole, studentRole, "
-				+ "staffRole, likes, views, postTime, postID, thread, tags) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "staffRole, likes, views, postTime, postID, thread, softDelete, tags) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement pstmt = connection.prepareStatement(insertPost)) {
 			currentPostUsername = post.getUserName();
 			pstmt.setString(1, currentPostUsername);
@@ -321,8 +328,10 @@ public class Database {
 			currentThread = post.getThread();
 			pstmt.setString(10, currentThread);
 			
+			currentSoftDelete = post.getSoftDelete();
+			pstmt.setBoolean(11, currentSoftDelete);
 			String currentTags = post.getTags();
-			pstmt.setString(11, currentTags);
+			pstmt.setString(12, currentTags);
 
 			pstmt.executeUpdate();
 		}
@@ -367,6 +376,22 @@ public class Database {
 			pstmt.executeUpdate();
 		}
 		
+	}
+	
+	/*******
+	 *  <p> Method:  registerThread(string thread) </p>
+	 *  
+	 *  <P> Description: Creates a row to represent a thread </p>
+	 *  
+	 *  
+	 */
+	public void registerThread(String thread) throws SQLException {
+		String insertThread = "INSERT INTO threadsDB (threads) VALUES (?) ";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(insertThread)) {
+			pstmt.setString(1, thread);
+			pstmt.executeUpdate();
+		}
 	}
 	
 /*******
@@ -479,7 +504,8 @@ public class Database {
 	                    rs.getString("views"),
 	                    rs.getString("postTime"),
 	                    rs.getInt("postID"),
-	                    rs.getString("thread"),
+	                    rs.getString("thread"), 
+	                    rs.getBoolean("softDelete")
 	                    rs.getString("tags")
 	                    );
 	                postList.add(post);
@@ -610,13 +636,35 @@ public class Database {
 	    }
 	    
 	    public void deletePost(Post post) throws SQLException {
+	    	String blankUser = ""; 
 			String newPostText = "";
-	        
-	        String sql = "UPDATE postDB SET postText = ? WHERE postID = ?";
+			String newTime = "";
+			
+					/*id INT AUTO_INCREMENT PRIMARY KEY, "
+			        + "mainUser VARCHAR(255), "
+			        + "postText VARCHAR(255), "
+			        + "adminRole BOOLEAN DEFAULT FALSE, "
+			        + "studentRole BOOLEAN DEFAULT FALSE, "
+			        + "staffRole BOOLEAN DEFAULT FALSE, "
+			        + "postTime VARCHAR(24), "
+			        + "likes VARCHAR(2000), "
+			        + "views INT DEFAULT 0, "
+			        + "postID INT DEFAULT 0,"
+			        + "thread VARCHAR(255)"*/
+			
+	        String sql = "UPDATE postDB "
+	        		+ "SET mainUser = ?, postText = ?, postTime = ?, likes = ?, softDelete = ? "
+	        		+ "WHERE postID = ?";
 	        PreparedStatement pstmt = connection.prepareStatement(sql);
 	        
-	        pstmt.setString(1, newPostText);
-	        pstmt.setInt(2, post.getPostID());
+	        pstmt.setString(1, blankUser);
+	        pstmt.setString(2, newPostText);
+	        pstmt.setString(3, newTime);
+	        pstmt.setInt(4, 0);
+	        pstmt.setBoolean(5, true);
+	        //pstmt.setNull(4, java.sql.Types.VARCHAR);
+	        
+	        pstmt.setInt(6, post.getPostID());
 	        System.out.println("Updating");
 	        pstmt.executeUpdate();
 		}
@@ -1032,9 +1080,36 @@ public class Database {
 		        e.printStackTrace(); 
 		        return new ArrayList<>();
 		    }
-//			System.out.println(userList);
 			return inviteList;
 		}
+
+		/*******
+		 *  <p> Method: List getThreadsListWithAll(boolean withAll) </p>
+		 *  
+		 *  <P> Description: Generate an List of Strings, one for each thread in the database,
+		 *  starting with "<All>" at the start of the list if the boolean value is true, 
+		 *  else, just listing starting with General </p>
+		 *  
+		 *  @return a list of threads starting with All or General
+		 */
+			public List<String> getThreadsListWithAll(boolean withAll) {
+				List<String> threadsList = new ArrayList<String>();
+				if(withAll) threadsList.add("All Threads");
+				String query = "SELECT threads FROM threadsDB";
+				try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+					ResultSet rs = pstmt.executeQuery();
+					while (rs.next()) {
+						String thread = rs.getString("threads");
+						threadsList.add(thread);
+						System.out.println(thread);
+					}
+				} catch (SQLException e) {
+			        e.printStackTrace(); 
+			        return new ArrayList<>();
+			    }
+//				System.out.println(userList);
+				return threadsList;
+			}
 	
 	/*******
 	 * <p> Method: List getAllInvites() </p>
@@ -1674,6 +1749,50 @@ public class Database {
 	}
 	//getter methods
 	public String getCurrentOneTimePassword() { return currentOneTimePassword; }
+	
+	
+	/*******
+	 * <p> Method: getThreadFromPost(Post post)</p>
+	 * 
+	 * <p> Description: Given a post, figure out what the thread is.</p>
+	 * 
+	 * @throws SQLException if there is an issues accessing the database.
+	 * 
+	 */
+	public void getThreadFromPost(Post post) throws SQLException {
+		post.getPostID();
+	    String query = "SELECT * FROM postDB WHERE postid = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, postId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                	rs.getString("thread");
+ 
+                }
+            }
+	    }
+	}
+	
+	/*******
+	 * <p> Method: setPostText(Post post, String update)</p>
+	 * 
+	 * <p> Description: Given a string and post, update the text</p>
+	 * 
+	 * @throws SQLException if there is an issues accessing the database.
+	 * 
+	 */
+	public void setPostText(Post post, String update) throws SQLException {
+		int postID = post.getPostID();
+	    String query = "UPDATE postDB SET postText = ? WHERE postid = ?";
+        PreparedStatement pstmt = connection.prepareStatement(query);
+        
+        pstmt.setString(1, update);
+        pstmt.setInt(2, postID);
+        System.out.println("Updating");
+        pstmt.executeUpdate();
+	}
+	
 	/*******
 	 * <p> Debugging method</p>
 	 * 

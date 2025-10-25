@@ -24,10 +24,11 @@ public class Post {
     private boolean studentRole;
     private boolean staffRole;
     private String likes;
-    private String views;
+    private int views;
     private String postTime;
     private int postID;
     private String thread;
+    private boolean softDelete;
     private String tags;
     
     /*****
@@ -49,7 +50,9 @@ public class Post {
      */
     // Constructor to initialize a new Reply object with replyUser, replyText, and role.
     
-    public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, String views, String postTime, int postID, String thread, String tags) {
+    public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, 
+    		boolean staffRole, String likes, int views, String postTime, int postID, 
+    		String thread, boolean softDelete, String tags) {
     	this.mainUser = mainUser;
     	this.postText = postText;
     	this.adminRole = adminRole;
@@ -60,6 +63,7 @@ public class Post {
     	this.postTime = postTime;
     	this.postID = postID;
     	this.thread = thread;
+    	this.softDelete = softDelete;
         this.tags = tags;
     }
     
@@ -138,7 +142,7 @@ public class Post {
      * 
      */
     
-    public void setViews(String views) {
+    public void setViews(int views) {
     	this.views = views;
     }
     
@@ -182,6 +186,20 @@ public class Post {
     }
     
     /*****
+     * <p> Method: void setSoftDelete(boolean softDelete) </p>
+     * 
+     * <p> Description: This setter defines the softDelete attribute. </p>
+     * 
+     * @param softDelete is a boolean value that defines whether the post has been "deleted"
+     * 
+     */
+    
+    public void setSoftDelete(boolean softDelete) {
+    	this.softDelete = softDelete;
+    }
+    
+    
+    /*****
      * <p> Method: String getUserName() </p>
      * 
      * <p> Description: This getter returns the UserName. </p>
@@ -215,7 +233,7 @@ public class Post {
      */
     // Gets the current value of the Views attribute.
     
-    public String getViews() { return views; }
+    public int getViews() { return views; }
     
     /*****
      * <p> Method: String getPostText() </p>
@@ -302,6 +320,19 @@ public class Post {
     public String getThread() { return thread; }
     
     /*****
+     * <p> Method: void getSoftDelete() </p>
+     * 
+     * <p> Description: This getter grabs the softDelete attribute. </p>
+     * 
+     * @return softDelete is a boolean value that defines whether the post has been "deleted"
+     * it should be false, but changes to true after deletepost in database
+     * 
+     */
+    
+    public boolean getSoftDelete() {
+    	return softDelete;
+
+    /*****
      * <p> Method: void setTags(String tags) </p>
      * * <p> Description: This setter defines the Tags attribute. </p>
      * * @param tags is a String that defines the tags for the post.
@@ -320,3 +351,6 @@ public class Post {
     public String getTags() { return tags; }
     
 }
+
+
+

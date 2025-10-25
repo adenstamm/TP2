@@ -172,7 +172,7 @@ public class ViewManageInvites {
  		
  		setupComboBoxUI(combobox_SelectInvite, "Dialog", 16, 320, 280, 150);
  		List<String> inviteList = theDatabase.getInviteList();
- 		System.out.println("Line 167");
+ 		//System.out.println("Line 167");
  		
  		combobox_SelectInvite.setItems(FXCollections.observableArrayList(inviteList));
  		combobox_SelectInvite.getSelectionModel().select(0);
@@ -302,7 +302,7 @@ public class ViewManageInvites {
     }
     
     /**********
-	 * <p> Method: refreshUsers </p>
+	 * <p> Method: refreshInvites </p>
 	 * 
 	 * <p> Description: This method refreshes the user drop down menu after delete action. </p>
 	 * 

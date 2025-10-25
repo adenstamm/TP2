@@ -35,7 +35,7 @@ public class ManagePost {
      * 
      */
 	
-	public static void storePost(User mainUser, String postText, String thread, String tags) {
+	public static void storePost(User mainUser, String postText, String thread, boolean sofDelete, String tags) {
 		if(mainUser.getUserName().isEmpty()) {
 			System.out.println("Error: The post needs to have a username attached to it.");
 			return;
@@ -52,7 +52,7 @@ public class ManagePost {
 			String likes = "";
 			String views = "";
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
-			LocalDateTime Time = LocalDateTime.now().plusDays(1).plusHours(0).plusMinutes(0);
+			LocalDateTime Time = LocalDateTime.now();
 			String postTime = Time.format(formatter);
 			List<Post> posts = new ArrayList<>();
 			posts = applicationMain.FoundationsMain.database.getAllPosts();
@@ -62,7 +62,8 @@ public class ManagePost {
 				thread = "General";
 			}
 			
-			Post post = new Post(Username, postText, adminRole, studentRole, staffRole, likes, views, postTime, postID, thread, tags);
+			Post post = new Post(Username, postText, adminRole, studentRole, staffRole, likes, 
+								 views, postTime, postID, thread, softDelete, tags);
 			System.out.println(postText);
 			try {
 			applicationMain.FoundationsMain.database.register(post);

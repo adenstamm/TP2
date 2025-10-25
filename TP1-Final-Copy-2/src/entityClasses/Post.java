@@ -29,6 +29,7 @@ public class Post {
     private int postID;
     private String thread;
     private boolean softDelete;
+    private String tags;
     
     /*****
      * <p> Method: Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, int views,
@@ -51,7 +52,7 @@ public class Post {
     
     public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, 
     		boolean staffRole, String likes, int views, String postTime, int postID, 
-    		String thread, boolean softDelete) {
+    		String thread, boolean softDelete, String tags) {
     	this.mainUser = mainUser;
     	this.postText = postText;
     	this.adminRole = adminRole;
@@ -63,6 +64,7 @@ public class Post {
     	this.postID = postID;
     	this.thread = thread;
     	this.softDelete = softDelete;
+        this.tags = tags;
     }
     
    
@@ -329,7 +331,24 @@ public class Post {
     
     public boolean getSoftDelete() {
     	return softDelete;
+
+    /*****
+     * <p> Method: void setTags(String tags) </p>
+     * * <p> Description: This setter defines the Tags attribute. </p>
+     * * @param tags is a String that defines the tags for the post.
+     * */
+    
+    public void setTags(String tags) {
+    	this.tags = tags;
     }
+
+    /*****
+     * <p> Method: String getTags() </p>
+     * * <p> Description: This getter returns the Tags. </p>
+     * * @return a String of the Tags
+	 *
+     */
+    public String getTags() { return tags; }
     
 }
 

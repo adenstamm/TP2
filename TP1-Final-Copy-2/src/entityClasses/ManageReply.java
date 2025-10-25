@@ -50,8 +50,8 @@ public class ManageReply {
 		int postID = 0;
 		String Username = user.getUserName();
 		boolean adminRole = user.getAdminRole();
-		boolean studentRole = user.getNewRole1();
-		boolean staffRole = user.getNewRole2();
+		boolean studentRole = user.getStudentRole();
+		boolean staffRole = user.getStaffRole();
 		int likes = 0;
 		int views = 0;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");

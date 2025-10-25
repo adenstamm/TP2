@@ -89,6 +89,7 @@ public class FoundationsMain extends Application {
 			// Connect to the database
 			database.connectToDatabase();
 			//entityClasses.ManagePost.registerTestCases();
+//			entityClasses.ManagePost.registerTestCases();
 		/*	
 		Post newPost = new Post("Ian", "Hi There", true, true, true, 12, 12, "", 1);
 		

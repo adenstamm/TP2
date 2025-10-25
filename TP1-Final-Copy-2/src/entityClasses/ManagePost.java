@@ -35,7 +35,7 @@ public class ManagePost {
      * 
      */
 	
-	public static void storePost(User mainUser, String postText, String thread) {
+	public static void storePost(User mainUser, String postText, String thread, String tags) {
 		if(mainUser.getUserName().isEmpty()) {
 			System.out.println("Error: The post needs to have a username attached to it.");
 			return;
@@ -62,7 +62,7 @@ public class ManagePost {
 				thread = "General";
 			}
 			
-			Post post = new Post(Username, postText, adminRole, studentRole, staffRole, likes, views, postTime, postID, thread);
+			Post post = new Post(Username, postText, adminRole, studentRole, staffRole, likes, views, postTime, postID, thread, tags);
 			System.out.println(postText);
 			try {
 			applicationMain.FoundationsMain.database.register(post);
@@ -91,7 +91,6 @@ public class ManagePost {
 		System.out.println("Registering " + user.getUserName());
 		if(likesList.contains(user.getUserName())) {
 			likesList.remove(user.getUserName());
-
 			try {
 				applicationMain.FoundationsMain.database.registerLikes(likesList, post);
 			} catch(SQLException e) {
@@ -159,40 +158,4 @@ public class ManagePost {
 			System.out.println("Failed to delete Post");
 		}
 	}
-	
-	// This is a temporary method for registering the test cases
-	public static void registerTestCases() {
-		
-		User user1 = new User("IanJohnson", "123456aA.", "", "", "", "", "", true, false, false, "", false);
-		User user2 = new User("", "123456aA.", "", "", "", "", "", true, false, false, "", false);
-			
-		Post post0 = new Post("", "", true, false, false, "", "", "", 0, "General");
-		Post post1 = new Post("", "", true, false, false, "", "", "", 1, "General");
-		Post post2 = new Post("", "", true, false, false, "", "", "", 2, "General");
-		Post post3 = new Post("", "", true, false, false, "", "", "", 50, "General");
-		
-		System.out.println("Registering the first post test case.");
-		storePost(user2, "This is the first test case.", "General");
-		System.out.println("Registering the second post test case.");
-		storePost(user1, "This is the second test case.", "General");
-		System.out.println("Registering the third post test case.");
-		storePost(user1, "", "General");
-		System.out.println("Registering the fourth post test case.");
-		storePost(user2, "", "General");
-		System.out.println("Registering the fifth post test case.");
-		storePost(user1, "This is the fifth test case", "General");
-		
-		System.out.println("Registering the first reply test case.");
-		ManageReply.storeReply(post1, user2, "This is the first test case.");
-		System.out.println("Registering the second reply test case.");
-		ManageReply.storeReply(post0, user1, "This is the second test case.");
-		System.out.println("Registering the third reply test case.");
-		ManageReply.storeReply(post1, user1, "This is the third test case");
-		System.out.println("Registering the fourth reply test case.");
-		ManageReply.storeReply(post2, user2, "");
-		System.out.println("Registering the fifth reply test case.");
-		ManageReply.storeReply(post3, user1, "This is the fifth test case.");
-			
-	}
-	
 }

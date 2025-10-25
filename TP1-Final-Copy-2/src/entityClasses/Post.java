@@ -28,6 +28,7 @@ public class Post {
     private String postTime;
     private int postID;
     private String thread;
+    private String tags;
     
     /*****
      * <p> Method: Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, int views,
@@ -48,7 +49,7 @@ public class Post {
      */
     // Constructor to initialize a new Reply object with replyUser, replyText, and role.
     
-    public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, String views, String postTime, int postID, String thread) {
+    public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, String views, String postTime, int postID, String thread, String tags) {
     	this.mainUser = mainUser;
     	this.postText = postText;
     	this.adminRole = adminRole;
@@ -59,6 +60,7 @@ public class Post {
     	this.postTime = postTime;
     	this.postID = postID;
     	this.thread = thread;
+        this.tags = tags;
     }
     
    
@@ -299,7 +301,22 @@ public class Post {
     
     public String getThread() { return thread; }
     
+    /*****
+     * <p> Method: void setTags(String tags) </p>
+     * * <p> Description: This setter defines the Tags attribute. </p>
+     * * @param tags is a String that defines the tags for the post.
+     * */
+    
+    public void setTags(String tags) {
+    	this.tags = tags;
+    }
+
+    /*****
+     * <p> Method: String getTags() </p>
+     * * <p> Description: This getter returns the Tags. </p>
+     * * @return a String of the Tags
+	 *
+     */
+    public String getTags() { return tags; }
+    
 }
-
-
-

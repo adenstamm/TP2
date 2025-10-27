@@ -14,28 +14,41 @@ package entityClasses;
  */ 
 
 public class Post {
-	/*
-	 * These are the private attributes for this entity object
-	 */
-	
+
+	/**specifies the author of the post*/
 	private String mainUser;
+	/**Holds the text for the post*/
     private String postText;
+    /**Specifies the the Admin attribute (TRUE or FALSE) for this author*/
     private boolean adminRole;
+    /**Specifies the the Student attribute (TRUE or FALSE) for this author*/
     private boolean studentRole;
+    /**Specifies the the Staff attribute (TRUE or FALSE) for this author*/
     private boolean staffRole;
+    /**Specifies the users who have liked this post*/
     private String likes;
+    /**Specifies the users who have viewed/read the post*/
     private String views;
+    /**Specifies the time that a post has been made*/
     private String postTime;
+    /**Specifies the postID of a post*/
     private int postID;
+    /**Specifies the thread that a post is tied to*/
     private String thread;
+    /**Specifies whether the user has deleted this post, is kept so that the replies are still tied to a post*/
     private boolean softDelete;
+    /**Specifies the searchable tags that the user associates with this posts*/
     private String tags;
     
     /*****
      * <p> Method: Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, int views,
      * 	 String postTime, int postID, String thread) </p>
      * 
-     * <p> Description: This constructor is used to establish post entity objects. </p>
+     * <p> Description: This constructor is used to establish post entity objects. These post entities will be stored in the database and
+     *     used in the guiDiscussion package. The purpose of this object is to contain post text that is written by a user and seen by other
+     *     users. It contains the person who wrote the post, the text inside, the roles that the user has, the people who have liked the post,
+     *     the people who have viewed/read the post, the time the post was made, the ID, the thread the post is associated with, the post's
+     *     tags, and whether or not this post has been deleted. </p>
      * 
      * @param mainUser specifies the author of the post
      * 
@@ -47,6 +60,19 @@ public class Post {
      * 
      * @param staffRole specifies the the Staff attribute (TRUE or FALSE) for this author
      * 
+     * @param likes specifies the users who have liked this post
+     * 
+     * @param views specifies the users who have viewed/read the post
+     * 
+     * @param postTime specifies the time that a post has been made
+     * 
+     * @param postID specifies the postID of a post
+     * 
+     * @param thread specifies the thread that a post is tied to
+     * 
+     * @param softDelete specifies whether the user has deleted this post, is kept so that the replies are still tied to a post
+     * 
+     * @param tags specifies the searchable tags that the user associates with this posts
      */
     // Constructor to initialize a new Reply object with replyUser, replyText, and role.
     
@@ -84,7 +110,7 @@ public class Post {
      * 
      * <p> Description: This setter defines the Admin role attribute. </p>
      * 
-     * @param role is a boolean that specifies if this post was made by an admin.
+     * @param adminRole is a boolean that specifies if this post was made by an admin.
      * 
      */
     
@@ -97,7 +123,7 @@ public class Post {
      * 
      * <p> Description: This setter defines the Student role attribute. </p>
      * 
-     * @param role is a boolean that specifies if this post was made by an student.
+     * @param studentRole is a boolean that specifies if this post was made by an student.
      * 
      */
     
@@ -110,7 +136,7 @@ public class Post {
      * 
      * <p> Description: This setter defines the Staff role attribute. </p>
      * 
-     * @param role is a boolean that specifies if this post was made by an staff.
+     * @param staffRole is a boolean that specifies if this post was made by an staff.
      * 
      */
     
@@ -170,6 +196,14 @@ public class Post {
     	this.postID = postID;
     }
     
+    /*****
+     * <p> Method: void setSoftDelete(boolean softDelete) </p>
+     * 
+     * <p> Description: This setter defines the PostID attribute. </p>
+     * 
+     * @param softDelete indicates whether the post is deleted or not.
+     * 
+     */
     
     public void setSoftDelete(boolean softDelete) {
     	this.softDelete = softDelete;
@@ -312,20 +346,30 @@ public class Post {
     
     /*****
      * <p> Method: void setTags(String tags) </p>
-     * * <p> Description: This setter defines the Tags attribute. </p>
-     * * @param tags is a String that defines the tags for the post.
-     * */
+     * <p> Description: This setter defines the Tags attribute. </p>
+     * @param tags is a String that defines the tags for the post.
+     */
     
     public void setTags(String tags) {
     	this.tags = tags;
     }
     
+    /*****
+     * <p> Method: boolean getThread() </p>
+     * 
+     * <p> Description: This getter returns the softDelete value. </p>
+     * 
+     * @return a boolean of softDelete
+	 *
+     */
+    // Gets the current value of the softDelete attribute.
+    
     public boolean getSoftDelete() { return softDelete; }
     
     /*****
      * <p> Method: String getTags() </p>
-     * * <p> Description: This getter returns the Tags. </p>
-     * * @return a String of the Tags
+     * <p> Description: This getter returns the Tags. </p>
+     * @return a String of tags
 	 *
      */
     public String getTags() { return tags; }

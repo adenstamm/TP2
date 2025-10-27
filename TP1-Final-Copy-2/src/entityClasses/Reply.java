@@ -15,18 +15,24 @@ package entityClasses;
 
 public class Reply {
 	
-	/*
-	 * These are the private attributes for this entity object
-	 */
 	
+	/**Specifies the author of the reply*/
 	private String replyUser;
+	/**Holds the text for the reply*/
     private String replyText;
+    /**Specifies the the Admin attribute (TRUE or FALSE) for this author*/
     private boolean adminRole;
+    /**Specifies the the Student attribute (TRUE or FALSE) for this author*/
     private boolean studentRole;
+    /**Specifies the the Staff attribute (TRUE or FALSE) for this author*/
     private boolean staffRole;
+    /**Specifies the users who have liked this reply*/
     private int likes;
+    /**Specifies the users who have viewed/read the reply*/
     private int views;
+    /**Specifies the time that a reply has been made*/
     private String replyTime;
+    /**Specifies the post that the reply is attached to*/
     private int postId;
     
     /*****
@@ -34,6 +40,8 @@ public class Reply {
      *  	boolean staffRole, int likes, int views, String replyTime) </p>
      * 
      * <p> Description: This constructor is used to establish reply entity objects. </p>
+     * 
+     * @param postId specifies the post that the reply is tied to
      * 
      * @param replyUser specifies the author of the reply
      * 
@@ -44,6 +52,12 @@ public class Reply {
      * @param studentRole specifies the the Student attribute (TRUE or FALSE) for this author
      * 
      * @param staffRole specifies the the Staff attribute (TRUE or FALSE) for this author
+     * 
+     * @param likes specifies the users that have liked this reply
+     * 
+     * @param views specifies the users that have viewed/read this reply
+     * 
+     * @param replyTime specifies the time that this reply was created
      * 
      */
     // Constructor to initialize a new Reply object with replyUser, replyText, and role.
@@ -63,11 +77,11 @@ public class Reply {
     
     
     /*****
-     * <p> Method: void setPostID(int postID) </p>
+     * <p> Method: void setPostId(int postId) </p>
      * 
      * <p> Description: This setter defines the PostID attribute. </p>
      * 
-     * @param postID indicates which post this is.
+     * @param postId indicates which post this is.
      * 
      */
     
@@ -93,7 +107,7 @@ public class Reply {
      * 
      * <p> Description: This setter defines the Reply text attribute. </p>
      * 
-     * @param postText is a String that defines what the substance of the reply is.
+     * @param replyText is a String that defines what the substance of the reply is.
      * 
      */
     
@@ -106,7 +120,7 @@ public class Reply {
      * 
      * <p> Description: This setter defines the Admin role attribute. </p>
      * 
-     * @param role is a boolean that specifies if this post was made by an admin.
+     * @param adminRole is a boolean that specifies if this post was made by an admin.
      * 
      */
     
@@ -119,7 +133,7 @@ public class Reply {
      * 
      * <p> Description: This setter defines the Student role attribute. </p>
      * 
-     * @param role is a boolean that specifies if this post was made by an student.
+     * @param studentRole is a boolean that specifies if this post was made by an student.
      * 
      */
     
@@ -132,7 +146,7 @@ public class Reply {
      * 
      * <p> Description: This setter defines the Staff role attribute. </p>
      * 
-     * @param role is a boolean that specifies if this post was made by an staff.
+     * @param staffRole is a boolean that specifies if this post was made by an staff.
      * 
      */
     
@@ -171,7 +185,7 @@ public class Reply {
      * 
      * <p> Description: This setter defines the Post Time attribute. </p>
      * 
-     * @param postTime is a String that defines what time a post was made.
+     * @param replyTime is a String that defines what time a post was made.
      * 
      */
     
@@ -183,11 +197,11 @@ public class Reply {
     
     
     /*****
-     * <p> Method: int getPostID() </p>
+     * <p> Method: int getPostId() </p>
      * 
-     * <p> Description: This getter returns the PostID. </p>
+     * <p> Description: This getter returns the PostId. </p>
      * 
-     * @return an int of the PostID
+     * @return an int of the PostId
 	 *
      */
     // Gets the current value of the PostID attribute.

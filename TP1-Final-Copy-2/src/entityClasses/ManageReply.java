@@ -20,6 +20,18 @@ import java.time.format.DateTimeFormatter;
 
 public class ManageReply {
 	
+	
+	/*******
+	 * <p> Title: ManageReply Default Constructor </p>
+	 * 
+	 * <p> Description: This constructor does not perform any special function for this
+	 * application. </p>
+	 */
+	
+	public ManageReply() {
+		// No initialization required at this time
+	}
+	
 	/*****
      * <p> Method: void storeReply(Post mainPost, User user, String replyText) </p>
      * 
@@ -73,6 +85,16 @@ public class ManageReply {
 			System.exit(0);
 		}
 	}
+	
+	/*****
+     * <p> Method: void deleteReply(Reply reply) </p>
+     * 
+     * <p> Description: This method deletes a reply from the database. </p>
+     * 
+     * @param reply the reply that is going to be deleted
+     * 
+     * 
+     */
 	
 	public static void deleteReply(Reply reply) {
 		try {

@@ -42,14 +42,43 @@ public class ControllerDiscussion {
 		// No initialization required at this time
 	}
 	
+	/**********
+	 * <p> Method: performLogout() </p>
+	 * 
+	 * <p> Description: This method should log the user out of their account. </p>
+	 * 
+	 * 
+	 * 
+	 */
+	
 	protected static void performLogout() {
 		guiUserLogin.ViewUserLogin.displayUserLogin(ViewDiscussion.theStage);
 	}
 	
+	/**********
+	 * <p> Method: performQuit() </p>
+	 * 
+	 * <p> Description: This method should quit the program. </p>
+	 * 
+	 * 
+	 * 
+	 */
+	
 	protected static void performQuit() {
 		System.exit(0);
 	}
-
+	
+	/**********
+	 * <p> Method: goToUserHomePage(theStage Stage, theUser User) </p>
+	 * 
+	 * <p> Description: Directs the user back to their homepage. </p>
+	 * 
+	 * @param theStage The current stage of the program.
+	 * 
+	 * @param theUser The current user that is going to the home page.
+	 * 
+	 */
+	
 	protected static void goToUserHomePage(Stage theStage, User theUser) {
 		
 		// Get the roles the user selected during login
@@ -85,6 +114,14 @@ public class ControllerDiscussion {
 		return;
 	}
 	
+	/**********
+	 * <p> Method: performDeletePost(post Post) </p>
+	 * 
+	 * <p> Description: This method should delete the specified post. </p>
+	 * 
+	 * @param post The post that will be deleted.
+	 * 
+	 */
 	protected static void performDeletePost(Post post) {
 
 		// Create alert window to confirm user choice

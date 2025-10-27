@@ -55,34 +55,48 @@ public class ViewDiscussion {
 	
 	 */
 	
-	// These are the application values required by the user interface
+	/** These are the application values required by the user interface */
 	
 	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
+	/** Indicates the window height.*/
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
 
 
-	// These are the widget attributes for the GUI. There are 3 areas for this GUI.
+	/** These are the widget attributes for the GUI. There are 3 areas for this GUI.
 	
-	// GUI Area 1: It informs the user about the purpose of this page, whose account is being used,
-	// and a button to allow this user to update the account settings
+	   GUI Area 1: It informs the user about the purpose of this page, whose account is being used,
+	   and a button to allow this user to update the account settings 
+	*/
+	
 	protected static Label label_PageTitle = new Label();
+	/** Will show the current user.*/
 	protected static Label label_UserDetails = new Label();
+	/** Indicates that this is where you create a new post.*/
 	protected static Label label_CreatePost = new Label();
+	
+	/** The area where the user can input the post text.*/
 	private static TextArea text_PostText = new TextArea();
+	/** The is the button for users to publish their post.*/
 	protected static Button button_Post = new Button("Post");
+	/** The area that holds the textfield for the user's new post.*/
 	protected static VBox postContainer = new VBox(10);
 	
-	// UI Elements for search
+	/** UI Elements for search */
 	private static TextField text_SearchTags = new TextField();
+	/** The button that searches to see what posts align with the tags.*/
 	private static Button button_Search = new Button("Search");
-	private static Button button_ClearSearch = new Button("Clear");
 	
+	/** Clears the search area for tags.*/
+	private static Button button_ClearSearch = new Button("Clear");
+	/** The area where you input the tags you want associated with your post.*/
 	private static TextField text_PostTags = new TextField();
 	
-	// This is a separator and it is used to partition the GUI for various tasks
+	/** This is a separator and it is used to partition the GUI for various tasks */
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
-
+	
+	/** The button that will take you to view your posts.*/
 	protected static Button button_YourPosts = new Button("Your Posts");
+	/** The button to go to the Unread posts page.*/
 	protected static Button button_UnreadPosts = new Button("Unread Posts");
 	
 	// GUI ARea 2: This is a stub, so there are no widgets here.  For an actual role page, this are
@@ -90,28 +104,36 @@ public class ViewDiscussion {
 	
 	
 	
-	// This is a separator and it is used to partition the GUI for various tasks
+	/** This is a separator and it is used to partition the GUI for various tasks */
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
 	
-	// GUI Area 3: This is last of the GUI areas.  It is used for quitting the application and for
-	// logging out.
+	/**
+	 * GUI Area 3: This is last of the GUI areas.  It is used for quitting the application and for
+	 * logging out.
+	 */
+	
 	protected static Button button_BackToHome = new Button("Back To Home");
+	/** The button that is used to quit the program.*/
 	protected static Button button_Quit = new Button("Quit");
 
 	// This is the end of the GUI objects for the page.
 	
-	// These attributes are used to configure the page and populate it with this user's information
+	/** These attributes are used to configure the page and populate it with this user's information */
 	private static ViewDiscussion theView;		// Used to determine if instantiation of the class
 												// is needed
 
-	// Reference for the in-memory database so this package has access
+	/** Reference for the in-memory database so this package has access */
 	private static Database theDatabase = applicationMain.FoundationsMain.database;
-
-	protected static Stage theStage;			// The Stage that JavaFX has established for us	
-	protected static Pane theRootPane;			// The Pane that holds all the GUI widgets
-	protected static User theUser;				// The current logged in User
 	
-	private static Scene theDiscussion;		// The shared Scene each invocation populates
+	/** The Stage that JavaFX has established for us */
+	protected static Stage theStage;			
+	/** The Pane that holds all the GUI widgets*/
+	protected static Pane theRootPane;		
+	/** The current logged in User*/
+	protected static User theUser;				
+	
+	/** The shared Scene each invocation populates*/
+	private static Scene theDiscussion;	
 	
 
 	/*-*******************************************************************************************
@@ -170,7 +192,7 @@ public class ViewDiscussion {
 	 * each GUI object. </p>
 	 * 
 	 * This is a singleton and is only performed once.  Subsequent uses fill in the changeable
-	 * fields using the displayDiscussion method.</p>
+	 * fields using the displayDiscussion method.
 	 * 
 	 */
 	private ViewDiscussion() {
@@ -225,6 +247,19 @@ public class ViewDiscussion {
 			label_PageTitle, label_UserDetails, line_Separator1,
 	        line_Separator4, button_BackToHome, button_Quit, button_YourPosts, button_UnreadPosts, scrollPane);
 	}
+	
+	/**********
+	 * <p> Method: buildPostContainer(searchTag String) </p>
+	 * 
+	 * <p> Description: This method builds the elements of the graphical user interface that allow
+	 * users to create new posts. This gives users a text field where they can input the text they 
+	 * wish to post. It also allows users to attribute tags to posts as well as specifying a thread
+	 * for the post to show up on. </p>
+	 * 
+	 * This method is called again when the post button is pressed.
+	 * 
+	 * @param searchTag specifies the tags that are associated with a post
+	 */
 	
 	protected static void buildPostContainer(String searchTag) {
 
@@ -315,6 +350,15 @@ public class ViewDiscussion {
         displayPosts(searchTag);
 	}
 
+	/**********
+	 * <p> Method: enterUserPosts() </p>
+	 * 
+	 * <p> Description: This method enters the UserPosts page where users can see the posts that they 
+	 * have made. This method calls displayUserPosts where the users posts are displayed.</p>
+	 * 
+	 * 
+	 */
+	
 	protected static void enterUserPosts() {
 		postContainer.getChildren().clear();
 		button_YourPosts.setVisible(false);
@@ -338,6 +382,15 @@ public class ViewDiscussion {
 		}
 		displayUsersPosts();
 	}
+	
+	/**********
+	 * <p> Method: enterUnreadPosts() </p>
+	 * 
+	 * <p> Description: This method enters the UnreadPosts page where users can see the posts that they 
+	 * have not read. This method calls displayUnreadPosts where the users unread posts are displayed.</p>
+	 * 
+	 * 
+	 */
 	
 	protected static void enterUnreadPosts() {
 		System.out.println("in");
@@ -363,6 +416,22 @@ public class ViewDiscussion {
 		}
 		displayUnreadPosts();
 	}
+	
+	/**********
+	 * <p> Method: displayPosts(searchTag String) </p>
+	 * 
+	 * <p> Description: This method creates the area where all the posts are shown and filtered. This method
+	 * reads the contents of the database to get a list of all the posts present. It also calls another method
+	 * that gathers the replies for each post. Each of these posts are shown with the User who posted it, the 
+	 * tags that are tied to the post, the thread the post is in, the time the post was created, and how many 
+	 * likes and views the post has.</p>
+	 * 
+	 * This area also filters the posts by the User's selected thread as well as the ability to search for 
+	 * specific keywords directed towards posts.
+	 * 
+	 * @param searchTag This specifies the tags associated with a post
+	 * 
+	 */
 	
 	protected static void displayPosts(String searchTag) {
 		List<Post> posts;
@@ -547,6 +616,19 @@ public class ViewDiscussion {
 		}
 	}
 	
+	/**********
+	 * <p> Method: displayRepliesForPost(post Post, searchTag String) </p>
+	 * 
+	 * <p> Description: This method creates the replies that are tied to the specified posts. When 
+	 * this method is called a list of replies tied to that post will be pulled from the database.
+	 * The necessary information about the post will be displayed below the post.
+	 * 
+	 * @param post specifies the current post
+	 * 
+	 * @param searchTag specifies the tags associated with the post
+	 * 
+	 */
+	
 	protected static void displayRepliesForPost(Post post, String searchTag) {
 		
 		TextArea text_ReplyText = new TextArea();
@@ -608,6 +690,17 @@ public class ViewDiscussion {
 		
 		
 	}
+	
+	/**********
+	 * <p> Method: displayPostsByThread(thread String) </p>
+	 * 
+	 * <p> Description: This method takes a thread parameter that is used to filter the posts on screen. 
+	 * This method scans through all of the posts stored in the database and adds the ones that are a part
+	 * of the same thread as the current thread.
+	 * 
+	 * @param thread specifies the thread the user has chosen to display
+	 * 
+	 */
 	
 	protected static void displayPostsByThread(String thread) {
 		postContainer.getChildren().clear();
@@ -800,8 +893,17 @@ public class ViewDiscussion {
 
 
 	/**********
-	 * Private local method to initialize the standard fields for a text field
+	 * Private local method to initialize the standard fields for a textUI
+	 * 
+	 * @param t		The TextArea object to be initialized
+	 * @param ff	The font to be used
+	 * @param f		The size of the font to be used
+	 * @param w		The width of the Button
+	 * @param x		The alignment (e.g. left, centered, or right)
+	 * @param y		The location from the top edge (y axis)
+	 * @param e		The ability to edit the text
 	 */
+	
 	private void setupTextUI(TextArea t, String ff, double f, double w, double x, double y, boolean e){
 		t.setFont(Font.font(ff, f));
 		t.setMinWidth(w);
@@ -811,11 +913,16 @@ public class ViewDiscussion {
 		t.setEditable(e);
 	}
 	
-	/*-********************************************************************************************
-
-	Helper methods to reduce code length
-
-
+	/**********
+	 * <p> Method: updateLikes(post Post, label_User Label) </p>
+	 * 
+	 * <p> Description: This is the method for managing likes. It checks the database to see
+	 * how many people have liked a specific post and adds the number to the User label .
+	 * 
+	 * @param post specifies post that the likes are tied to
+	 * 
+	 * @param label_User specifies label that shows the users name, and other features of the post
+	 * 
 	 */
 	
 	protected static void updateLikes(Post post, Label label_User) {
@@ -828,6 +935,19 @@ public class ViewDiscussion {
 		int likesNum = likes.size() - 1;
 		label_User.setText("User: " + post.getUserName() + "  " + post.getPostTime() + "  Likes: " + likesNum);
 	}
+	
+	/**********
+	 * <p> Method: updateLikes(post Post, label_User Label) </p>
+	 * 
+	 * <p> Description: This is the method for managing views. It checks the database to see
+	 * how many people have viewed a specific post and adds the number to the User label. If 
+	 * the user has already read a post, they can mark it as unread.
+	 * 
+	 * @param post specifies the post that the views are tied to
+	 * 
+	 * @param button_View specifies the button that is pressed to register a view
+	 * 
+	 */
 	
 	protected static void updateViews(Post post, Button button_View) {
 		List<Post> posts = applicationMain.FoundationsMain.database.getAllPosts();
@@ -844,7 +964,17 @@ public class ViewDiscussion {
 					button_View.setText("Mark as Read");
 		}
 	}
-
+	
+	/**********
+	 * <p> Method: displayUsersPosts() </p>
+	 * 
+	 * <p> Description: This method builds the UserPosts page where users can see the posts that they 
+	 * have made. All posts that have been made by the current user will appear here along with the 
+	 * replies to those posts.</p>
+	 * 
+	 * 
+	 */
+	
 	protected static void displayUsersPosts() {
 		List<Post> all_posts = new ArrayList<>();
 		all_posts = applicationMain.FoundationsMain.database.getAllPosts();
@@ -908,6 +1038,16 @@ public class ViewDiscussion {
 			}
 		}
 	}
+	
+	/**********
+	 * <p> Method: displayUnreadPosts() </p>
+	 * 
+	 * <p> Description: This method builds the UnreadPosts page where users can see the posts that they 
+	 * have not yet read. This shows the posts that the current user has not read and displays the replies
+	 * to those posts as well.</p>
+	 * 
+	 * 
+	 */
 	
 	protected static void displayUnreadPosts() {
 		List<Post> all_posts = new ArrayList<>();

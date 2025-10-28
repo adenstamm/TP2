@@ -225,7 +225,7 @@ public class ViewDiscussion {
 				combobox_SelectThread.getSelectionModel().select(0);
 				combobox_SelectThread.getSelectionModel().selectedItemProperty()
 		     	.addListener((ObservableValue<? extends String> observable, 
-		     		String oldvalue, String newValue) -> {displayPostsByThread(newValue);});
+		     		String oldvalue, String newValue) -> {displayPostsByThread(null, newValue);});
 		
 		
 		buildPostContainer(null, null);
@@ -300,6 +300,11 @@ public class ViewDiscussion {
 			enterUnreadPosts();
 			return;
 		}
+		if(thread != null) {
+			displayPostsByThread(searchTag, thread); 
+			return;
+			}
+		
 				// --- Create Search Box ---
 		HBox searchBox = new HBox(10);
 		searchBox.setPadding(new Insets(5));
@@ -318,7 +323,7 @@ public class ViewDiscussion {
 		button_ClearSearch.setOnAction((event) -> {
 			text_SearchTags.clear();
 			postContainer.getChildren().clear();
-			buildPostContainer(null, null);
+			buildPostContainer(null, thread);
 		});
 		
 		searchBox.getChildren().addAll(new Label("Search Tags:"), text_SearchTags, button_Search, button_ClearSearch);
@@ -403,23 +408,23 @@ public class ViewDiscussion {
 		combobox_SelectThread.setVisible(false);
 		button_Back_Yours.setVisible(true);
 		boolean flag = false;
-		for (var child : theRootPane.getChildren()) {
+		/*for (var child : theRootPane.getChildren()) {
 			if ("Back_User".equals(child.getId()))
 				return;
 		}
-		
+		*/
 		if (!flag) {
 			button_Back_Yours.setId("Back_User");
 			button_Back_Yours.setOnAction((event) -> {
 				button_YourPosts.setVisible(true); 
-								    button_UnreadPosts.setVisible(true);
-								    combobox_SelectThread.setVisible(true);
-								    page = "Default";
-								    combobox_SelectThread.setValue("All Threads");
-        							postContainer.getChildren().clear();
-        							buildPostContainer(null, null);
-        							button_Back_Yours.setVisible(false);
-        							});
+			    button_UnreadPosts.setVisible(true);
+			    combobox_SelectThread.setVisible(true);
+			    page = "Default";
+			    combobox_SelectThread.setValue("All Threads");
+				postContainer.getChildren().clear();
+				buildPostContainer(null, null);
+				button_Back_Yours.setVisible(false);
+				});
 		}
 		displayUsersPosts();
 	}
@@ -448,15 +453,16 @@ public class ViewDiscussion {
 		System.out.println("yes it gets to here");
 		if (!flag) {
 			button_Back_Unread.setId("Back_Unread");
-			button_Back_Unread.setOnAction((event) -> {button_UnreadPosts.setVisible(true); 
-									button_YourPosts.setVisible(true); 
-									combobox_SelectThread.setVisible(true);
-									page = "Default";
-									combobox_SelectThread.setValue("All Threads");
-        							postContainer.getChildren().clear();
-        							buildPostContainer(null, null);	
-        							button_Back_Unread.setVisible(false);
-        							});
+			button_Back_Unread.setOnAction((event) -> {
+				button_UnreadPosts.setVisible(true); 
+				button_YourPosts.setVisible(true); 
+				combobox_SelectThread.setVisible(true);
+				page = "Default";
+				combobox_SelectThread.setValue("All Threads");
+				postContainer.getChildren().clear();
+				buildPostContainer(null, null);	
+				button_Back_Unread.setVisible(false);
+				});
 		}
 		displayUnreadPosts();
 	}
@@ -586,21 +592,56 @@ public class ViewDiscussion {
 	 * 
 	 */
 	
-	protected static void displayPostsByThread(String thread) {
+	protected static void displayPostsByThread(String searchTag, String thread) {
 		postContainer.getChildren().clear();
 		if(thread == "All Threads") buildPostContainer(null, null);
 		
+		// --- Create Search Box ---
+		HBox searchBox = new HBox(10);
+		searchBox.setPadding(new Insets(5));
+		searchBox.setAlignment(Pos.CENTER_LEFT);
+		text_SearchTags.setPromptText("Search by tag...");
+		if (searchTag != null) {
+			text_SearchTags.setText(searchTag);
+		}
+		
+		button_Search.setOnAction((event) -> { 
+			String tag = text_SearchTags.getText();
+			postContainer.getChildren().clear();
+			buildPostContainer(tag, thread);
+		});
+		
+		button_ClearSearch.setOnAction((event) -> {
+			text_SearchTags.clear();
+			postContainer.getChildren().clear();
+			buildPostContainer(null, thread);
+		});
+		
+		searchBox.getChildren().addAll(new Label("Search Tags:"), text_SearchTags, button_Search, button_ClearSearch);
+				
+		postContainer.getChildren().addAll(searchBox, new Separator());
+				
 		List<Post> posts = new ArrayList<>();
 		posts = applicationMain.FoundationsMain.database.getAllPosts();
 		
+		if (searchTag != null && !searchTag.isEmpty()) {
+			posts = applicationMain.FoundationsMain.database.getPostsByTag(searchTag);
+		} else {
+			posts = applicationMain.FoundationsMain.database.getAllPosts();
+		}
+		System.out.println("Number of posts: " + posts.size());
+        
 		if(posts.size() == 0) {
+			if (searchTag != null && !searchTag.isEmpty()) {
+				postContainer.getChildren().add(new Label("No posts found with tag: " + searchTag));
+			}
 			return;
 		} else {
 			for(Post post : posts){
 				if(post.getThread() == thread) {
-					createPostBoxes(post, null, thread);
-			}
+					createPostBoxes(post, searchTag, thread);
 				}
+		    }
 		}
 	}
 	
@@ -809,7 +850,8 @@ public class ViewDiscussion {
 			return;
 		} else {
 			for(Post post : posts){
-				createPostBoxes(post, null, null);
+				if(!post.getSoftDelete())
+					createPostBoxes(post, null, null);
 			}
 		}
 	}
@@ -914,7 +956,7 @@ public class ViewDiscussion {
         	    	button_openReply.setDisable(false);
         	    	 postContainer.getChildren().clear();
         	    	 if(thread == null) {buildPostContainer(searchTag, null);}
- 	       	    	 else if (thread != null) {displayPostsByThread(thread);}
+ 	       	    	 else if (thread != null) {displayPostsByThread(searchTag, thread);}
         	    });
         	    setupButtonUI(button_reply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
         	    editPost.setMargin(button_reply, new Insets(0, 10, 0, 10));
@@ -933,7 +975,7 @@ public class ViewDiscussion {
 		        	
 		             postContainer.getChildren().clear(); 
 		             if(thread == null) {buildPostContainer(searchTag, null);}
-		       	     else if (thread != null) {displayPostsByThread(thread);}
+		       	     else if (thread != null) {displayPostsByThread(searchTag, thread);}
 		        	});
 		        updateLikes(post, button_Like);
 		        setupButtonUI(button_Like, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
@@ -948,7 +990,7 @@ public class ViewDiscussion {
 		            updateViews(post, button_View); 
 		            postContainer.getChildren().clear(); 
 		            if(thread == null) {buildPostContainer(searchTag, null);}
-	       	    	else if (thread != null) {displayPostsByThread(thread);}
+	       	    	else if (thread != null) {displayPostsByThread(searchTag, thread);}
 		            });
 		        updateViews(post, button_View);
 		        setupButtonUI(button_View, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
@@ -978,7 +1020,7 @@ public class ViewDiscussion {
 	        	    		}
 	                        postContainer.getChildren().clear();
 	                        if(thread == null) {buildPostContainer(searchTag, null);}
-	    	       	    	else if (thread != null) {displayPostsByThread(thread);}
+	    	       	    	else if (thread != null) {displayPostsByThread(searchTag, thread);}
 	                    }
 	        	    });	
 	        	    setupButtonUI(button_saveChanges, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);

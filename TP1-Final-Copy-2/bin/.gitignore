@@ -1,2 +1,15 @@
-/guiDiscussion/
+/guiAddRemoveRoles/
 /guiAdminHome/
+/guiDeleteUser/
+/guiDiscussion/
+/guiFirstAdmin/
+/guiListUsers/
+/guiManageInvites/
+/guiMultipleRoleDispatch/
+/guiNewAccount/
+/guiStaff/
+/guiStudent/
+/guiTools/
+/guiUserLogin/
+/guiUserUpdate/
+/entityClasses/

@@ -278,11 +278,7 @@ public class ViewDiscussion {
 	}
 	
 	/**********
-<<<<<<< HEAD
 	 * <p> Method: buildPostContainer(searchTag String, String thread) </p>
-=======
-	 * <p> Method: buildPostContainer(searchTag String) </p>
->>>>>>> origin/dev
 	 * 
 	 * <p> Description: This method builds the elements of the graphical user interface that allow
 	 * users to create new posts. This gives users a text field where they can input the text they 
@@ -292,21 +288,12 @@ public class ViewDiscussion {
 	 * This method is called again when the post button is pressed.
 	 * 
 	 * @param searchTag specifies the tags that are associated with a post
-<<<<<<< HEAD
 	 * 
 	 * @param thread specifies if you are in a thread
 	 */
 	
 	protected static void buildPostContainer(String searchTag, String thread) {
 		if(page.equals("User Posts")) {
-=======
-	 */
-	
-	protected static void buildPostContainer(String searchTag) {
-
-
-		if (!button_YourPosts.isVisible()) {
->>>>>>> origin/dev
 			enterUserPosts();
 			return;
 		} else if (page.equals("Unread Posts")) {
@@ -688,7 +675,6 @@ public class ViewDiscussion {
 	}
 	
 	/**********
-<<<<<<< HEAD
 	 * Private local method to initialize the standard fields for a ComboBox
 	 * 
 	 * @param c		The ComboBox object to be initialized
@@ -714,17 +700,6 @@ public class ViewDiscussion {
 	Helper methods to reduce code length
 
 
-=======
-	 * <p> Method: updateLikes(post Post, label_User Label) </p>
-	 * 
-	 * <p> Description: This is the method for managing likes. It checks the database to see
-	 * how many people have liked a specific post and adds the number to the User label .
-	 * 
-	 * @param post specifies post that the likes are tied to
-	 * 
-	 * @param label_User specifies label that shows the users name, and other features of the post
-	 * 
->>>>>>> origin/dev
 	 */
 	
 	/**********
@@ -781,11 +756,7 @@ public class ViewDiscussion {
 					button_View.setText("Mark as Read");
 		}
 	}
-<<<<<<< HEAD
-
-=======
 	
->>>>>>> origin/dev
 	/**********
 	 * <p> Method: displayUsersPosts() </p>
 	 * 
@@ -795,10 +766,6 @@ public class ViewDiscussion {
 	 * 
 	 * 
 	 */
-<<<<<<< HEAD
-=======
-	
->>>>>>> origin/dev
 	protected static void displayUsersPosts() {
 		List<Post> all_posts = new ArrayList<>();
 		all_posts = applicationMain.FoundationsMain.database.getAllPosts();
@@ -827,10 +794,7 @@ public class ViewDiscussion {
 	 * 
 	 * 
 	 */
-<<<<<<< HEAD
-=======
 	
->>>>>>> origin/dev
 	protected static void displayUnreadPosts() {
 		List<Post> all_posts = new ArrayList<>();
 		all_posts = applicationMain.FoundationsMain.database.getAllPosts();

@@ -55,37 +55,51 @@ public class ViewDiscussion {
 	
 	 */
 	
-	// These are the application values required by the user interface
+	/** These are the application values required by the user interface */
 	
 	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
+	/** Indicates the window height.*/
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
 	
 	private static String page = "Default";
 
 
-	// These are the widget attributes for the GUI. There are 3 areas for this GUI.
+	/** These are the widget attributes for the GUI. There are 3 areas for this GUI.
 	
-	// GUI Area 1: It informs the user about the purpose of this page, whose account is being used,
-	// and a button to allow this user to update the account settings
+	   GUI Area 1: It informs the user about the purpose of this page, whose account is being used,
+	   and a button to allow this user to update the account settings 
+	*/
+	
 	protected static Label label_PageTitle = new Label();
+	/** Will show the current user.*/
 	protected static Label label_UserDetails = new Label();
+	/** Indicates that this is where you create a new post.*/
 	protected static Label label_CreatePost = new Label();
+	
+	/** The area where the user can input the post text.*/
 	private static TextArea text_PostText = new TextArea();
+	/** The is the button for users to publish their post.*/
 	protected static Button button_Post = new Button("Post");
+	/** The area that holds the textfield for the user's new post.*/
 	protected static VBox postContainer = new VBox(10);
 	protected static ComboBox <String> combobox_SelectThread = new ComboBox <String>();
 	
-	// UI Elements for search
+	/** UI Elements for search */
 	private static TextField text_SearchTags = new TextField();
+	/** The button that searches to see what posts align with the tags.*/
 	private static Button button_Search = new Button("Search");
-	private static Button button_ClearSearch = new Button("Clear");
 	
+	/** Clears the search area for tags.*/
+	private static Button button_ClearSearch = new Button("Clear");
+	/** The area where you input the tags you want associated with your post.*/
 	private static TextField text_PostTags = new TextField();
 	
-	// This is a separator and it is used to partition the GUI for various tasks
+	/** This is a separator and it is used to partition the GUI for various tasks */
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
-
+	
+	/** The button that will take you to view your posts.*/
 	protected static Button button_YourPosts = new Button("Your Posts");
+	/** The button to go to the Unread posts page.*/
 	protected static Button button_UnreadPosts = new Button("Unread Posts");
 	protected static Button button_Back_Unread = new Button("Back");
 	protected static Button button_Back_Yours = new Button("Back");
@@ -96,28 +110,36 @@ public class ViewDiscussion {
 	
 	
 	
-	// This is a separator and it is used to partition the GUI for various tasks
+	/** This is a separator and it is used to partition the GUI for various tasks */
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
 	
-	// GUI Area 3: This is last of the GUI areas.  It is used for quitting the application and for
-	// logging out.
+	/**
+	 * GUI Area 3: This is last of the GUI areas.  It is used for quitting the application and for
+	 * logging out.
+	 */
+	
 	protected static Button button_BackToHome = new Button("Back To Home");
+	/** The button that is used to quit the program.*/
 	protected static Button button_Quit = new Button("Quit");
 
 	// This is the end of the GUI objects for the page.
 	
-	// These attributes are used to configure the page and populate it with this user's information
+	/** These attributes are used to configure the page and populate it with this user's information */
 	private static ViewDiscussion theView;		// Used to determine if instantiation of the class
 												// is needed
 
-	// Reference for the in-memory database so this package has access
+	/** Reference for the in-memory database so this package has access */
 	private static Database theDatabase = applicationMain.FoundationsMain.database;
-
-	protected static Stage theStage;			// The Stage that JavaFX has established for us	
-	protected static Pane theRootPane;			// The Pane that holds all the GUI widgets
-	protected static User theUser;				// The current logged in User
 	
-	private static Scene theDiscussion;		// The shared Scene each invocation populates
+	/** The Stage that JavaFX has established for us */
+	protected static Stage theStage;			
+	/** The Pane that holds all the GUI widgets*/
+	protected static Pane theRootPane;		
+	/** The current logged in User*/
+	protected static User theUser;				
+	
+	/** The shared Scene each invocation populates*/
+	private static Scene theDiscussion;	
 	
 
 	/*-*******************************************************************************************
@@ -176,7 +198,7 @@ public class ViewDiscussion {
 	 * each GUI object. </p>
 	 * 
 	 * This is a singleton and is only performed once.  Subsequent uses fill in the changeable
-	 * fields using the displayDiscussion method.</p>
+	 * fields using the displayDiscussion method.
 	 * 
 	 */
 	private ViewDiscussion() {
@@ -256,7 +278,11 @@ public class ViewDiscussion {
 	}
 	
 	/**********
+<<<<<<< HEAD
 	 * <p> Method: buildPostContainer(searchTag String, String thread) </p>
+=======
+	 * <p> Method: buildPostContainer(searchTag String) </p>
+>>>>>>> origin/dev
 	 * 
 	 * <p> Description: This method builds the elements of the graphical user interface that allow
 	 * users to create new posts. This gives users a text field where they can input the text they 
@@ -266,12 +292,21 @@ public class ViewDiscussion {
 	 * This method is called again when the post button is pressed.
 	 * 
 	 * @param searchTag specifies the tags that are associated with a post
+<<<<<<< HEAD
 	 * 
 	 * @param thread specifies if you are in a thread
 	 */
 	
 	protected static void buildPostContainer(String searchTag, String thread) {
 		if(page.equals("User Posts")) {
+=======
+	 */
+	
+	protected static void buildPostContainer(String searchTag) {
+
+
+		if (!button_YourPosts.isVisible()) {
+>>>>>>> origin/dev
 			enterUserPosts();
 			return;
 		} else if (page.equals("Unread Posts")) {
@@ -365,6 +400,15 @@ public class ViewDiscussion {
 	 * 
 	 */
 
+	/**********
+	 * <p> Method: enterUserPosts() </p>
+	 * 
+	 * <p> Description: This method enters the UserPosts page where users can see the posts that they 
+	 * have made. This method calls displayUserPosts where the users posts are displayed.</p>
+	 * 
+	 * 
+	 */
+	
 	protected static void enterUserPosts() {
 		postContainer.getChildren().clear();
 		button_YourPosts.setVisible(false);
@@ -623,8 +667,17 @@ public class ViewDiscussion {
 
 
 	/**********
-	 * Private local method to initialize the standard fields for a text field
+	 * Private local method to initialize the standard fields for a textUI
+	 * 
+	 * @param t		The TextArea object to be initialized
+	 * @param ff	The font to be used
+	 * @param f		The size of the font to be used
+	 * @param w		The width of the Button
+	 * @param x		The alignment (e.g. left, centered, or right)
+	 * @param y		The location from the top edge (y axis)
+	 * @param e		The ability to edit the text
 	 */
+	
 	private void setupTextUI(TextArea t, String ff, double f, double w, double x, double y, boolean e){
 		t.setFont(Font.font(ff, f));
 		t.setMinWidth(w);
@@ -635,6 +688,7 @@ public class ViewDiscussion {
 	}
 	
 	/**********
+<<<<<<< HEAD
 	 * Private local method to initialize the standard fields for a ComboBox
 	 * 
 	 * @param c		The ComboBox object to be initialized
@@ -660,6 +714,17 @@ public class ViewDiscussion {
 	Helper methods to reduce code length
 
 
+=======
+	 * <p> Method: updateLikes(post Post, label_User Label) </p>
+	 * 
+	 * <p> Description: This is the method for managing likes. It checks the database to see
+	 * how many people have liked a specific post and adds the number to the User label .
+	 * 
+	 * @param post specifies post that the likes are tied to
+	 * 
+	 * @param label_User specifies label that shows the users name, and other features of the post
+	 * 
+>>>>>>> origin/dev
 	 */
 	
 	/**********
@@ -716,7 +781,11 @@ public class ViewDiscussion {
 					button_View.setText("Mark as Read");
 		}
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> origin/dev
 	/**********
 	 * <p> Method: displayUsersPosts() </p>
 	 * 
@@ -726,6 +795,10 @@ public class ViewDiscussion {
 	 * 
 	 * 
 	 */
+<<<<<<< HEAD
+=======
+	
+>>>>>>> origin/dev
 	protected static void displayUsersPosts() {
 		List<Post> all_posts = new ArrayList<>();
 		all_posts = applicationMain.FoundationsMain.database.getAllPosts();
@@ -754,6 +827,10 @@ public class ViewDiscussion {
 	 * 
 	 * 
 	 */
+<<<<<<< HEAD
+=======
+	
+>>>>>>> origin/dev
 	protected static void displayUnreadPosts() {
 		List<Post> all_posts = new ArrayList<>();
 		all_posts = applicationMain.FoundationsMain.database.getAllPosts();

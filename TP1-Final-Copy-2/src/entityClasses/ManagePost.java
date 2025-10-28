@@ -22,6 +22,18 @@ import java.util.List;
 
 public class ManagePost {
 	
+	
+	/*******
+	 * <p> Title: ManagePost() Default Constructor </p>
+	 * 
+	 * <p> Description: This constructor does not perform any special function for this
+	 * application. </p>
+	 */
+	
+	public ManagePost() {
+		// No initialization required at this time
+	}
+	
 	/*****
      * <p> Method: void storePost(User mainUser, String postText, String thread) </p>
      * 
@@ -32,6 +44,10 @@ public class ManagePost {
      * @param postText the text that will be stored in the post
      * 
      * @param thread the specific thread that this post belongs to
+     * 
+     * @param tags the tags that are associated with the post
+     * 
+     * @param softDelete determines whether the post is deleted or not
      * 
      */
 	

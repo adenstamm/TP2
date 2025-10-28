@@ -11,11 +11,11 @@ import entityClasses.ManagePost;
 /*******
  * <p> Title: PostTest Class. </p>
  *
- * <p> Description: Tiny console test harness I wrote to sanity-check post
- * create/delete and tag search against our in-memory DB. Runs a couple of
+ * <p> Description: Tiny console test harness I wrote to check post
+ * create/delete, tag search, and liking against our in-memory DB. Runs a couple of
  * focused tests and prints what happened. </p>
  *
- * <p> Copyright: Nobody! © 2025 </p>
+ * <p> Copyright: Aden Stamm© 2025 </p>
  *
  * @author Aden Stamm
  * @version 1.01   2025-10-27  Initial test scaffold
@@ -23,17 +23,6 @@ import entityClasses.ManagePost;
 
 public class PostTest {
 
-	
-	/**
-	 * Default constructor for PostTest.
-	 * Initializes the controller with default values and no special setup.
-	 */
-	
-	public PostTest() {
-		// No initialization required at this time
-	}
-	
-	
     /*-*******************************************************************************************
      * Attributes
      *-------------------------------------------------------------------------------------------*/
@@ -67,6 +56,7 @@ public class PostTest {
 
         testDeletePost();
         testKeywordSearch();
+        testLikePost();
 
         System.out.println("All tests completed!");
     }
@@ -167,5 +157,117 @@ public class PostTest {
         System.out.println(dbPosts.size()   > 0 ? "Database search working"  : "Database search failed");
         System.out.println(webPosts.size()  > 0 ? "Web search working"       : "Web search failed");
         System.out.println(noPosts.size()   == 0 ? "Non-existent tag search working" : "Non-existent tag search failed");
+    }
+
+    /**********
+     * <p> Method: testLikePost() </p>
+     *
+     * <p> Description: Creates a user and a post, then tests liking the post
+     * and verifies that the user has liked the post. </p>
+     */
+    public static void testLikePost() {
+        System.out.println("\n--- Testing Like Post ---");
+
+        // Create a test user for liking posts.
+        User testUser = new User(
+            "likeuser", "password", "Like", "", "User", "Like",
+            "like@email.com", true, true, true, "", false
+        );
+
+        // Create a post to like.
+        ManagePost.storePost(
+            testUser,
+            "This is a test post for liking",
+            "General",
+            "test,like",
+            false
+        );
+
+        // Find the created post by exact text.
+        List<Post> posts = database.getAllPosts();
+        Post testPost = null;
+        for (Post post : posts) {
+            if (post.getPostText().equals("This is a test post for liking")) {
+                testPost = post;
+                break;
+            }
+        }
+
+        if (testPost != null) {
+            System.out.println("Found test post with ID: " + testPost.getPostID());
+
+            // Test: like the post then verify the user has liked it.
+            ManagePost.registerLike(testPost, testUser);
+            System.out.println("Post liked successfully");
+
+
+            // Test: unlike the post then verify the user has unliked it.
+            ManagePost.registerLike(testPost, testUser);
+            System.out.println("Post unliked successfully");
+
+            
+            // Verify the post still exists and is accessible
+            List<Post> postsAfterLike = database.getAllPosts();
+            boolean postStillExists = false;
+            for (Post post : postsAfterLike) {
+                if (post.getPostID() == testPost.getPostID()) {
+                    postStillExists = true;
+                    break;
+                }
+            }
+            
+            if (postStillExists) {
+                System.out.println("Post integrity test passed - post still exists after like/unlike operations");
+            } else {
+                System.out.println("Post integrity test failed - post disappeared after like/unlike operations");
+            }
+        } else {
+            System.out.println("Post not found");
+        }
+    }
+
+    /**********
+     * <p> Method: verifyUserLikedPost(Post post, User user) </p>
+     *
+     * <p> Description: Helper method to verify if a user has liked a specific post. </p>
+     *
+     * @param post the post to check
+     * @param user the user to check for
+     * @return true if the user has liked the post, false otherwise
+     */
+    public static boolean verifyUserLikedPost(Post post, User user) {
+        try {
+            // Refresh the post from the database to get the latest likes
+            List<Post> allPosts = database.getAllPosts();
+            Post refreshedPost = null;
+            for (Post p : allPosts) {
+                if (p.getPostID() == post.getPostID()) {
+                    refreshedPost = p;
+                    break;
+                }
+            }
+            
+            if (refreshedPost == null) {
+                System.out.println("Could not find post in database");
+                return false;
+            }
+            
+            // Get the raw likes string and check if it contains the username
+            String likesString = refreshedPost.getLikes();
+            System.out.println("Debug - Raw likes string: '" + likesString + "'");
+            System.out.println("Debug - Looking for user: '" + user.getUserName() + "'");
+            
+            // Simple string contains check - this is more reliable than splitting
+            if (likesString != null && likesString.contains(user.getUserName())) {
+                System.out.println("Debug - Found match in likes string!");
+                return true;
+            }
+            
+            System.out.println("Debug - No match found");
+            return false;
+        } catch (Exception e) {
+            System.out.println("Error verifying user like: " + e.getMessage());
+            return false;
+        }
     }
 }

@@ -1,11 +1,3 @@
-/test/
-/database/
-/entityClasses/
-/guiAddRemoveRoles/
-/guiAdminHome/
-/guiDeleteUser/
-/guiDiscussion/
-/guiFirstAdmin/
 /guiListUsers/
 /guiManageInvites/
 /guiMultipleRoleDispatch/
@@ -15,3 +7,6 @@
 /guiTools/
 /guiUserLogin/
 /guiUserUpdate/
+/test/
+/entityClasses/
+/guiFirstAdmin/

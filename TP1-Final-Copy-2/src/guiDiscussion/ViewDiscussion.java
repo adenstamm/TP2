@@ -60,6 +60,8 @@ public class ViewDiscussion {
 	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
 	/** Indicates the window height.*/
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
+	
+	private static String page = "Default";
 
 
 	/** These are the widget attributes for the GUI. There are 3 areas for this GUI.
@@ -80,6 +82,7 @@ public class ViewDiscussion {
 	protected static Button button_Post = new Button("Post");
 	/** The area that holds the textfield for the user's new post.*/
 	protected static VBox postContainer = new VBox(10);
+	protected static ComboBox <String> combobox_SelectThread = new ComboBox <String>();
 	
 	/** UI Elements for search */
 	private static TextField text_SearchTags = new TextField();
@@ -98,6 +101,9 @@ public class ViewDiscussion {
 	protected static Button button_YourPosts = new Button("Your Posts");
 	/** The button to go to the Unread posts page.*/
 	protected static Button button_UnreadPosts = new Button("Unread Posts");
+	protected static Button button_Back_Unread = new Button("Back");
+	protected static Button button_Back_Yours = new Button("Back");
+	
 	
 	// GUI ARea 2: This is a stub, so there are no widgets here.  For an actual role page, this are
 	// would contain the widgets needed for the user to play the assigned role.
@@ -211,7 +217,18 @@ public class ViewDiscussion {
 		label_UserDetails.setText("User: " + theUser.getUserName());
 		setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
 		
-		buildPostContainer(null);
+		//Set up the selector for which threads are displayed
+				setupComboBoxUI(combobox_SelectThread, "Dialog", 16, 50, 150, 630, 55);
+		 		List<String> threadList = theDatabase.getThreadsListWithAll(true);
+		 		
+				combobox_SelectThread.setItems(FXCollections.observableArrayList(threadList));
+				combobox_SelectThread.getSelectionModel().select(0);
+				combobox_SelectThread.getSelectionModel().selectedItemProperty()
+		     	.addListener((ObservableValue<? extends String> observable, 
+		     		String oldvalue, String newValue) -> {displayPostsByThread(newValue);});
+		
+		
+		buildPostContainer(null, null);
         
         
         ScrollPane scrollPane = new ScrollPane(postContainer);
@@ -224,11 +241,17 @@ public class ViewDiscussion {
  	    scrollPane.setPannable(true);
 
 		// GUI Area 2
-		setupButtonUI(button_YourPosts, "Dialog", 18, 250, Pos.CENTER, 500, 55);
-        button_YourPosts.setOnAction((event) -> {enterUserPosts();});
+		setupButtonUI(button_YourPosts, "Dialog", 18, 200, Pos.CENTER, 410, 55);
+        button_YourPosts.setOnAction((event) -> {
+        	page = "User Posts";
+        	enterUserPosts();
+        	});
         
-        setupButtonUI(button_UnreadPosts, "Dialog", 18, 250, Pos.CENTER, 200, 55);
-        button_UnreadPosts.setOnAction((event) -> {enterUnreadPosts();});
+        setupButtonUI(button_UnreadPosts, "Dialog", 18, 200, Pos.CENTER, 190, 55);
+        button_UnreadPosts.setOnAction((event) -> {
+        	page = "Unread Posts";
+        	enterUnreadPosts();
+        });
 
 		// GUI Area 3
         setupButtonUI(button_BackToHome, "Dialog", 18, 250, Pos.CENTER, 20, 540);
@@ -236,7 +259,12 @@ public class ViewDiscussion {
         
         setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
         button_Quit.setOnAction((event) -> {ControllerDiscussion.performQuit(); });
+        
 
+		setupButtonUI(button_Back_Unread, "Dialog", 18, 200, Pos.CENTER, 580, 540);
+		button_Back_Unread.setVisible(false);
+		setupButtonUI(button_Back_Yours, "Dialog", 18, 200, Pos.CENTER, 580, 540);
+		button_Back_Yours.setVisible(false);
 		// This is the end of the GUI initialization code
 		
 		// Place all of the widget items into the Root Pane's list of children
@@ -244,12 +272,13 @@ public class ViewDiscussion {
         
         
         theRootPane.getChildren().addAll(
-			label_PageTitle, label_UserDetails, line_Separator1,
-	        line_Separator4, button_BackToHome, button_Quit, button_YourPosts, button_UnreadPosts, scrollPane);
+			label_PageTitle, label_UserDetails, combobox_SelectThread, line_Separator1,
+	        line_Separator4, button_BackToHome, button_Quit, button_Back_Yours, 
+	        button_Back_Unread, button_YourPosts, button_UnreadPosts, scrollPane);
 	}
 	
 	/**********
-	 * <p> Method: buildPostContainer(searchTag String) </p>
+	 * <p> Method: buildPostContainer(searchTag String, String thread) </p>
 	 * 
 	 * <p> Description: This method builds the elements of the graphical user interface that allow
 	 * users to create new posts. This gives users a text field where they can input the text they 
@@ -259,21 +288,19 @@ public class ViewDiscussion {
 	 * This method is called again when the post button is pressed.
 	 * 
 	 * @param searchTag specifies the tags that are associated with a post
+	 * 
+	 * @param thread specifies if you are in a thread
 	 */
 	
-	protected static void buildPostContainer(String searchTag) {
-
-
-		if (!button_YourPosts.isVisible()) {
+	protected static void buildPostContainer(String searchTag, String thread) {
+		if(page.equals("User Posts")) {
 			enterUserPosts();
 			return;
-		}
-		else if (!button_UnreadPosts.isVisible()) {
+		} else if (page.equals("Unread Posts")) {
 			enterUnreadPosts();
 			return;
 		}
-		
-		// --- Create Search Box ---
+				// --- Create Search Box ---
 		HBox searchBox = new HBox(10);
 		searchBox.setPadding(new Insets(5));
 		searchBox.setAlignment(Pos.CENTER_LEFT);
@@ -285,13 +312,13 @@ public class ViewDiscussion {
 		button_Search.setOnAction((event) -> { 
 			String tag = text_SearchTags.getText();
 			postContainer.getChildren().clear();
-			buildPostContainer(tag);
+			buildPostContainer(tag, null);
 		});
 		
 		button_ClearSearch.setOnAction((event) -> {
 			text_SearchTags.clear();
 			postContainer.getChildren().clear();
-			buildPostContainer(null);
+			buildPostContainer(null, null);
 		});
 		
 		searchBox.getChildren().addAll(new Label("Search Tags:"), text_SearchTags, button_Search, button_ClearSearch);
@@ -333,13 +360,14 @@ public class ViewDiscussion {
 		postContainer.setSpacing(10);
 		
 		Button button_Post = new Button("Post");
+		setupButtonUI(button_Post, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
         button_Post.setOnAction((event) -> {
         	// Pass the tags text to storePost
-        	entityClasses.ManagePost.storePost(theUser, text_PostText.getText(), "General", text_PostTags.getText(), false); 
+        	entityClasses.ManagePost.storePost(theUser, text_PostText.getText(), combobox_selectPostThread.getValue(), text_PostTags.getText(), false); 
         	text_PostText.clear();	// Clear fields after posting
         	text_PostTags.clear();
             postContainer.getChildren().clear(); 
-            buildPostContainer(null); // Refresh with no search
+            buildPostContainer(searchTag, null); // Refresh with search
         });
         
         postControls.getChildren().addAll(label_Thread, combobox_selectPostThread, button_Post);
@@ -349,6 +377,15 @@ public class ViewDiscussion {
         
         displayPosts(searchTag);
 	}
+	
+	/**********
+	 * <p> Method: enterUserPosts() </p>
+	 * 
+	 * <p> Description: This method enters the UserPosts page where users can see the posts that they 
+	 * have made. This method calls displayUserPosts where the users posts are displayed.</p>
+	 * 
+	 * 
+	 */
 
 	/**********
 	 * <p> Method: enterUserPosts() </p>
@@ -363,8 +400,8 @@ public class ViewDiscussion {
 		postContainer.getChildren().clear();
 		button_YourPosts.setVisible(false);
 		button_UnreadPosts.setVisible(false);
-		Button button_Back = new Button("Back");
-		setupButtonUI(button_Back, "Dialog", 18, 250, Pos.CENTER, 580, 540);
+		combobox_SelectThread.setVisible(false);
+		button_Back_Yours.setVisible(true);
 		boolean flag = false;
 		for (var child : theRootPane.getChildren()) {
 			if ("Back_User".equals(child.getId()))
@@ -372,13 +409,17 @@ public class ViewDiscussion {
 		}
 		
 		if (!flag) {
-			button_Back.setId("Back_User");
-			button_Back.setOnAction((event) -> {button_YourPosts.setVisible(true); 
+			button_Back_Yours.setId("Back_User");
+			button_Back_Yours.setOnAction((event) -> {
+				button_YourPosts.setVisible(true); 
 								    button_UnreadPosts.setVisible(true);
+								    combobox_SelectThread.setVisible(true);
+								    page = "Default";
+								    combobox_SelectThread.setValue("All Threads");
         							postContainer.getChildren().clear();
-        							buildPostContainer(null);
-        							theRootPane.getChildren().remove(button_Back);});
-			theRootPane.getChildren().add(button_Back);
+        							buildPostContainer(null, null);
+        							button_Back_Yours.setVisible(false);
+        							});
 		}
 		displayUsersPosts();
 	}
@@ -397,8 +438,8 @@ public class ViewDiscussion {
 		postContainer.getChildren().clear();
 		button_UnreadPosts.setVisible(false);
 		button_YourPosts.setVisible(false);
-		Button button_Back = new Button("Back");
-		setupButtonUI(button_Back, "Dialog", 18, 250, Pos.CENTER, 580, 540);
+		combobox_SelectThread.setVisible(false);
+		button_Back_Unread.setVisible(true);
 		boolean flag = false;
 		/*for (var child : theRootPane.getChildren()) {
 			if ("Back_Unread".equals(child.getId()))
@@ -406,13 +447,16 @@ public class ViewDiscussion {
 		}*/
 		System.out.println("yes it gets to here");
 		if (!flag) {
-			button_Back.setId("Back_Unread");
-			button_Back.setOnAction((event) -> {button_UnreadPosts.setVisible(true); 
+			button_Back_Unread.setId("Back_Unread");
+			button_Back_Unread.setOnAction((event) -> {button_UnreadPosts.setVisible(true); 
 									button_YourPosts.setVisible(true); 
+									combobox_SelectThread.setVisible(true);
+									page = "Default";
+									combobox_SelectThread.setValue("All Threads");
         							postContainer.getChildren().clear();
-        							buildPostContainer(null);	
-        							theRootPane.getChildren().remove(button_Back);});
-			theRootPane.getChildren().add(button_Back);
+        							buildPostContainer(null, null);	
+        							button_Back_Unread.setVisible(false);
+        							});
 		}
 		displayUnreadPosts();
 	}
@@ -451,167 +495,7 @@ public class ViewDiscussion {
 			return;
 		} else {
 			for(Post post : posts){
-
-				VBox singlePostBox = new VBox(5);
-				singlePostBox.setPadding(new Insets(10));
-				singlePostBox.setStyle("-fx-background-color: #f2f2f2; -fx-background-radius: 8;");
-		        singlePostBox.setMaxWidth(Double.MAX_VALUE);
-		        
-		        
-		        List<String> likes = new ArrayList<>();
-				likes = applicationMain.FoundationsMain.database.getLikesToList(post);
-		        int likesNum = likes.size() - 1;
-		        
-		        List<String> views = new ArrayList<>();
-				views = applicationMain.FoundationsMain.database.getViewsToList(post);
-		        int viewsNum = views.size() - 1;
-		        
-		        HBox postLabel = new HBox(20); 
-		 		postLabel.setAlignment(Pos.CENTER_LEFT);
-		        if(!post.getSoftDelete()) {
-				Label label_User = new Label("User: " + post.getUserName());
-				// + "  " + post.getPostTime() + "  Likes: " + likesNum);
-				label_User.setFont(new Font("Arial", 20));
-				
-				
-				Label label_Thread = new Label("Thread: " + post.getThread());
-				label_Thread.setFont(new Font("Arial", 18));
-				
-				Label label_Created = new Label("Date Created: " + post.getPostTime());
-				label_Created.setFont(new Font("Arial", 18));
-				
-				Label label_Likes = new Label("Likes: " + likesNum);
-				label_Likes.setFont(new Font("Arial", 18)); 
-				
-				Label label_Views = new Label("Views: " + viewsNum);
-				label_Views.setFont(new Font("Arial", 18)); 
-				
-				Region spacer = new Region();
-				HBox.setHgrow(spacer, Priority.ALWAYS);
-				
-				postLabel.getChildren().addAll(label_User, spacer, label_Thread, label_Created, label_Likes, label_Views);
-				
-				Label postTextLabel = new Label(post.getPostText());
-		        postTextLabel.setFont(new Font("Arial", 16));
-		        postTextLabel.setWrapText(true);
-		        postTextLabel.setPadding(new Insets(5, 10, 5, 10));
-		       
-		        singlePostBox.getChildren().addAll(postLabel, postTextLabel);
-		        } else {
-		        	Label label_deleted = new Label("This post was deleted.");
-		        	label_deleted.setFont(new Font("Arial", 20));
-		        	postLabel.setAlignment(Pos.CENTER);
-					postLabel.getChildren().addAll(label_deleted);
-					singlePostBox.getChildren().addAll(postLabel);
-		        }
-		        
-		        String tags = post.getTags();
-		        Label tagsLabel = new Label("Tags: " + (tags != null && !tags.isEmpty() ? tags : "None"));
-		        tagsLabel.setFont(new Font("Arial", 12));
-		        tagsLabel.setStyle("-fx-font-style: italic;");
-		        
-		        
-		        HBox buttons = new HBox(0); 
-		 		buttons.setAlignment(Pos.BASELINE_LEFT);
-		 		
-		 		HBox editPost = new HBox(10); 
-		 		editPost.setAlignment(Pos.BASELINE_LEFT);
-		        
-		 		if(!post.getSoftDelete() ) {
-		        	
-		        	buttons.setPadding(new Insets(0, 10, 0, 10));
-		        	Button button_openReply = new Button("Create a Reply");
-		        	button_openReply.setOnAction((event) -> {
-		        		button_openReply.setDisable(true);
-		        		TextArea text_createReply = new TextArea();
-		        		text_createReply.setPrefRowCount(5);
-		        		text_createReply.setWrapText(true);
-		        		text_createReply.setMaxWidth(width);
-		        		editPost.getChildren().add(text_createReply);
-		        	
-		        	    Button button_reply = new Button("Reply");
-		        	    button_reply.setOnAction(ev -> {
-		        	    	entityClasses.ManageReply.storeReply(post, theUser, text_createReply.getText()); 
-		        	    	button_openReply.setDisable(false);
-		        	    	postContainer.getChildren().clear();
-	                        buildPostContainer(null);
-		        	    });
-		        	    setupButtonUI(button_reply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-		        	    editPost.setMargin(button_reply, new Insets(0, 10, 0, 10));
-		        	    editPost.getChildren().add(button_reply);
-                    });
-		        	
-			        setupButtonUI(button_openReply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-			        buttons.setMargin(button_openReply, new Insets(0, 10, 0, 10));
-			        buttons.getChildren().addAll(button_openReply);
-			        	
-			        if(post.getUserName() != theDatabase.getCurrentUsername()) {
-			        	Button button_Like = new Button("Like");
-				        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser); 
-				                                postContainer.getChildren().clear(); buildPostContainer(null);});
-				        setupButtonUI(button_Like, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-				        buttons.setMargin(button_Like, new Insets(0, 10, 0, 10));
-				        buttons.getChildren().addAll(button_Like);
-				      
-				        // --- END OF ADDED BLOCK ---
-				        
-				        Button button_View = new Button("Mark as Read");
-				        button_View.setOnAction((event) -> {entityClasses.ManagePost.registerView(post, theUser);
-				                                updateViews(post, button_View); postContainer.getChildren().clear(); buildPostContainer(null);});
-				        updateViews(post, button_View);
-				        buttons.getChildren().addAll(button_View);
-			        }
-			              
-			        if(post.getUserName() == theDatabase.getCurrentUsername()) {
-			        	Button button_editPost = new Button("Edit Post");
-			        	button_editPost.setOnAction((event) -> {
-			        		button_editPost.setDisable(true);
-			        		TextArea text_editPost = new TextArea();
-			        		text_editPost.setPrefRowCount(5);
-			        		text_editPost.setWrapText(true);
-			        		text_editPost.setMaxWidth(width);
-			        		editPost.getChildren().add(text_editPost);
-			        	
-			        	    Button button_saveChanges = new Button("Save Changes");
-			        	    button_saveChanges.setOnAction(ev -> {
-			        	    	button_editPost.setDisable(false);
-			        	    	String updatedText = text_editPost.getText();
-			        	    	if (!updatedText.isEmpty()) {
-			        	    		try {
-			                        theDatabase.setPostText(post, updatedText);}
-			        	    		catch (SQLException e) {
-			        	    			e.printStackTrace();
-			        	    		}
-			                        postContainer.getChildren().clear();
-			                        buildPostContainer(post.getThread());
-			                    }
-			        	    });	
-			        	    setupButtonUI(button_saveChanges, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-			        	    editPost.setMargin(button_saveChanges, new Insets(0, 10, 0, 10));
-			        	    editPost.getChildren().add(button_saveChanges);
-			        	});
-				        setupButtonUI(button_editPost, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-				        buttons.setMargin(button_editPost, new Insets(0, 10, 0, 10));
-				        buttons.getChildren().addAll(button_editPost);
-				        
-				        Button button_deletePost = new Button("Delete Post");
-				        button_deletePost.setOnAction((event) -> {
-				        	ControllerDiscussion.performDeletePost(post);});
-				        setupButtonUI(button_deletePost, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-				        buttons.setMargin(button_deletePost, new Insets(0, 10, 0, 10));
-				        buttons.getChildren().addAll(button_deletePost);
-		        	}
-			        singlePostBox.getChildren().addAll(tagsLabel, buttons, editPost);
-		        } 
-		        
-		        
-		        
-		        postContainer.getChildren().add(singlePostBox);
-		        displayRepliesForPost(post, null);
-		        postContainer.getChildren().addAll(new Separator());
-		        
-
-		    
+				createPostBoxes(post, searchTag, null);
 		    }
 		}
 	}
@@ -686,7 +570,7 @@ public class ViewDiscussion {
 	 */
 	public static void refreshPosts() {
 		postContainer.getChildren().clear();
-		buildPostContainer(null);
+		buildPostContainer(null, null);
 		
 		
 	}
@@ -704,7 +588,7 @@ public class ViewDiscussion {
 	
 	protected static void displayPostsByThread(String thread) {
 		postContainer.getChildren().clear();
-		if(thread == "All Threads") buildPostContainer(null);
+		if(thread == "All Threads") buildPostContainer(null, null);
 		
 		List<Post> posts = new ArrayList<>();
 		posts = applicationMain.FoundationsMain.database.getAllPosts();
@@ -714,132 +598,9 @@ public class ViewDiscussion {
 		} else {
 			for(Post post : posts){
 				if(post.getThread() == thread) {
-				VBox singlePostBox = new VBox(5);
-				singlePostBox.setPadding(new Insets(10));
-				singlePostBox.setStyle("-fx-background-color: #f2f2f2; -fx-background-radius: 8;");
-		        singlePostBox.setMaxWidth(Double.MAX_VALUE);
-		        
-		        List<String> likes = new ArrayList<>();
-				likes = applicationMain.FoundationsMain.database.getLikesToList(post);
-		        int likesNum = likes.size() - 1;
-		        
-		        HBox postLabel = new HBox(20); 
-		 		postLabel.setAlignment(Pos.CENTER_LEFT);
-		        
-				Label label_User = new Label("User: " + post.getUserName());
-				// + "  " + post.getPostTime() + "  Likes: " + likesNum);
-				label_User.setFont(new Font("Arial", 20));
-				
-				
-				Label label_Thread = new Label("Thread: " + post.getThread());
-				label_Thread.setFont(new Font("Arial", 18));
-				
-				Label label_Created = new Label("Date Created: " + post.getPostTime());
-				label_Created.setFont(new Font("Arial", 18));
-				
-				Label label_Likes = new Label("Likes: " + likesNum);
-				label_Likes.setFont(new Font("Arial", 18));
-				
-				Region spacer = new Region();
-				HBox.setHgrow(spacer, Priority.ALWAYS);
-				
-				postLabel.getChildren().addAll(label_User, spacer, label_Thread, label_Created, label_Likes);
-				
-				
-				Label postTextLabel = new Label(post.getPostText());
-		        postTextLabel.setFont(new Font("Arial", 16));
-		        postTextLabel.setWrapText(true);
-		        singlePostBox.getChildren().addAll(postLabel, postTextLabel);
-		        
-		        HBox buttons = new HBox(0); 
-		 		buttons.setAlignment(Pos.BASELINE_LEFT);
-		 		
-		 		HBox editPost = new HBox(10); 
-		 		editPost.setAlignment(Pos.BASELINE_LEFT);
-		 		
-		 		if(!post.getSoftDelete() ) {
-		        	
-		        	buttons.setPadding(new Insets(0, 10, 0, 10));
-		        	Button button_openReply = new Button("Create a Reply");
-		        	button_openReply.setOnAction((event) -> {
-		        		button_openReply.setDisable(true);
-		        		TextArea text_createReply = new TextArea();
-		        		text_createReply.setPrefRowCount(5);
-		        		text_createReply.setWrapText(true);
-		        		text_createReply.setMaxWidth(width);
-		        		editPost.getChildren().add(text_createReply);
-		        	
-		        	    Button button_reply = new Button("Reply");
-		        	    button_reply.setOnAction(ev -> {
-		        	    	entityClasses.ManageReply.storeReply(post, theUser, text_createReply.getText()); 
-		        	    	button_openReply.setDisable(false);
-		        	    	postContainer.getChildren().clear();
-	                        buildPostContainer(null);
-		        	    });
-		        	    setupButtonUI(button_reply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-		        	    editPost.setMargin(button_reply, new Insets(0, 10, 0, 10));
-		        	    editPost.getChildren().add(button_reply);
-                    });
-		        	
-			        setupButtonUI(button_openReply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-			        buttons.setMargin(button_openReply, new Insets(0, 10, 0, 10));
-			        buttons.getChildren().addAll(button_openReply);
-			        	
-			        if(post.getUserName() != theDatabase.getCurrentUsername()) {
-			        	Button button_Like = new Button("Like");
-				        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser); 
-				                                postContainer.getChildren().clear(); postContainer.getChildren().clear(); buildPostContainer(null);});
-				        setupButtonUI(button_Like, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-				        buttons.setMargin(button_Like, new Insets(0, 10, 0, 10));
-				        buttons.getChildren().addAll(button_Like);
-			        }
-			              
-			        if(post.getUserName() == theDatabase.getCurrentUsername()) {
-			        	Button button_editPost = new Button("Edit Post");
-			        	button_editPost.setOnAction((event) -> {
-			        		button_editPost.setDisable(true);
-			        		TextArea text_editPost = new TextArea();
-			        		text_editPost.setPrefRowCount(5);
-			        		text_editPost.setWrapText(true);
-			        		text_editPost.setMaxWidth(width);
-			        		editPost.getChildren().add(text_editPost);
-			        	
-			        	    Button button_saveChanges = new Button("Save Changes");
-			        	    button_saveChanges.setOnAction(ev -> {
-			        	    	button_editPost.setDisable(false);
-			        	    	String updatedText = text_editPost.getText();
-			        	    	if (!updatedText.isEmpty()) {
-			        	    		try {
-			                        theDatabase.setPostText(post, updatedText);}
-			        	    		catch (SQLException e) {
-			        	    			e.printStackTrace();
-			        	    		}
-			                        postContainer.getChildren().clear();
-			                        buildPostContainer(null);
-			                    }
-			        	    });	
-			        	    setupButtonUI(button_saveChanges, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-			        	    editPost.setMargin(button_saveChanges, new Insets(0, 10, 0, 10));
-			        	    editPost.getChildren().add(button_saveChanges);
-			        	});
-				        setupButtonUI(button_editPost, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-				        buttons.setMargin(button_editPost, new Insets(0, 10, 0, 10));
-				        buttons.getChildren().addAll(button_editPost);
-				        
-				        Button button_deletePost = new Button("Delete Post");
-				        button_deletePost.setOnAction((event) -> {
-				        	ControllerDiscussion.performDeletePost(post);});
-				        setupButtonUI(button_deletePost, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
-				        buttons.setMargin(button_deletePost, new Insets(0, 10, 0, 10));
-				        buttons.getChildren().addAll(button_deletePost);
-		        	}
-			        singlePostBox.getChildren().addAll(buttons, editPost);
-		        } 
-		        postContainer.getChildren().add(singlePostBox);
-		        displayRepliesForPost(post, post.getTags());
-		        
-		        postContainer.getChildren().addAll(new Separator());
-			}}
+					createPostBoxes(post, null, thread);
+			}
+				}
 		}
 	}
 	
@@ -914,6 +675,34 @@ public class ViewDiscussion {
 	}
 	
 	/**********
+	 * Private local method to initialize the standard fields for a ComboBox
+	 * 
+	 * @param c		The ComboBox object to be initialized
+	 * @param ff	The font to be used
+	 * @param f		The size of the font to be used
+	 * @param w		The width of the ComboBox
+	 * @param mw	The max width of the ComboBox
+	 * @param x		The location from the left edge (x axis)
+	 * @param y		The location from the top (y axis)
+	 */
+	private void setupComboBoxUI(ComboBox <String> c, String ff, double f, double w, double mw, double x, double y){
+		c.setStyle("-fx-font: " + f + " " + ff + ";");
+		c.setMinWidth(w);
+		c.setMaxWidth(mw);
+		c.setLayoutX(x);
+		c.setLayoutY(y);
+	}
+
+	
+	
+	/*-********************************************************************************************
+
+	Helper methods to reduce code length
+
+
+	 */
+	
+	/**********
 	 * <p> Method: updateLikes(post Post, label_User Label) </p>
 	 * 
 	 * <p> Description: This is the method for managing likes. It checks the database to see
@@ -925,15 +714,20 @@ public class ViewDiscussion {
 	 * 
 	 */
 	
-	protected static void updateLikes(Post post, Label label_User) {
+	protected static void updateLikes(Post post, Button button_Like) {
 		List<Post> posts = applicationMain.FoundationsMain.database.getAllPosts();
 
 		for (Post p : posts)
-			if (p.getPostID() == post.getPostID()) post.setLikes(p.getLikes());
+			if (p.getPostID() == post.getPostID()) post.setLikes(p.getLikes()); {
 		
 		List<String> likes = applicationMain.FoundationsMain.database.getLikesToList(post);
 		int likesNum = likes.size() - 1;
-		label_User.setText("User: " + post.getUserName() + "  " + post.getPostTime() + "  Likes: " + likesNum);
+		if (likes.contains(theUser.getUserName()))
+			button_Like.setText("Liked");
+		else
+			button_Like.setText("Like");
+		}
+		//label_User.setText("User: " + post.getUserName() + "  " + post.getPostTime() + "  Likes: " + likesNum);
 	}
 	
 	/**********
@@ -954,8 +748,6 @@ public class ViewDiscussion {
 
 		for (Post p : posts)
 			if (p.getPostID() == post.getPostID()) post.setViews(p.getViews()); {
-		
-		
 				List<String> views = applicationMain.FoundationsMain.database.getViewsToList(post);
 				System.out.println("views: " + views);
 				if (views.contains(theUser.getUserName()))
@@ -974,7 +766,6 @@ public class ViewDiscussion {
 	 * 
 	 * 
 	 */
-	
 	protected static void displayUsersPosts() {
 		List<Post> all_posts = new ArrayList<>();
 		all_posts = applicationMain.FoundationsMain.database.getAllPosts();
@@ -989,52 +780,7 @@ public class ViewDiscussion {
 			return;
 		} else {
 			for(Post post : posts){
-				VBox singlePostBox = new VBox(5);
-				singlePostBox.setPadding(new Insets(10));
-				singlePostBox.setStyle("-fx-background-color: #f2f2f2; -fx-background-radius: 8;");
-		        singlePostBox.setMaxWidth(Double.MAX_VALUE);
-		        
-		        
-		        List<String> likes = new ArrayList<>();
-				likes = applicationMain.FoundationsMain.database.getLikesToList(post);
-		        int likesNum = likes.size() - 1;
-		        
-				Label label_User = new Label("User: " + post.getUserName() + "  " + post.getPostTime() + "  Likes: " + likesNum);
-				label_User.setFont(new Font("Arial", 15));
-				
-				
-				Label postTextLabel = new Label(post.getPostText());
-		        postTextLabel.setFont(new Font("Arial", 14));
-		        postTextLabel.setWrapText(true);
-		        
-		        singlePostBox.getChildren().addAll(label_User, postTextLabel);
-		        
-		        TextArea text_ReplyText = new TextArea();
-		        text_ReplyText.setPrefRowCount(5);
-		        text_ReplyText.setWrapText(true);
-		        text_ReplyText.setMaxWidth(width);
-		        
-		        HBox buttons = new HBox(5);
-		        
-		        Button button_Reply = new Button("Post Reply");
-		        button_Reply.setOnAction((event) -> {entityClasses.ManageReply.storeReply(post, theUser, text_ReplyText.getText()); 
-		                                displayRepliesForPost(post, null);});
-		        
-		        Button button_Like = new Button("Like");
-		        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser);
-		                                updateLikes(post, label_User);});
-		        
-		        Button button_View = new Button("Mark as Read");
-		        button_View.setOnAction((event) -> {entityClasses.ManagePost.registerView(post, theUser);
-		                                updateViews(post, button_View);});
-		        updateViews(post, button_View);
-		        
-		        buttons.getChildren().addAll(button_Reply, button_Like, button_View);
-		        
-		        postContainer.getChildren().add(singlePostBox);
-		        postContainer.getChildren().addAll(text_ReplyText, buttons);
-		        displayRepliesForPost(post, null);
-		        postContainer.getChildren().addAll(new Separator());
+				createPostBoxes(post, null, null);
 			}
 		}
 	}
@@ -1063,52 +809,202 @@ public class ViewDiscussion {
 			return;
 		} else {
 			for(Post post : posts){
-				VBox singlePostBox = new VBox(5);
-				singlePostBox.setPadding(new Insets(10));
-				singlePostBox.setStyle("-fx-background-color: #f2f2f2; -fx-background-radius: 8;");
-		        singlePostBox.setMaxWidth(Double.MAX_VALUE);
-		        
-		        
-		        List<String> likes = new ArrayList<>();
-				likes = applicationMain.FoundationsMain.database.getLikesToList(post);
-		        int likesNum = likes.size() - 1;
-		        
-				Label label_User = new Label("User: " + post.getUserName() + "  " + post.getPostTime() + "  Likes: " + likesNum);
-				label_User.setFont(new Font("Arial", 15));
-				
-				
-				Label postTextLabel = new Label(post.getPostText());
-		        postTextLabel.setFont(new Font("Arial", 14));
-		        postTextLabel.setWrapText(true);
-		        
-		        singlePostBox.getChildren().addAll(label_User, postTextLabel);
-		        
-		        TextArea text_ReplyText = new TextArea();
-		        text_ReplyText.setPrefRowCount(5);
-		        text_ReplyText.setWrapText(true);
-		        text_ReplyText.setMaxWidth(width);
-		        
-		        HBox buttons = new HBox(5);
-		        
-		        Button button_Reply = new Button("Post Reply");
-		        button_Reply.setOnAction((event) -> {entityClasses.ManageReply.storeReply(post, theUser, text_ReplyText.getText()); 
-		                                displayRepliesForPost(post, null);});
-		        
-		        Button button_Like = new Button("Like");
-		        button_Like.setOnAction((event) -> {entityClasses.ManagePost.registerLike(post, theUser);
-		                                updateLikes(post, label_User);});
-		        
-		        Button button_View = new Button("Mark as Read");
-		        button_View.setOnAction((event) -> {entityClasses.ManagePost.registerView(post, theUser);
-		                                updateViews(post, button_View); enterUnreadPosts();});
-		        
-		        buttons.getChildren().addAll(button_Reply, button_Like, button_View);
-		        
-		        postContainer.getChildren().add(singlePostBox);
-		        postContainer.getChildren().addAll(text_ReplyText, buttons);
-		        displayRepliesForPost(post, null);
-		        postContainer.getChildren().addAll(new Separator());
+				createPostBoxes(post, null, null);
 			}
 		}
+	}
+	
+	/**********
+	 * <p> Method: createPostBoxes(Post post, String searchTag, String thread) </p>
+	 * 
+	 * <p> Description: This method should create the posts to fill out the 
+	 * discussions, depending on what search and threads are inputed </p>
+	 * 
+	 * @param post takes the post provided and creates a section for its information
+	 * 
+	 * @param searchTag takes the tag that is searched, and allows the post to 
+	 * refresh that searches values
+	 * 
+	 * @param thread allows the post to refresh the thread when something is
+	 * liked, viewed, updated, or replied to
+	 * 
+	 */
+	protected static void createPostBoxes(Post post, String searchTag, String thread) {
+		
+		VBox singlePostBox = new VBox(5);
+		singlePostBox.setPadding(new Insets(10));
+		singlePostBox.setStyle("-fx-background-color: #f2f2f2; -fx-background-radius: 8;");
+        singlePostBox.setMaxWidth(Double.MAX_VALUE);
+        
+        
+        List<String> likes = new ArrayList<>();
+		likes = applicationMain.FoundationsMain.database.getLikesToList(post);
+        int likesNum = likes.size() - 1;
+        
+        List<String> views = new ArrayList<>();
+		views = applicationMain.FoundationsMain.database.getViewsToList(post);
+        int viewsNum = views.size() - 1;
+        
+        HBox postLabel = new HBox(20); 
+ 		postLabel.setAlignment(Pos.CENTER_LEFT);
+        if(!post.getSoftDelete()) {
+		Label label_User = new Label("User: " + post.getUserName());
+		// + "  " + post.getPostTime() + "  Likes: " + likesNum);
+		label_User.setFont(new Font("Arial", 18));
+		
+		
+		Label label_Thread = new Label("Thread: " + post.getThread());
+		label_Thread.setFont(new Font("Arial", 16));
+		
+		Label label_Created = new Label("Date Created: " + post.getPostTime());
+		label_Created.setFont(new Font("Arial", 16));
+		
+		Label label_Likes = new Label("Likes: " + likesNum);
+		label_Likes.setFont(new Font("Arial", 16)); 
+		
+		Label label_Views = new Label("Views: " + viewsNum);
+		label_Views.setFont(new Font("Arial", 16)); 
+		
+		Region spacer = new Region();
+		HBox.setHgrow(spacer, Priority.ALWAYS);
+		
+		postLabel.getChildren().addAll(label_User, spacer, label_Thread, label_Created, label_Likes, label_Views);
+		
+		Label postTextLabel = new Label(post.getPostText());
+        postTextLabel.setFont(new Font("Arial", 16));
+        postTextLabel.setWrapText(true);
+        postTextLabel.setPadding(new Insets(5, 10, 5, 10));
+       
+        singlePostBox.getChildren().addAll(postLabel, postTextLabel);
+        } else {
+        	Label label_deleted = new Label("This post was deleted.");
+        	label_deleted.setFont(new Font("Arial", 20));
+        	postLabel.setAlignment(Pos.CENTER);
+			postLabel.getChildren().addAll(label_deleted);
+			singlePostBox.getChildren().addAll(postLabel);
+        }
+        
+        String tags = post.getTags();
+        Label tagsLabel = new Label("Tags: " + (tags != null && !tags.isEmpty() ? tags : "None"));
+        tagsLabel.setFont(new Font("Arial", 12));
+        tagsLabel.setStyle("-fx-font-style: italic;");
+        
+        
+        HBox buttons = new HBox(0); 
+ 		buttons.setAlignment(Pos.BASELINE_LEFT);
+ 		
+ 		HBox editPost = new HBox(10); 
+ 		editPost.setAlignment(Pos.BASELINE_LEFT);
+        
+ 		if(!post.getSoftDelete() ) {
+        	
+        	buttons.setPadding(new Insets(0, 10, 0, 10));
+        	Button button_openReply = new Button("Create a Reply");
+        	button_openReply.setOnAction((event) -> {
+        		button_openReply.setDisable(true);
+        		TextArea text_createReply = new TextArea();
+        		text_createReply.setPrefRowCount(5);
+        		text_createReply.setWrapText(true);
+        		text_createReply.setMaxWidth(width);
+        		editPost.getChildren().add(text_createReply);
+        	
+        	    Button button_reply = new Button("Reply");
+        	    button_reply.setOnAction(ev -> {
+        	    	entityClasses.ManageReply.storeReply(post, theUser, text_createReply.getText()); 
+        	    	button_openReply.setDisable(false);
+        	    	 postContainer.getChildren().clear();
+        	    	 if(thread == null) {buildPostContainer(searchTag, null);}
+ 	       	    	 else if (thread != null) {displayPostsByThread(thread);}
+        	    });
+        	    setupButtonUI(button_reply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+        	    editPost.setMargin(button_reply, new Insets(0, 10, 0, 10));
+        	    editPost.getChildren().add(button_reply);
+            });
+        	
+	        setupButtonUI(button_openReply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+	        buttons.setMargin(button_openReply, new Insets(0, 10, 0, 10));
+	        buttons.getChildren().addAll(button_openReply);
+	        	
+	        if(post.getUserName() != theDatabase.getCurrentUsername()) {
+	        	Button button_Like = new Button("Like");
+		        button_Like.setOnAction((event) -> {
+		        	entityClasses.ManagePost.registerLike(post, theUser); 
+		        	updateLikes(post, button_Like); 
+		        	
+		             postContainer.getChildren().clear(); 
+		             if(thread == null) {buildPostContainer(searchTag, null);}
+		       	     else if (thread != null) {displayPostsByThread(thread);}
+		        	});
+		        updateLikes(post, button_Like);
+		        setupButtonUI(button_Like, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+		        buttons.setMargin(button_Like, new Insets(0, 10, 0, 10));
+		        buttons.getChildren().addAll(button_Like);
+		      
+		        // --- END OF ADDED BLOCK ---
+		        
+		        Button button_View = new Button("Mark as Read");
+		        button_View.setOnAction((event) -> {
+		        	entityClasses.ManagePost.registerView(post, theUser);
+		            updateViews(post, button_View); 
+		            postContainer.getChildren().clear(); 
+		            if(thread == null) {buildPostContainer(searchTag, null);}
+	       	    	else if (thread != null) {displayPostsByThread(thread);}
+		            });
+		        updateViews(post, button_View);
+		        setupButtonUI(button_View, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+		        buttons.setMargin(button_View, new Insets(0, 10, 0, 10));
+		        buttons.getChildren().addAll(button_View);
+	        }
+	              
+	        if(post.getUserName() == theDatabase.getCurrentUsername()) {
+	        	Button button_editPost = new Button("Edit Post");
+	        	button_editPost.setOnAction((event) -> {
+	        		button_editPost.setDisable(true);
+	        		TextArea text_editPost = new TextArea();
+	        		text_editPost.setPrefRowCount(5);
+	        		text_editPost.setWrapText(true);
+	        		text_editPost.setMaxWidth(width);
+	        		editPost.getChildren().add(text_editPost);
+	        	
+	        	    Button button_saveChanges = new Button("Save Changes");
+	        	    button_saveChanges.setOnAction(ev -> {
+	        	    	button_editPost.setDisable(false);
+	        	    	String updatedText = text_editPost.getText();
+	        	    	if (!updatedText.isEmpty()) {
+	        	    		try {
+	                        theDatabase.setPostText(post, updatedText);}
+	        	    		catch (SQLException e) {
+	        	    			e.printStackTrace();
+	        	    		}
+	                        postContainer.getChildren().clear();
+	                        if(thread == null) {buildPostContainer(searchTag, null);}
+	    	       	    	else if (thread != null) {displayPostsByThread(thread);}
+	                    }
+	        	    });	
+	        	    setupButtonUI(button_saveChanges, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+	        	    editPost.setMargin(button_saveChanges, new Insets(0, 10, 0, 10));
+	        	    editPost.getChildren().add(button_saveChanges);
+	        	});
+		        setupButtonUI(button_editPost, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+		        buttons.setMargin(button_editPost, new Insets(0, 10, 0, 10));
+		        buttons.getChildren().addAll(button_editPost);
+		        
+		        Button button_deletePost = new Button("Delete Post");
+		        button_deletePost.setOnAction((event) -> {
+		        	ControllerDiscussion.performDeletePost(post);});
+		        setupButtonUI(button_deletePost, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+		        buttons.setMargin(button_deletePost, new Insets(0, 10, 0, 10));
+		        buttons.getChildren().addAll(button_deletePost);
+        	}
+	        singlePostBox.getChildren().addAll(tagsLabel, buttons, editPost);
+        } 
+        
+        
+        
+        postContainer.getChildren().add(singlePostBox);
+        displayRepliesForPost(post, null);
+        postContainer.getChildren().addAll(new Separator());
+        
+		
 	}
 }

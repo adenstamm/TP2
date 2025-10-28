@@ -92,6 +92,31 @@ public class ControllerFirstAdmin {
                 System.exit(0);
             }
             
+          //register general through the first time creation
+            try {
+            	theDatabase.registerThread("General"); 
+            	}
+            catch (SQLException e) {
+                 e.printStackTrace();
+                 System.exit(0);
+            }
+            //temporary creation of threads
+            try {
+            	theDatabase.registerThread("Thread A"); 
+            	theDatabase.registerThread("Thread B"); 
+            	theDatabase.registerThread("Thread C");
+            	theDatabase.registerThread("Thread D"); 
+            	theDatabase.registerThread("SUper Duper Long THreads That Should Reach past box"); 
+            	}
+            catch (SQLException e) {
+                 e.printStackTrace();
+                 System.exit(0);
+            }
+            //temporary creation of initial posts
+            //entityClasses.ManagePost.registerTestCases();
+            
+            
+            
             // User was established in the database, so navigate to the User Update Page
         	guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewFirstAdmin.theStage, user, true);
 		}

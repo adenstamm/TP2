@@ -11,29 +11,29 @@ import java.time.format.DateTimeFormatter;
  * 
  * <p> Copyright: Lynn Robert Carter © 2025 </p>
  * 
- * @author Ian Johnson
+ * @author Xandra Cornelius
  * 
  * @version 1.00		2025-10-13 Initial version
  *  
  */
 
 
-public class ManageReply {
+public class ManageReview {
 	
 	
 	/*******
-	 * <p> Title: ManageReply Default Constructor </p>
+	 * <p> Title: ManageReview Default Constructor </p>
 	 * 
 	 * <p> Description: This constructor does not perform any special function for this
 	 * application. </p>
 	 */
 	
-	public ManageReply() {
+	public ManageReview() {
 		// No initialization required at this time
 	}
 	
 	/*****
-     * <p> Method: void storeReply(Post mainPost, User user, String replyText) </p>
+     * <p> Method: void storeReview(Post mainPost, User user, String replyText) </p>
      * 
      * <p> Description: This method prepares and stores a reply into the database. </p>
      * 
@@ -45,13 +45,13 @@ public class ManageReply {
      * 
      */
 	
-	public static void storeReply(Post mainPost, User user, String replyText) {
+	public static void storeReview(Post mainPost, User user, String reviewText) {
 		
 		if(user.getUserName().isEmpty()) {
 			System.out.println("Reply is missing a Username.");
 			return;
 		}
-		if (replyText.isEmpty()) {
+		if (reviewText.isEmpty()) {
 			System.out.println("Reply is missing the reply text.");
 			return;
 		}
@@ -60,15 +60,11 @@ public class ManageReply {
 			return;
 		}
 		int postID = 0;
-		String Username = user.getUserName();
-		boolean adminRole = user.getAdminRole();
-		boolean studentRole = user.getStudentRole();
-		boolean staffRole = user.getStaffRole();
-		int likes = 0;
-		int views = 0;
+		String staffUsername = user.getUserName();
+		String studentUsername = mainPost.getUserName();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
 		LocalDateTime Time = LocalDateTime.now().plusDays(0).plusHours(0).plusMinutes(0);
-		String replyTime = Time.format(formatter);
+		String reviewTime = Time.format(formatter);
 		
 		if(mainPost.getPostID() == 50) {
 		postID = 2;
@@ -76,12 +72,12 @@ public class ManageReply {
 		postID = mainPost.getPostID();
 		}
 		
-		Reply reply = new Reply(postID, Username, replyText, adminRole, studentRole, staffRole, likes, views, replyTime);
-		System.out.println(replyText);
+		Review review = new Review(postID, staffUsername, studentUsername, reviewText, reviewTime);
+		System.out.println(reviewText);
 		try {
-		applicationMain.FoundationsMain.database.register(reply);
+		applicationMain.FoundationsMain.database.registerReview(review);
 		} catch (SQLException e) {
-			System.out.println("Failed to register post.");
+			System.out.println("Failed to register review.");
 			System.exit(0);
 		}
 	}
@@ -96,12 +92,12 @@ public class ManageReply {
      * 
      */
 	
-	public static void deleteReply(Reply reply) {
-		try {
-		applicationMain.FoundationsMain.database.deleteReply(reply);
-		} catch (SQLException e) {
-			System.out.println("Failed to delete Post");
-		}
-	}
+//	public static void deleteReview(Review review) {
+//		try {
+//		applicationMain.FoundationsMain.database.deleteReview(review);
+//		} catch (SQLException e) {
+//			System.out.println("Failed to delete Review");
+//		}
+//	}
 	
 }

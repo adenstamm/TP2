@@ -31,6 +31,7 @@ import database.Database;
 import entityClasses.User;
 import entityClasses.Post;
 import entityClasses.Reply;
+import entityClasses.Review;
 
 /*******
  * <p> Title: ViewRole2Home Class. </p>
@@ -177,17 +178,24 @@ public class ViewDiscussion {
 		
 		// If not yet established, populate the static aspects of the GUI
 		if (theView == null) theView = new ViewDiscussion();		// Instantiate singleton if needed
+		else {
+			postContainer.getChildren().clear();
+			buildPostContainer(null, null);
+		}
 		
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.
 		theDatabase.getUserAccountDetails(user.getUserName());
 		
 		label_UserDetails.setText("User: " + theUser.getUserName());// Set the username
+		
+		
 
 		// Set the title for the window, display the page, and wait for the Admin to do something
 		theStage.setTitle("CSE 360 Foundations: Discussion Page");
 		theStage.setScene(theDiscussion);						// Set this page onto the stage
 		theStage.show();											// Display it to the user
+		
 	}
 	
 	/**********
@@ -830,6 +838,7 @@ public class ViewDiscussion {
 	 * 
 	 */
 	protected static void createPostBoxes(Post post, String searchTag, String thread) {
+		 
 		
 		VBox singlePostBox = new VBox(5);
 		singlePostBox.setPadding(new Insets(10));
@@ -996,15 +1005,100 @@ public class ViewDiscussion {
 		        buttons.setMargin(button_deletePost, new Insets(0, 10, 0, 10));
 		        buttons.getChildren().addAll(button_deletePost);
         	}
+	       System.out.println("Current Role = " + theUser.getCurrentRole());
+	        if(theUser.getCurrentRole() == 2) { 
+	        	Button button_openReview = new Button("Create a Review");
+	        	button_openReview.setOnAction((event) -> {
+	        		button_openReview.setDisable(true);
+	        		TextArea text_createReview = new TextArea();
+	        		text_createReview.setPrefRowCount(5);
+	        		text_createReview.setWrapText(true);
+	        		text_createReview.setMaxWidth(width);
+	        		editPost.getChildren().add(text_createReview);
+	        	
+	        	    Button button_review = new Button("Review");
+	        	    button_review.setOnAction(ev -> {
+	        	    	entityClasses.ManageReview.storeReview(post, theUser, text_createReview.getText()); 
+	        	    	button_openReview.setDisable(false);
+	        	    	 postContainer.getChildren().clear();
+	        	    	 if(thread == null) {buildPostContainer(searchTag, null);}
+	 	       	    	 else if (thread != null) {displayPostsByThread(thread);}
+	        	    });
+	        	    setupButtonUI(button_review, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+	        	    editPost.setMargin(button_review, new Insets(0, 10, 0, 10));
+	        	    editPost.getChildren().add(button_review);
+	        });
+	        	setupButtonUI(button_openReview, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
+		        buttons.setMargin(button_openReview, new Insets(0, 10, 0, 10));
+		        buttons.getChildren().addAll(button_openReview);
+	        
+	        }
+	        
+	        
 	        singlePostBox.getChildren().addAll(tagsLabel, buttons, editPost);
         } 
         
         
         
         postContainer.getChildren().add(singlePostBox);
+        if(post.getUserName() == theDatabase.getCurrentUsername() || theUser.getCurrentRole() == 2) {
+            displayReviewsForPost(post, null);
+        }
         displayRepliesForPost(post, null);
         postContainer.getChildren().addAll(new Separator());
         
 		
+	}
+	
+	/**********
+	 * <p> Method: displayRepliesForPost(post Post, searchTag String) </p>
+	 * 
+	 * <p> Description: This method creates the replies that are tied to the specified posts. When 
+	 * this method is called a list of replies tied to that post will be pulled from the database.
+	 * The necessary information about the post will be displayed below the post.
+	 * 
+	 * @param post specifies the current post
+	 * 
+	 * @param searchTag specifies the tags associated with the post
+	 * 
+	 */
+	
+	protected static void displayReviewsForPost(Post post, String searchTag) {
+		
+		TextArea text_ReviewText = new TextArea();
+		text_ReviewText.setPrefRowCount(3);
+		text_ReviewText.setWrapText(true);
+		text_ReviewText.setMaxWidth(width);
+        int postID = post.getPostID();
+        
+        HBox buttons = new HBox(5);
+        
+        
+        List<Review> reviews = new ArrayList<>();
+        try {
+		reviews = applicationMain.FoundationsMain.database.getReviewsForPost(postID);
+        } catch (SQLException e) {
+        	System.exit(0);
+        }
+        
+        for(Review review : reviews) {
+        	VBox singleReviewBox = new VBox(5);
+        	singleReviewBox.setPadding(new Insets(10));
+        	singleReviewBox.setStyle("-fx-background-color: #e2e2e2; -fx-background-radius: 8;");
+        	singleReviewBox.setMaxWidth(Double.MAX_VALUE);
+        	
+        	Label label_Staff = new Label("Staff: " + review.getStaffName() + "  " + review.getReviewTime());
+        	label_Staff.setFont(new Font("Arial", 15));
+        	label_Staff.setTranslateX(30);
+        	
+			Label replyTextLabel = new Label(review.getReviewText());
+	        replyTextLabel.setFont(new Font("Arial", 14));
+	        replyTextLabel.setWrapText(true);
+	        replyTextLabel.setTranslateX(30);
+	        
+	        singleReviewBox.getChildren().addAll(label_Staff, replyTextLabel);
+	        
+	        postContainer.getChildren().addAll(singleReviewBox);
+        }
 	}
 }

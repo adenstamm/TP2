@@ -1,7 +1,5 @@
 package guiStaff;
 
-import guiStudent.ViewStudentHome;
-
 public class ControllerStaffHome {
 	
 	/*-*******************************************************************************************
@@ -30,7 +28,7 @@ public class ControllerStaffHome {
 	}
 
 	protected static void performRequestAdminAction() {
-	    guiRequestAdminAction.ViewRequestAdminAction.displayRequestAdminAction(ViewRole2Home.theStage, ViewRole2Home.theUser);
+	    guiRequestAdminAction.ViewRequestAdminAction.displayRequestAdminAction(ViewStaffHome.theStage, ViewStaffHome.theUser);
 	}
 
 	protected static void goToManageThreads() {

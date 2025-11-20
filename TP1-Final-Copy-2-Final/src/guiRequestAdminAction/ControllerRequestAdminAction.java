@@ -34,6 +34,6 @@ public class ControllerRequestAdminAction {
     }
 
     public void performCancel() {
-        guiStaff.ViewStaffHome.displayRole2Home(ViewRequestAdminAction.theStage, ViewRequestAdminAction.theUser);
+        guiStaff.ViewStaffHome.displayStaffHome(ViewRequestAdminAction.theStage, ViewRequestAdminAction.theUser);
     }
 }

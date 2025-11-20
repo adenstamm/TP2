@@ -173,7 +173,7 @@ public class ViewStaffHome {
 		button_ManageThreads.setOnAction((event) -> {ControllerStaffHome.goToManageThreads(); });
 
 		setupButtonUI(button_RequestAdminAction, "Dialog", 18, 250, Pos.CENTER, 275, 200);
-		button_RequestAdminAction.setOnAction((event) -> { ControllerRole2Home.performRequestAdminAction(); });
+		button_RequestAdminAction.setOnAction((event) -> { ControllerStaffHome.performRequestAdminAction(); });
 		
 		
 		// GUI Area 3

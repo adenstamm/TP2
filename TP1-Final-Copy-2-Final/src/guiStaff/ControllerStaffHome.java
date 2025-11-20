@@ -28,6 +28,11 @@ public class ControllerStaffHome {
 		guiDiscussion.ViewDiscussion.displayDiscussion(ViewStaffHome.theStage, 
 				ViewStaffHome.theUser);
 	}
+
+	protected static void performRequestAdminAction() {
+	    guiRequestAdminAction.ViewRequestAdminAction.displayRequestAdminAction(ViewRole2Home.theStage, ViewRole2Home.theUser);
+	}
+
 	protected static void goToManageThreads() {
 		
 		guiManageThreads.ViewManageThreads.displayThreads(ViewStaffHome.theStage, 

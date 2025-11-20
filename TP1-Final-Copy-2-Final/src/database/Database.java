@@ -15,6 +15,7 @@ import entityClasses.User;
 import entityClasses.Invite;
 import entityClasses.Post;
 import entityClasses.Reply;
+import entityClasses.AdminRequest;
 import guiAdminHome.ViewAdminHome;
 
 
@@ -200,6 +201,15 @@ public class Database {
 	    String threadsTable = "CREATE TABLE IF NOT EXISTS threadsDB ("
 	        + "threads VARCHAR(255) PRIMARY KEY)";
 	    statement.execute(threadsTable);
+
+		String adminRequestTable = "CREATE TABLE IF NOT EXISTS adminRequestsDB ("
+            + "requestID INT AUTO_INCREMENT PRIMARY KEY, "
+            + "creatorUsername VARCHAR(255), "
+            + "description VARCHAR(MAX), "
+            + "status VARCHAR(50), "
+            + "resolutionNote VARCHAR(MAX)"
+            + ")";
+	    statement.execute(adminRequestTable);
 	}
 
 
@@ -386,6 +396,43 @@ public class Database {
 			pstmt.executeUpdate();
 		}
 	}
+
+	/**
+     * <p> Method: register(AdminRequest request) </p>
+     * <p> Description: HW3 Prototype. Saves a new AdminRequest to the database.
+     * This method uses `RETURN_GENERATED_KEYS` to get the new auto-incremented
+     * ID from the database, and then sets it back into the request object. </p>
+     * * @param request The AdminRequest object to be saved.
+     * @throws SQLException
+     */
+    public void register(AdminRequest request) throws SQLException {
+        // This is the "prototype code" to make the TDD test pass.
+        // The internal comments explain *why* we use RETURN_GENERATED_KEYS.
+        // This is critical for TDD, as the test needs to know the new ID.
+        String insertRequest = "INSERT INTO adminRequestsDB (creatorUsername, description, status, resolutionNote) "
+                             + "VALUES (?, ?, ?, ?)";
+        
+        try (PreparedStatement pstmt = connection.prepareStatement(insertRequest, Statement.RETURN_GENERATED_KEYS)) {
+            
+            pstmt.setString(1, request.getCreatorUsername());
+            pstmt.setString(2, request.getDescription());
+            pstmt.setString(3, request.getStatus());
+            pstmt.setString(4, request.getResolutionNote());
+            
+            pstmt.executeUpdate();
+
+            // This part gets the new ID back from the database
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    // Update the original object with the new ID.
+                    // This is what the TDD test asserts.
+                    request.setRequestID(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating request failed, no ID obtained.");
+                }
+            }
+        }
+    }
 		
 		/*******
 		 *  <p> Method:  registerThread(string thread) </p>
@@ -442,6 +489,39 @@ public class Database {
 //		System.out.println(userList);
 		return userList;
 	}
+
+	/**
+     * <p> Method: getRequestByID(int id) </p>
+     * <p> Description: HW3 Prototype. Retrieves a single AdminRequest from
+     * the database using its unique requestID. This is the helper method
+     * for the TDD test to verify the register method worked. </p>
+     * * @param id The ID of the request to find.
+     * @return An AdminRequest object, or null if not found.
+     * @throws SQLException
+     */
+    public AdminRequest getRequestByID(int id) throws SQLException {
+        String query = "SELECT * FROM adminRequestsDB WHERE requestID = ?";
+        
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, id);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    // Use the full constructor to build the object from DB data
+                    return new AdminRequest(
+                        rs.getInt("requestID"),
+                        rs.getString("creatorUsername"),
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        rs.getString("resolutionNote")
+                    );
+                }
+            }
+        }
+        // If no request was found, return null.
+        // The test will check for this.
+        return null;
+    }
 
 	/*******
 	 * <p> Method: List getAllUsers() </p>

@@ -58,6 +58,7 @@ public class ViewStaffHome {
 	
 	protected static Button button_Discussion = new Button("Discussion");
 	protected static Button button_ManageThreads = new Button("Manage Threads");
+	protected static Button button_RequestAdminAction = new Button("Request Admin Action");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
@@ -170,6 +171,9 @@ public class ViewStaffHome {
 		
 		setupButtonUI(button_ManageThreads, "Dialog", 16, 250, Pos.CENTER, 300, 300);
 		button_ManageThreads.setOnAction((event) -> {ControllerStaffHome.goToManageThreads(); });
+
+		setupButtonUI(button_RequestAdminAction, "Dialog", 18, 250, Pos.CENTER, 275, 200);
+		button_RequestAdminAction.setOnAction((event) -> { ControllerRole2Home.performRequestAdminAction(); });
 		
 		
 		// GUI Area 3
@@ -184,7 +188,7 @@ public class ViewStaffHome {
 		// Place all of the widget items into the Root Pane's list of children
         theRootPane.getChildren().addAll(
 			label_PageTitle, label_UserDetails, button_UpdateThisUser, line_Separator1,
-	        line_Separator4, button_Logout, button_Quit, button_Discussion, button_ManageThreads);
+	        line_Separator4, button_Logout, button_Quit, button_Discussion, button_ManageThreads, button_RequestAdminAction);
 	}
 	
 	

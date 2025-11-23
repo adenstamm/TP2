@@ -207,7 +207,9 @@ public class Database {
             + "creatorUsername VARCHAR(255), "
             + "description VARCHAR(MAX), "
             + "status VARCHAR(50), "
-            + "resolutionNote VARCHAR(MAX)"
+            + "resolutionNote VARCHAR(MAX), "
+            + "documentation VARCHAR(MAX), "
+            + "originalID INT, "
             + ")";
 	    statement.execute(adminRequestTable);
 	}
@@ -409,8 +411,8 @@ public class Database {
         // This is the "prototype code" to make the TDD test pass.
         // The internal comments explain *why* we use RETURN_GENERATED_KEYS.
         // This is critical for TDD, as the test needs to know the new ID.
-        String insertRequest = "INSERT INTO adminRequestsDB (creatorUsername, description, status, resolutionNote) "
-                             + "VALUES (?, ?, ?, ?)";
+        String insertRequest = "INSERT INTO adminRequestsDB (creatorUsername, description, status, resolutionNote, documentation) "
+                             + "VALUES (?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement pstmt = connection.prepareStatement(insertRequest, Statement.RETURN_GENERATED_KEYS)) {
             
@@ -418,6 +420,8 @@ public class Database {
             pstmt.setString(2, request.getDescription());
             pstmt.setString(3, request.getStatus());
             pstmt.setString(4, request.getResolutionNote());
+            pstmt.setString(5, request.getDocumentation());
+            pstmt.setInt(6, request.getOriginalID());
             
             pstmt.executeUpdate();
 
@@ -489,6 +493,29 @@ public class Database {
 //		System.out.println(userList);
 		return userList;
 	}
+	
+	/*******
+	 *  <p> Method: List getUserList() </p>
+	 *  
+	 *  <P> Description: Generate an List of Strings, one for each user in the database,
+	 *  starting with "<Select User>" at the start of the list. </p>
+	 *  
+	 *  @return a list of userNames found in the database.
+	 */
+		public List<Integer> getRequestList () {
+			List<Integer> requestList = new ArrayList<Integer>();
+			String query = "SELECT requestID FROM adminRequestsDB";
+			try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+				ResultSet rs = pstmt.executeQuery();
+				while (rs.next()) {
+					requestList.add(rs.getInt("requestID"));
+				}
+			} catch (SQLException e) {
+		        return null;
+		    }
+//			System.out.println(userList);
+			return requestList;
+		}
 
 	/**
      * <p> Method: getRequestByID(int id) </p>
@@ -513,7 +540,9 @@ public class Database {
                         rs.getString("creatorUsername"),
                         rs.getString("description"),
                         rs.getString("status"),
-                        rs.getString("resolutionNote")
+                        rs.getString("resolutionNote"),
+                        rs.getString("documentation"),
+                        rs.getInt("originalID")
                     );
                 }
             }

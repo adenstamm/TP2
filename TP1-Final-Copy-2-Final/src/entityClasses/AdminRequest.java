@@ -65,11 +65,11 @@ public class AdminRequest {
     	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedDateTime = currentDateTime.format(formatter);
         
-    	this.documentation += toAdd + "-*-*-\n";
+    	this.documentation += formattedDateTime + "\n" + toAdd + "-*-*-\n";
     }
     
     public List<String> documentationToList() {
-    	if (this.documentation == null) return null;
+    	if (this.documentation.compareTo("") == 0) return null;
     	
     	List<String> updates = new ArrayList<>();
     	char[] delimiter = {'-', '*', '-', '*', '-', '\n'};

@@ -656,6 +656,22 @@ public class Database {
             pstmt.executeUpdate();
         }
     }
+    
+    /**
+     * <p> Method: updateRequestDocumentation(int requestID, String newDocumentation) </p>
+     * <p> Description: Updates the documentation of an admin request. Used by staff to update request details. </p>
+     * @param requestID The ID of the request to update
+     * @param newDocumentation The new description text
+     * @throws SQLException
+     */
+    public void updateRequestDocumentation(int requestID, String newDocumentation) throws SQLException {
+        String query = "UPDATE adminRequestsDB SET documentation = ? WHERE requestID = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, newDocumentation);
+            pstmt.setInt(2, requestID);
+            pstmt.executeUpdate();
+        }
+    }
 
 	/**
      * <p> Method: getAllOpenRequests() </p>

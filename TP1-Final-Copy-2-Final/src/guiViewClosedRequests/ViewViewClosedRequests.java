@@ -1,14 +1,18 @@
 package guiViewClosedRequests;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -169,6 +173,8 @@ public class ViewViewClosedRequests {
         statusLabel.setFont(Font.font("Arial", 14));
         statusLabel.setTextFill(Color.DARKRED);
         entryVBox.getChildren().add(statusLabel);
+        
+        createDocSection(entryVBox, request);
 
         // Action buttons (only for staff)
         if (theUser.getStaffRole()) {
@@ -192,6 +198,86 @@ public class ViewViewClosedRequests {
         }
 
         return entryVBox;
+    }
+    
+    protected static void createDocSection(VBox entryVBox, AdminRequest request) {
+    	Label title = new Label("Documentation");
+        Label arrow = new Label("▲");   // will rotate when collapsed/expanded
+
+        HBox docHeader = new HBox();
+        docHeader.setSpacing(10);
+        docHeader.setPadding(new Insets(8));
+        docHeader.getChildren().addAll(title, arrow);
+        docHeader.setAlignment(Pos.CENTER_LEFT);
+
+        // styling (optional, to make it look like a strip)
+        docHeader.setStyle("-fx-background-color: #ddd; -fx-cursor: hand;");
+        HBox.setHgrow(title, Priority.ALWAYS);  // pushes arrow to the right
+        
+        VBox content = new VBox(5);
+        createDocContent(entryVBox, content, request);
+        content.setVisible(false);
+        content.setManaged(false);
+        
+        docHeader.setOnMouseClicked(e -> {
+            boolean isVisible = content.isVisible();
+            content.setVisible(!isVisible);
+            content.setManaged(!isVisible);
+
+            // rotate arrow
+            arrow.setText(isVisible ? "▲" : "▼");
+        });
+        
+        entryVBox.getChildren().addAll(docHeader, content);
+    }
+    
+    protected static void createDocContent(VBox entryVBox, VBox content, AdminRequest request) {
+    	TextArea addDoc = new TextArea();
+    	addDoc.setWrapText(true);
+        Button submitDoc = new Button("Submit");
+        content.getChildren().addAll(addDoc, submitDoc);
+
+        submitDoc.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
+        submitDoc.setOnAction(e -> {
+            controller.performSubmitDoc(request, addDoc.getText(), entryVBox, content);
+        });
+        
+        
+        List<String> docList = request.documentationToList();
+        if (docList == null) {
+        	content.getChildren().add(new Label("None"));
+        }
+        else {
+        	for (String doc : docList) {
+        		String dateText = null;
+        		int i = 0;
+        		while (i < doc.length() && doc.charAt(i) != '\n') {
+        			++i;
+        		}
+        		if (i <= 1) 
+        			dateText = "None";
+        		else
+        			dateText = doc.substring(0, i);
+        		
+        		VBox docContent = new VBox();
+        		
+        		
+        		Label docText = new Label();
+        		docText.setWrapText(true);
+        		if (i >= doc.length() - 1)
+        			docText.setText("None");
+        		else
+        			docText.setText(doc.substring(i + 1));
+        			
+        		docContent.getChildren().addAll(new Label(dateText), docText);
+        		content.getChildren().add(docContent);
+        	}
+        }
+        
+        Separator line = new Separator();
+        line.setOrientation(Orientation.HORIZONTAL);
+        content.getChildren().add(line);
+
     }
 
     /**

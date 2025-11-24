@@ -9,8 +9,14 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+
+import java.util.List;
 import java.util.Optional;
+
+import entityClasses.AdminRequest;
 
 /**
  * <p> Title: ControllerManageAdminRequests Class. </p>
@@ -100,6 +106,17 @@ public class ControllerManageAdminRequests {
                 alert.showAndWait();
             }
         }
+    }
+    
+    /**
+     * Handles the submit documentation action.
+     */
+    public void performSubmitDoc(AdminRequest request, String text, VBox entryVBox, VBox content) {
+    	content.getChildren().clear();
+    	
+    	request.addDocumentation(text);
+    	model.setRequestDocumentation(request.getRequestID(), request.getDocumentation());
+    	ViewManageAdminRequests.createDocContent(entryVBox, content, request);
     }
 
     /**

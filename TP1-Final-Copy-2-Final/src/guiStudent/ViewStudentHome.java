@@ -171,8 +171,10 @@ public class ViewStudentHome {
 		button_Discussion.setOnAction((event) -> {ControllerStudentHome.goToDiscussion(); });
 		
 		// GUI Area 3
-        setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
-        button_Logout.setOnAction((event) -> {ControllerStudentHome.performLogout(); });
+		setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
+        button_Logout.setOnAction((event) -> {
+        	theUser.setCurrentRole(4);
+        	ControllerStudentHome.performLogout(); });
         
         setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
         button_Quit.setOnAction((event) -> {ControllerStudentHome.performQuit(); });

@@ -14,6 +14,7 @@ import entityClasses.Invite;
 import entityClasses.Post;
 import entityClasses.Reply;
 import entityClasses.StudentNote;
+import entityClasses.Review;
 
 
 
@@ -85,11 +86,17 @@ public class Database {
     private boolean adminRole;
     private boolean studentRole;
     private boolean staffRole;
+    private int currentRole;
     private int likes;
     private int views;
     private String replyTime;
     private int postId;
     private boolean feedback;
+    
+    private String currentStudent;
+    private String currentStaff;
+    private String currentNote;
+    private boolean currentNoteSoftDelete;
     
     private String currentStudent;
     private String currentStaff;
@@ -179,8 +186,7 @@ public class Database {
 	        + "postID INT DEFAULT 0,"
 	        + "thread VARCHAR(100),"
 	        + "softDelete BOOLEAN DEFAULT FALSE, "
-	        + "tags VARCHAR(512),"
-	        + "hidden BOOLEAN DEFAULT FALSE"
+	        + "tags VARCHAR(512)"
 	        + ")";
 	    statement.execute(postTable);
 
@@ -195,8 +201,7 @@ public class Database {
 	        + "adminRole BOOLEAN DEFAULT FALSE, "
 	        + "studentRole BOOLEAN DEFAULT FALSE, "
 	        + "staffRole BOOLEAN DEFAULT FALSE, "
-	        + "postId INT,"
-	        + "feedback BOOLEAN DEFAULT FALSE"
+	        + "postId INT"
 	        + ")";
 	    statement.execute(replyTable);
 	    
@@ -205,6 +210,17 @@ public class Database {
 	        + "threads VARCHAR(255) PRIMARY KEY)";
 	    statement.execute(threadsTable);
 	    
+		 // Review table
+	    String reviewTable = "CREATE TABLE IF NOT EXISTS reviewDB ("
+	        + "id INT AUTO_INCREMENT PRIMARY KEY, "
+	        + "reviewStaff VARCHAR(255), "
+	        + "reviewStudent VARCHAR(255),"
+	        + "reviewText VARCHAR(255), "
+	        + "reviewTime VARCHAR(24), "
+	        + "postId INT"
+	        + ")";
+	    statement.execute(reviewTable);
+	    
 	    String studentNoteTable = "CREATE TABLE IF NOT EXISTS noteDB ("
 		        + "id INT AUTO_INCREMENT PRIMARY KEY, "
 		        + "student VARCHAR(30), "
@@ -212,8 +228,9 @@ public class Database {
 		        + "note VARCHAR(255), "
 		        + "softDelete BOOLEAN DEFAULT FALSE"
 		        + ")";
-		    statement.execute(studentNoteTable);
+		statement.execute(studentNoteTable);
 	}
+	
 	
 
 
@@ -312,8 +329,8 @@ public class Database {
 	
 	public void register(Post post) throws SQLException {
 		String insertPost = "INSERT INTO postDB (mainUser, postText, adminRole, studentRole, "
-				+ "staffRole, likes, views, postTime, postID, thread, softDelete, tags, hidden) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "staffRole, likes, views, postTime, postID, thread, softDelete, tags) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement pstmt = connection.prepareStatement(insertPost)) {
 			currentPostUsername = post.getUserName();
 			pstmt.setString(1, currentPostUsername);
@@ -350,20 +367,16 @@ public class Database {
 			
 			String currentTags = post.getTags();
 			pstmt.setString(12, currentTags);
-			
-			currentHidden = post.getHidden();
-			pstmt.setBoolean(13, currentHidden);
 
 			pstmt.executeUpdate();
 		}
-		
 	}
 	
 	public void register(Reply reply) throws SQLException {
 		
 		String insertReply = "INSERT INTO replyDB (postId, replyUser, replyText, adminRole, "
-				+ "studentRole, staffRole, likes, views, replyTime, feedback) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "studentRole, staffRole, likes, views, replyTime) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		try (PreparedStatement pstmt = connection.prepareStatement(insertReply)) {
 			
@@ -394,9 +407,6 @@ public class Database {
 			replyTime = reply.getReplyTime();
 			pstmt.setString(9, replyTime);
 			
-			feedback = reply.getFeedback();
-			pstmt.setBoolean(10, feedback);
-			
 			pstmt.executeUpdate();
 		}
 	}
@@ -423,7 +433,7 @@ public class Database {
 			pstmt.executeUpdate();
 		}
 	}
-		
+
 		/*******
 		 *  <p> Method:  registerThread(string thread) </p>
 		 *  
@@ -439,6 +449,37 @@ public class Database {
 				pstmt.executeUpdate();
 			}
 		
+	}
+	/*******
+	 *  <p> Method:  registerReview(Review review) </p>
+	 *  
+	 *  <P> Description: Creates a row to represent a thread </p>
+	 *  
+	 *  
+	 */
+	public void registerReview(Review review) throws SQLException {
+		String insertReply = "INSERT INTO reviewDB (postId, reviewStaff, reviewStudent,"
+				+ " reviewText, reviewTime) VALUES (?, ?, ?, ?, ?)";
+		try (PreparedStatement pstmt = connection.prepareStatement(insertReply)) {
+		
+			int reviewPostId = review.getPostId();
+			pstmt.setInt(1, reviewPostId);
+
+			String reviewStaff = review.getStaffName();
+			pstmt.setString(2, reviewStaff);
+		
+			String reviewStudent = review.getStudentName();
+			pstmt.setString(3, reviewStudent);
+
+			String reviewText = review.getReviewText();
+			pstmt.setString(4, reviewText);
+		
+			String reviewTime = review.getReviewTime();
+			pstmt.setString(5, reviewTime);
+		
+			pstmt.executeUpdate();
+		}
+	
 	}
 	
 	public void deleteThread(String thread) {
@@ -568,8 +609,7 @@ public class Database {
 	                    rs.getInt("postID"),
 	                    rs.getString("thread"),
 	                    rs.getBoolean("softDelete"),
-	                    rs.getString("tags"),
-	                    rs.getBoolean("hidden")
+	                    rs.getString("tags")
 	                    );
 	                List<String> threads = getThreadsListWithAll(false);
 	                if (!threads.contains(post.getThread())) {
@@ -606,8 +646,7 @@ public class Database {
 	                    rs.getInt("postID"),
 	                    rs.getString("thread"),
 	                    rs.getBoolean("softDelete"),
-	                    rs.getString("tags"),
-	                    rs.getBoolean("hidden")
+	                    rs.getString("tags")
 	                );
 	                postList.add(post);
 	            }
@@ -638,8 +677,7 @@ public class Database {
 	                    rs.getBoolean("staffRole"),
 	                    rs.getInt("likes"),
 	                    rs.getInt("views"),
-	                    rs.getString("replyTime"),
-	                    rs.getBoolean("feedback")
+	                    rs.getString("replyTime")
 	                    );
 	                    replies.add(reply);
 	                }
@@ -647,6 +685,31 @@ public class Database {
 	        }
 	        
 	        return replies;
+	    }
+	    
+	    public List<StudentNote> getNotesForStudent(String student) throws SQLException {
+	        List<StudentNote> notes = new ArrayList<>();
+	        
+	        String selectQuery = "SELECT * FROM noteDB WHERE student = ? ORDER BY staff ASC";
+	        
+	        try (PreparedStatement pstmt = connection.prepareStatement(selectQuery)) {
+	            pstmt.setString(1, student);
+	            
+	            try (ResultSet rs = pstmt.executeQuery()) {
+	                while (rs.next()) {
+	                    StudentNote note = new StudentNote(
+	                    
+	                    rs.getString("student"),
+	                    rs.getString("staff"),
+	                    rs.getString("note"),
+	                    rs.getBoolean("softDelete")
+	                    );
+	                    notes.add(note);
+	                }
+	            }
+	        }
+	        
+	        return notes;
 	    }
 	    
 	    public List<StudentNote> getNotesForStudent(String student) throws SQLException {
@@ -1751,6 +1814,31 @@ public class Database {
 	 *  
 	 */
 	public boolean getCurrentStaffRole() { return currentStaffRole;};
+	
+
+	
+	/*******
+	 * <p> Method: int getCurrentRole() </p>
+	 * 
+	 * <p> Description: Get the current user's role attribute.</p>
+	 * 
+	 * @return an int representitve of what the current role is.
+	 *  
+	 */
+	public int getCurrentRole() { return currentRole;};
+	
+	/*******
+	 * <p> Method: void setCurrentRole(int role) </p>
+	 * 
+	 * <p> Description: Set the current user's role attribute.</p>
+	 * 
+	 * @param an int representitve of what the current role is.
+	 *  
+	 */
+	public void setCurrentRole(int role) { 
+		currentRole = role;
+		}
+	
 
 	/*******
 	 * <p> Method: boolean getCurrentHasOneTimePassword() </p>
@@ -1912,7 +2000,32 @@ public class Database {
 		}
 		resultSet.close();
 	}
-
+	
+	public List<Review> getReviewsForPost(int postId) throws SQLException {
+        List<Review> reviews = new ArrayList<>();
+        
+        String selectQuery = "SELECT * FROM reviewDB WHERE postId = ? ORDER BY reviewTime ASC";
+        
+        try (PreparedStatement pstmt = connection.prepareStatement(selectQuery)) {
+            pstmt.setInt(1, postId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Review review = new Review(
+                    
+                    rs.getInt("postId"),
+                    rs.getString("reviewStaff"),
+                    rs.getString("reviewStudent"),
+                    rs.getString("reviewText"),
+                    rs.getString("reviewTime")
+                    );
+                    reviews.add(review);
+                }
+            }
+        }
+        
+        return reviews;
+    }
 
 	/*******
 	 * <p> Method: void closeConnection()</p>

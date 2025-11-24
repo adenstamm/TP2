@@ -39,8 +39,7 @@ public class Post {
     private boolean softDelete;
     /**Specifies the searchable tags that the user associates with this posts*/
     private String tags;
-    
-    private boolean hidden;
+
     
     /*****
      * <p> Method: Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, int views,
@@ -78,8 +77,7 @@ public class Post {
      */
     // Constructor to initialize a new Reply object with replyUser, replyText, and role.
     
-    public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, String views, String postTime, int postID, String thread, boolean softDelete, String tags,
-    			boolean hidden) {
+    public Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, String views, String postTime, int postID, String thread, boolean softDelete, String tags) {
     	this.mainUser = mainUser;
     	this.postText = postText;
     	this.adminRole = adminRole;
@@ -92,7 +90,6 @@ public class Post {
     	this.thread = thread;
     	this.softDelete = softDelete;
         this.tags = tags;
-        this.hidden = hidden;
     }
     
    
@@ -213,9 +210,6 @@ public class Post {
     	this.softDelete = softDelete;
     }
     
-    public void setHidden(boolean hidden) {
-    	this.hidden = hidden;
-    }
     
     /*****
      * <p> Method: void setThread(String thread) </p>
@@ -350,8 +344,6 @@ public class Post {
     // Gets the current value of the Thread attribute.
     
     public String getThread() { return thread; }
-    
-    public boolean getHidden() { return hidden; }
     
     /*****
      * <p> Method: void setTags(String tags) </p>

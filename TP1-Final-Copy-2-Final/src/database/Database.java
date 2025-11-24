@@ -79,7 +79,6 @@ public class Database {
     private String currentPostTime;
     private String currentThread;
     private boolean currentSoftDelete;
-    private boolean currentHidden;
     
     private String replyUser;
     private String replyText;
@@ -91,12 +90,7 @@ public class Database {
     private int views;
     private String replyTime;
     private int postId;
-    private boolean feedback;
-    
-    private String currentStudent;
-    private String currentStaff;
-    private String currentNote;
-    private boolean currentNoteSoftDelete;
+
     
     private String currentStudent;
     private String currentStaff;
@@ -687,30 +681,7 @@ public class Database {
 	        return replies;
 	    }
 	    
-	    public List<StudentNote> getNotesForStudent(String student) throws SQLException {
-	        List<StudentNote> notes = new ArrayList<>();
-	        
-	        String selectQuery = "SELECT * FROM noteDB WHERE student = ? ORDER BY staff ASC";
-	        
-	        try (PreparedStatement pstmt = connection.prepareStatement(selectQuery)) {
-	            pstmt.setString(1, student);
-	            
-	            try (ResultSet rs = pstmt.executeQuery()) {
-	                while (rs.next()) {
-	                    StudentNote note = new StudentNote(
-	                    
-	                    rs.getString("student"),
-	                    rs.getString("staff"),
-	                    rs.getString("note"),
-	                    rs.getBoolean("softDelete")
-	                    );
-	                    notes.add(note);
-	                }
-	            }
-	        }
-	        
-	        return notes;
-	    }
+	   
 	    
 	    public List<StudentNote> getNotesForStudent(String student) throws SQLException {
 	        List<StudentNote> notes = new ArrayList<>();

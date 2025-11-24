@@ -13,7 +13,10 @@ import entityClasses.User;
 import entityClasses.Invite;
 import entityClasses.Post;
 import entityClasses.Reply;
-import guiAdminHome.ViewAdminHome;
+import entityClasses.StudentNote;
+import entityClasses.Review;
+import entityClasses.AdminRequest;
+
 
 
 /*******
@@ -201,7 +204,38 @@ public class Database {
 	    String threadsTable = "CREATE TABLE IF NOT EXISTS threadsDB ("
 	        + "threads VARCHAR(255) PRIMARY KEY)";
 	    statement.execute(threadsTable);
+	    
+		 // Review table
+	    String reviewTable = "CREATE TABLE IF NOT EXISTS reviewDB ("
+	        + "id INT AUTO_INCREMENT PRIMARY KEY, "
+	        + "reviewStaff VARCHAR(255), "
+	        + "reviewStudent VARCHAR(255),"
+	        + "reviewText VARCHAR(255), "
+	        + "reviewTime VARCHAR(24), "
+	        + "postId INT"
+	        + ")";
+	    statement.execute(reviewTable);
+	    
+	    String studentNoteTable = "CREATE TABLE IF NOT EXISTS noteDB ("
+		        + "id INT AUTO_INCREMENT PRIMARY KEY, "
+		        + "student VARCHAR(30), "
+		        + "staff VARCHAR(30), "
+		        + "note VARCHAR(255), "
+		        + "softDelete BOOLEAN DEFAULT FALSE"
+		        + ")";
+		statement.execute(studentNoteTable);
+		
+		String adminRequestTable = "CREATE TABLE IF NOT EXISTS adminRequestsDB ("
+	            + "requestID INT AUTO_INCREMENT PRIMARY KEY, "
+	            + "creatorUsername VARCHAR(255), "
+	            + "description VARCHAR(MAX), "
+	            + "status VARCHAR(50), "
+	            + "resolutionNote VARCHAR(MAX)"
+	            + ")";
+		    statement.execute(adminRequestTable);
 	}
+	
+	
 
 
 /*******
@@ -420,6 +454,74 @@ public class Database {
 			}
 		
 	}
+	/*******
+	 *  <p> Method:  registerReview(Review review) </p>
+	 *  
+	 *  <P> Description: Creates a row to represent a thread </p>
+	 *  
+	 *  
+	 */
+	public void registerReview(Review review) throws SQLException {
+		String insertReply = "INSERT INTO reviewDB (postId, reviewStaff, reviewStudent,"
+				+ " reviewText, reviewTime) VALUES (?, ?, ?, ?, ?)";
+		try (PreparedStatement pstmt = connection.prepareStatement(insertReply)) {
+		
+			int reviewPostId = review.getPostId();
+			pstmt.setInt(1, reviewPostId);
+
+			String reviewStaff = review.getStaffName();
+			pstmt.setString(2, reviewStaff);
+		
+			String reviewStudent = review.getStudentName();
+			pstmt.setString(3, reviewStudent);
+
+			String reviewText = review.getReviewText();
+			pstmt.setString(4, reviewText);
+		
+			String reviewTime = review.getReviewTime();
+			pstmt.setString(5, reviewTime);
+		
+			pstmt.executeUpdate();
+		}
+	
+	}
+	
+	/**
+     * <p> Method: register(AdminRequest request) </p>
+     * <p> Description: HW3 Prototype. Saves a new AdminRequest to the database.
+     * This method uses `RETURN_GENERATED_KEYS` to get the new auto-incremented
+     * ID from the database, and then sets it back into the request object. </p>
+     * * @param request The AdminRequest object to be saved.
+     * @throws SQLException
+     */
+    public void register(AdminRequest request) throws SQLException {
+        // This is the "prototype code" to make the TDD test pass.
+        // The internal comments explain *why* we use RETURN_GENERATED_KEYS.
+        // This is critical for TDD, as the test needs to know the new ID.
+        String insertRequest = "INSERT INTO adminRequestsDB (creatorUsername, description, status, resolutionNote) "
+                             + "VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(insertRequest, Statement.RETURN_GENERATED_KEYS)) {
+
+            pstmt.setString(1, request.getCreatorUsername());
+            pstmt.setString(2, request.getDescription());
+            pstmt.setString(3, request.getStatus());
+            pstmt.setString(4, request.getResolutionNote());
+
+            pstmt.executeUpdate();
+
+            // This part gets the new ID back from the database
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    // Update the original object with the new ID.
+                    // This is what the TDD test asserts.
+                    request.setRequestID(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating request failed, no ID obtained.");
+                }
+            }
+        }
+    }
 	
 	public void deleteThread(String thread) {
 

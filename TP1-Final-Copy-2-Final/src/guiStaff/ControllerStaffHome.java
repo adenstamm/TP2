@@ -33,5 +33,25 @@ public class ControllerStaffHome {
 		guiManageThreads.ViewManageThreads.displayThreads(ViewStaffHome.theStage, 
 				ViewStaffHome.theUser);
 	}
+	
+	protected static void goToStudentNotes() {
+		
+		guiStudentNotes.ViewStudentNotes.displayStudentNotes(ViewStaffHome.theStage, 
+				ViewStaffHome.theUser);
+	}
+	
+	protected static void performRequestAdminAction() {
+	    guiRequestAdminAction.ViewRequestAdminAction.displayRequestAdminAction(ViewStaffHome.theStage, ViewStaffHome.theUser);
+	}
+	
+	protected static void viewClosedRequests() {
+		guiViewClosedRequests.ViewViewClosedRequests.displayViewClosedRequests(ViewStaffHome.theStage, 
+				ViewStaffHome.theUser);
+	}
+
+	protected static void manageAdminRequests() {
+		guiManageAdminRequests.ViewManageAdminRequests.displayManageAdminRequests(ViewStaffHome.theStage, 
+				ViewStaffHome.theUser);
+	}
 
 }

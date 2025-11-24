@@ -58,6 +58,10 @@ public class ViewStaffHome {
 	
 	protected static Button button_Discussion = new Button("Discussion");
 	protected static Button button_ManageThreads = new Button("Manage Threads");
+	protected static Button button_StudentNotes = new Button("Student Notes");
+	protected static Button button_RequestAdminAction = new Button("Request Admin Action");
+	protected static Button button_ViewClosedRequests = new Button("View Closed Requests");
+	protected static Button button_ManageAdminRequests = new Button("Manage Admin Requests");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
@@ -172,6 +176,19 @@ public class ViewStaffHome {
 		setupButtonUI(button_ManageThreads, "Dialog", 16, 250, Pos.CENTER, 400, 300);
 		button_ManageThreads.setOnAction((event) -> {ControllerStaffHome.goToManageThreads(); });
 		
+		setupButtonUI(button_StudentNotes, "Dialog", 16, 250, Pos.CENTER, 400, 230);
+		button_StudentNotes.setOnAction((event) -> {ControllerStaffHome.goToStudentNotes(); });
+		
+		setupButtonUI(button_RequestAdminAction, "Dialog", 18, 250, Pos.CENTER, 100, 230);
+		button_RequestAdminAction.setOnAction((event) -> { ControllerStaffHome.performRequestAdminAction(); });
+
+		setupButtonUI(button_ViewClosedRequests, "Dialog", 18, 250, Pos.CENTER, 100, 300);
+		button_ViewClosedRequests.setOnAction((event) -> { ControllerStaffHome.viewClosedRequests(); });
+
+		setupButtonUI(button_ManageAdminRequests, "Dialog", 18, 250, Pos.CENTER, 100, 370);
+		button_ManageAdminRequests.setOnAction((event) -> { ControllerStaffHome.manageAdminRequests(); });
+		
+		
 		
 		// GUI Area 3
 		setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
@@ -187,7 +204,8 @@ public class ViewStaffHome {
 		// Place all of the widget items into the Root Pane's list of children
         theRootPane.getChildren().addAll(
 			label_PageTitle, label_UserDetails, button_UpdateThisUser, line_Separator1,
-	        line_Separator4, button_Logout, button_Quit, button_Discussion, button_ManageThreads);
+	        line_Separator4, button_Logout, button_Quit, button_Discussion, button_ManageThreads, button_StudentNotes,
+	        button_RequestAdminAction, button_ViewClosedRequests, button_ManageAdminRequests);
 	}
 	
 	

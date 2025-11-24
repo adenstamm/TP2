@@ -7,15 +7,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 
 import entityClasses.User;
 import entityClasses.Invite;
 import entityClasses.Post;
 import entityClasses.Reply;
-import guiAdminHome.ViewAdminHome;
+import entityClasses.StudentNote;
+
 
 
 /*******
@@ -91,6 +90,11 @@ public class Database {
     private String replyTime;
     private int postId;
     private boolean feedback;
+    
+    private String currentStudent;
+    private String currentStaff;
+    private String currentNote;
+    private boolean currentNoteSoftDelete;
     
 	/*******
 	 * <p> Method: Database </p>
@@ -200,7 +204,17 @@ public class Database {
 	    String threadsTable = "CREATE TABLE IF NOT EXISTS threadsDB ("
 	        + "threads VARCHAR(255) PRIMARY KEY)";
 	    statement.execute(threadsTable);
+	    
+	    String studentNoteTable = "CREATE TABLE IF NOT EXISTS noteDB ("
+		        + "id INT AUTO_INCREMENT PRIMARY KEY, "
+		        + "student VARCHAR(30), "
+		        + "staff VARCHAR(30), "
+		        + "note VARCHAR(255), "
+		        + "softDelete BOOLEAN DEFAULT FALSE"
+		        + ")";
+		    statement.execute(studentNoteTable);
 	}
+	
 
 
 /*******
@@ -383,6 +397,29 @@ public class Database {
 			feedback = reply.getFeedback();
 			pstmt.setBoolean(10, feedback);
 			
+			pstmt.executeUpdate();
+		}
+	}
+	
+	public void register(StudentNote studentNote) throws SQLException {
+		
+		String insertReply = "INSERT INTO noteDB (student, staff, note, softDelete)"
+				+ "VALUES (?, ?, ?, ?)";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(insertReply)) {
+
+			currentStudent = studentNote.getStudent();
+			pstmt.setString(1, currentStudent);
+
+			currentStaff = studentNote.getStaff();
+			pstmt.setString(2, currentStaff);
+			
+			currentNote = studentNote.getNote();
+			pstmt.setString(3, currentNote);
+			
+			currentNoteSoftDelete = studentNote.getSoftDelete();
+			pstmt.setBoolean(4, currentNoteSoftDelete);
+
 			pstmt.executeUpdate();
 		}
 	}
@@ -610,6 +647,31 @@ public class Database {
 	        }
 	        
 	        return replies;
+	    }
+	    
+	    public List<StudentNote> getNotesForStudent(String student) throws SQLException {
+	        List<StudentNote> notes = new ArrayList<>();
+	        
+	        String selectQuery = "SELECT * FROM noteDB WHERE student = ? ORDER BY staff ASC";
+	        
+	        try (PreparedStatement pstmt = connection.prepareStatement(selectQuery)) {
+	            pstmt.setString(1, student);
+	            
+	            try (ResultSet rs = pstmt.executeQuery()) {
+	                while (rs.next()) {
+	                    StudentNote note = new StudentNote(
+	                    
+	                    rs.getString("student"),
+	                    rs.getString("staff"),
+	                    rs.getString("note"),
+	                    rs.getBoolean("softDelete")
+	                    );
+	                    notes.add(note);
+	                }
+	            }
+	        }
+	        
+	        return notes;
 	    }
 	    
 	    public ArrayList<String> getLikesToList(Post post){

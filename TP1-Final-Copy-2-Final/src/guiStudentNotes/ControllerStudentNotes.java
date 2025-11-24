@@ -1,10 +1,10 @@
-package guiManageThreads;
+package guiStudentNotes;
 
 import entityClasses.User;
 import javafx.stage.Stage;
 
 /*******
- * <p> Title: ModelDiscussion Class. </p>
+ * <p> Title: ControllerStudentNotes Class. </p>
  * 
  * <p> Description: The Discussion Page Model.  This class is not used as there is no
  * data manipulated by this MVC beyond accepting discussion information and saving it in the
@@ -18,25 +18,13 @@ import javafx.stage.Stage;
  *  
  */
 
-public class ControllerManageThreads {
+public class ControllerStudentNotes {
 	/**
 	 * Default constructor for ControllerDiscussion.
 	 * Initializes the controller with default values and no special setup.
 	 */
-	public ControllerManageThreads() {
+	public ControllerStudentNotes() {
 		// No initialization required at this time
-	}
-	/**********
-	 * <p> Method: performLogout() </p>
-	 * 
-	 * <p> Description: This method should log the user out of their account. </p>
-	 * 
-	 * 
-	 * 
-	 */
-	
-	protected static void performLogout() {
-		guiUserLogin.ViewUserLogin.displayUserLogin(ViewManageThreads.theStage);
 	}
 	
 	/**********

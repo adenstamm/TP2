@@ -1,9 +1,7 @@
 package guiManageThreads;
 
-import database.Database;
-
 /*******
- * <p> Title: ModelDiscussion Class. </p>
+ * <p> Title: ModelManageThreads Class. </p>
  * 
  * <p> Description: The Discussion Page Model.  This class is not used as there is no
  * data manipulated by this MVC beyond accepting discussion information and saving it in the
@@ -18,7 +16,6 @@ import database.Database;
  */
 
 public class ModelManageThreads {
-	private static Database theDatabase = applicationMain.FoundationsMain.database;
 	/**
 	 * Default constructor for ControllerDiscussion.
 	 * Initializes the controller with default values and no special setup.

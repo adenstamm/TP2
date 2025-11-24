@@ -992,7 +992,6 @@ public class ViewDiscussion {
         	    	editPost.getChildren().add(button_giveFeedback);
         	    }
             });
-        	
 	        setupButtonUI(button_openReply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
 	        buttons.setMargin(button_openReply, new Insets(0, 10, 0, 10));
 	        buttons.getChildren().addAll(button_openReply);

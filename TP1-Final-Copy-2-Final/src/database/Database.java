@@ -523,6 +523,134 @@ public class Database {
         return null;
     }
 
+	/**
+     * <p> Method: getAllClosedRequests() </p>
+     * <p> Description: Retrieves all closed admin requests from the database.
+     * This method is used to display the closed request list for staff and admins. </p>
+     * @return List of AdminRequest objects with status "Closed", ordered by requestID descending
+     * @throws SQLException
+     */
+    public List<AdminRequest> getAllClosedRequests() throws SQLException {
+        List<AdminRequest> closedRequests = new ArrayList<>();
+        String query = "SELECT * FROM adminRequestsDB WHERE status = 'Closed' ORDER BY requestID DESC";
+        
+        try (Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                closedRequests.add(new AdminRequest(
+                    rs.getInt("requestID"),
+                    rs.getString("creatorUsername"),
+                    rs.getString("description"),
+                    rs.getString("status"),
+                    rs.getString("resolutionNote")
+                ));
+            }
+        }
+        return closedRequests;
+    }
+
+	/**
+     * <p> Method: updateRequestStatus(int requestID, String newStatus) </p>
+     * <p> Description: Updates the status of an admin request. Used to reopen closed requests. </p>
+     * @param requestID The ID of the request to update
+     * @param newStatus The new status (e.g., "Open" or "Closed")
+     * @throws SQLException
+     */
+    public void updateRequestStatus(int requestID, String newStatus) throws SQLException {
+        String query = "UPDATE adminRequestsDB SET status = ? WHERE requestID = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, newStatus);
+            pstmt.setInt(2, requestID);
+            pstmt.executeUpdate();
+        }
+    }
+
+	/**
+     * <p> Method: updateRequestDescription(int requestID, String newDescription) </p>
+     * <p> Description: Updates the description of an admin request. Used by staff to update request details. </p>
+     * @param requestID The ID of the request to update
+     * @param newDescription The new description text
+     * @throws SQLException
+     */
+    public void updateRequestDescription(int requestID, String newDescription) throws SQLException {
+        String query = "UPDATE adminRequestsDB SET description = ? WHERE requestID = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, newDescription);
+            pstmt.setInt(2, requestID);
+            pstmt.executeUpdate();
+        }
+    }
+
+	/**
+     * <p> Method: getAllOpenRequests() </p>
+     * <p> Description: Retrieves all open admin requests from the database.
+     * This method is used to display the open request list for staff and admins. </p>
+     * @return List of AdminRequest objects with status "Open", ordered by requestID descending
+     * @throws SQLException
+     */
+    public List<AdminRequest> getAllOpenRequests() throws SQLException {
+        List<AdminRequest> openRequests = new ArrayList<>();
+        String query = "SELECT * FROM adminRequestsDB WHERE status = 'Open' ORDER BY requestID DESC";
+        
+        try (Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                openRequests.add(new AdminRequest(
+                    rs.getInt("requestID"),
+                    rs.getString("creatorUsername"),
+                    rs.getString("description"),
+                    rs.getString("status"),
+                    rs.getString("resolutionNote")
+                ));
+            }
+        }
+        return openRequests;
+    }
+
+	/**
+     * <p> Method: getAllRequests() </p>
+     * <p> Description: Retrieves all admin requests from the database (both open and closed).
+     * This method is used to display all requests for staff and admins. </p>
+     * @return List of all AdminRequest objects, ordered by requestID descending
+     * @throws SQLException
+     */
+    public List<AdminRequest> getAllRequests() throws SQLException {
+        List<AdminRequest> allRequests = new ArrayList<>();
+        String query = "SELECT * FROM adminRequestsDB ORDER BY requestID DESC";
+        
+        try (Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                allRequests.add(new AdminRequest(
+                    rs.getInt("requestID"),
+                    rs.getString("creatorUsername"),
+                    rs.getString("description"),
+                    rs.getString("status"),
+                    rs.getString("resolutionNote")
+                ));
+            }
+        }
+        return allRequests;
+    }
+
+	/**
+     * <p> Method: closeRequest(int requestID, String resolutionNote) </p>
+     * <p> Description: Closes an admin request by setting its status to "Closed" and adding a resolution note.
+     * Used by admins to resolve requests. </p>
+     * @param requestID The ID of the request to close
+     * @param resolutionNote The resolution note explaining how the request was resolved
+     * @throws SQLException
+     */
+    public void closeRequest(int requestID, String resolutionNote) throws SQLException {
+        String query = "UPDATE adminRequestsDB SET status = ?, resolutionNote = ? WHERE requestID = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, "Closed");
+            pstmt.setString(2, resolutionNote != null ? resolutionNote : "");
+            pstmt.setInt(3, requestID);
+            pstmt.executeUpdate();
+        }
+    }
+
 	/*******
 	 * <p> Method: List getAllUsers() </p>
 	 * * <P> Description: Generate a List of User objects for every user in the database. </p>

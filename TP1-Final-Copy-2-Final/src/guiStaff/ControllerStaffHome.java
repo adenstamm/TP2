@@ -37,4 +37,14 @@ public class ControllerStaffHome {
 				ViewStaffHome.theUser);
 	}
 
+	protected static void viewClosedRequests() {
+		guiViewClosedRequests.ViewViewClosedRequests.displayViewClosedRequests(ViewStaffHome.theStage, 
+				ViewStaffHome.theUser);
+	}
+
+	protected static void manageAdminRequests() {
+		guiManageAdminRequests.ViewManageAdminRequests.displayManageAdminRequests(ViewStaffHome.theStage, 
+				ViewStaffHome.theUser);
+	}
+
 }

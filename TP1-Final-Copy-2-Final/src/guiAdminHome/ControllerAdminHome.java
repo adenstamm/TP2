@@ -234,6 +234,32 @@ public class ControllerAdminHome {
 	/**********
 	 * <p> 
 	 * 
+	 * Title: viewClosedRequests () Method. </p>
+	 * 
+	 * <p> Description: Protected method that displays the closed admin requests list.
+	 * Both admins and staff can view this list. Staff can also reopen requests and update descriptions. </p>
+	 */
+	protected static void viewClosedRequests() {
+		guiViewClosedRequests.ViewViewClosedRequests.displayViewClosedRequests(ViewAdminHome.theStage, 
+				ViewAdminHome.theUser);
+	}
+	
+	/**********
+	 * <p> 
+	 * 
+	 * Title: manageAdminRequests () Method. </p>
+	 * 
+	 * <p> Description: Protected method that displays the admin requests list.
+	 * Both admins and staff can view this list. Admins can close requests with resolution notes. </p>
+	 */
+	protected static void manageAdminRequests() {
+		guiManageAdminRequests.ViewManageAdminRequests.displayManageAdminRequests(ViewAdminHome.theStage, 
+				ViewAdminHome.theUser);
+	}
+	
+	/**********
+	 * <p> 
+	 * 
 	 * Title: invalidEmailAddress () Method. </p>
 	 * 
 	 * <p> Description: Protected method that is intended to check an email address before it is

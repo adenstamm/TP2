@@ -48,4 +48,6 @@ public class AdminRequest {
     // --- Setters ---
     // (Used by the prototype to set the ID after database insertion)
     public void setRequestID(int id) { this.requestID = id; }
+    public void setStatus(String status) { this.status = status; }
+    public void setDescription(String description) { this.description = description; }
 }

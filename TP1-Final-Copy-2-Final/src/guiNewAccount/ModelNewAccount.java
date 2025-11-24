@@ -212,11 +212,11 @@ public class ModelNewAccount {
 				
 				if (userNameSize < 4) {
 					// UserName is too small
-					userNameRecognizerErrorMessage = "A UserName must have at least 4 characters.\n";
+					userNameRecognizerErrorMessage += "A UserName must have at least 4 characters.\n";
 					return userNameRecognizerErrorMessage;
 				} else if (userNameSize > 16) {
 					// UserName is too long
-					userNameRecognizerErrorMessage = "A UserName must have no more than 16 characters.\n";
+					userNameRecognizerErrorMessage += "A UserName must have no more than 16 characters.\n";
 					return userNameRecognizerErrorMessage;
 				} else if (unCurrentCharNdx < input.length()) {
 					// There are characters remaining in the input, so the input is not valid

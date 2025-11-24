@@ -82,6 +82,7 @@ public class ViewStudentHome {
 
 	private static Scene theViewStudentHomeScene;	// The shared Scene each invocation populates
 	protected static final int theRole = 2;		// Admin: 1; Student: 2; Role2: 3
+	
 
 	/*-*******************************************************************************************
 
@@ -116,6 +117,7 @@ public class ViewStudentHome {
 		// Establish the references to the GUI and the current user
 		theStage = ps;
 		theUser = user;
+		theUser.setCurrentRole(1);
 		
 		// If not yet established, populate the static aspects of the GUI
 		if (theView == null) theView = new ViewStudentHome();		// Instantiate singleton if needed
@@ -172,7 +174,9 @@ public class ViewStudentHome {
 		
 		// GUI Area 3
         setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
-        button_Logout.setOnAction((event) -> {ControllerStudentHome.performLogout(); });
+        button_Logout.setOnAction((event) -> {
+        	theUser.setCurrentRole(4);
+        	ControllerStudentHome.performLogout(); });
         
         setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
         button_Quit.setOnAction((event) -> {ControllerStudentHome.performQuit(); });

@@ -18,8 +18,6 @@ module FoundationsF25 {
 	requires java.sql;
 	requires javafx.graphics;
 	requires javafx.base;
-	requires org.junit.jupiter.api;
-	requires org.junit.jupiter.params;
 	
 	opens applicationMain to javafx.graphics, javafx.fxml;
 }

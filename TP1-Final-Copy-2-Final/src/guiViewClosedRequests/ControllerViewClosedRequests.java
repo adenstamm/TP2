@@ -9,8 +9,12 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import java.util.Optional;
+
+import entityClasses.AdminRequest;
+import guiManageAdminRequests.ViewManageAdminRequests;
 
 /**
  * <p> Title: ControllerViewClosedRequests Class. </p>
@@ -131,6 +135,17 @@ public class ControllerViewClosedRequests {
                 alert.showAndWait();
             }
         }
+    }
+    
+    /**
+     * Handles the submit documentation action.
+     */
+    public void performSubmitDoc(AdminRequest request, String text, VBox entryVBox, VBox content) {
+    	content.getChildren().clear();
+    	
+    	request.addDocumentation(text);
+    	model.setRequestDocumentation(request.getRequestID(), request.getDocumentation());
+    	ViewViewClosedRequests.createDocContent(entryVBox, content, request);
     }
 
     /**

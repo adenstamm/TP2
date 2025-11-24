@@ -1,5 +1,4 @@
-/module-info.class
-/tddTests/
-/guiAdminHome/
-/guiStaff/
+/guiManageAdminRequests/
+/guiStudentNotes/
 /guiViewClosedRequests/
+/database/

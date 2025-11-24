@@ -1,5 +1,10 @@
 package entityClasses;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * <p> Title: AdminRequest Class </p>
  * <p> Description: Entity class for the HW3 Prototype (Task 5).
@@ -13,6 +18,7 @@ public class AdminRequest {
     private String description;
     private String status;
     private String resolutionNote;
+    private String documentation;
 
     /**
      * Constructor for creating a new request.
@@ -25,17 +31,19 @@ public class AdminRequest {
         this.status = "Open"; // Default status on creation
         this.resolutionNote = ""; // Default empty note
         this.requestID = -1; // -1 means it's not yet in the DB
+        this.documentation = "";
     }
 
     /**
      * Full constructor for retrieving a request from the database.
      */
-    public AdminRequest(int id, String creator, String desc, String status, String note) {
+    public AdminRequest(int id, String creator, String desc, String status, String note, String documentation) {
         this.requestID = id;
         this.creatorUsername = creator;
         this.description = desc;
         this.status = status;
         this.resolutionNote = note;
+        this.documentation = documentation;
     }
 
     // --- Getters ---
@@ -44,10 +52,44 @@ public class AdminRequest {
     public String getDescription() { return description; }
     public String getStatus() { return status; }
     public String getResolutionNote() { return resolutionNote; }
+    public String getDocumentation() { return documentation; }
 
     // --- Setters ---
     // (Used by the prototype to set the ID after database insertion)
     public void setRequestID(int id) { this.requestID = id; }
     public void setStatus(String status) { this.status = status; }
     public void setDescription(String description) { this.description = description; }
+    
+    public void addDocumentation(String toAdd) {
+    	LocalDateTime currentDateTime = LocalDateTime.now();
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDateTime = currentDateTime.format(formatter);
+        
+    	this.documentation += formattedDateTime + "\n" + toAdd + "-*-*-\n";
+    }
+    
+    public List<String> documentationToList() {
+    	if (this.documentation.compareTo("") == 0) return null;
+    	
+    	List<String> updates = new ArrayList<>();
+    	char[] delimiter = {'-', '*', '-', '*', '-', '\n'};
+    	int n = this.documentation.length();
+    	int i = 0;
+    	int delimitInd = 0;
+    	int currChunk = 0;
+    	while (i < n) {
+    		if (documentation.charAt(i) == delimiter[delimitInd]) ++delimitInd;
+    		else delimitInd = 0;
+    		
+    		if (delimiter.length == delimitInd) {
+    			updates.add(documentation.substring(currChunk, i - delimitInd + 1));
+    			currChunk = i + 1;
+    			delimitInd = 0;
+    		}
+    		
+    		++i;
+    	}
+    	
+    	return updates;
+    }
 }

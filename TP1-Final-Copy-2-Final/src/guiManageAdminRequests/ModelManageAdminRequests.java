@@ -82,4 +82,19 @@ public class ModelManageAdminRequests {
     public String getStatusMessage() {
         return statusMessage;
     }
+    
+    
+    /**
+     * Updates the documentation of a request in the database.
+     * @param requestID The ID of the request to close
+     * @param documentation The documentation of the request
+     */
+    public void setRequestDocumentation(int requestID, String documentation) {
+    	try {
+			database.updateRequestDocumentation(requestID, documentation);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 }

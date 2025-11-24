@@ -57,6 +57,8 @@ public class ViewStaffHome {
 	// GUI ARea 2: This is the area where the student can go to the discussion page
 	
 	protected static Button button_Discussion = new Button("Discussion");
+	protected static Button button_ManageThreads = new Button("Manage Threads");
+	protected static Button button_StudentNotes = new Button("Student Notes");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
@@ -168,9 +170,15 @@ public class ViewStaffHome {
 		setupButtonUI(button_Discussion, "Dialog", 16, 250, Pos.CENTER, 300, 370);
 		button_Discussion.setOnAction((event) -> {ControllerStaffHome.goToDiscussion(); });
 		
+		setupButtonUI(button_ManageThreads, "Dialog", 16, 250, Pos.CENTER, 300, 300);
+		button_ManageThreads.setOnAction((event) -> {ControllerStaffHome.goToManageThreads(); });
+		
+		setupButtonUI(button_StudentNotes, "Dialog", 16, 250, Pos.CENTER, 300, 230);
+		button_StudentNotes.setOnAction((event) -> {ControllerStaffHome.goToStudentNotes(); });
+		
 		
 		// GUI Area 3
-        setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
+		setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
         button_Logout.setOnAction((event) -> {
         	theUser.setCurrentRole(4);
         	ControllerStaffHome.performLogout(); });
@@ -183,7 +191,7 @@ public class ViewStaffHome {
 		// Place all of the widget items into the Root Pane's list of children
         theRootPane.getChildren().addAll(
 			label_PageTitle, label_UserDetails, button_UpdateThisUser, line_Separator1,
-	        line_Separator4, button_Logout, button_Quit, button_Discussion);
+	        line_Separator4, button_Logout, button_Quit, button_Discussion, button_ManageThreads, button_StudentNotes);
 	}
 	
 	

@@ -1,5 +1,4 @@
 package entityClasses;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -88,6 +87,8 @@ public class ManagePost {
 			}
 		}
 	}
+	
+
 	
 	/*****
      * <p> Method: void registerLike(Post post, User user) </p>

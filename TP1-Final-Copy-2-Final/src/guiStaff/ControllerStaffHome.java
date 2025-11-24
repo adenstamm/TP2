@@ -28,5 +28,16 @@ public class ControllerStaffHome {
 		guiDiscussion.ViewDiscussion.displayDiscussion(ViewStaffHome.theStage, 
 				ViewStaffHome.theUser);
 	}
+	protected static void goToManageThreads() {
+		
+		guiManageThreads.ViewManageThreads.displayThreads(ViewStaffHome.theStage, 
+				ViewStaffHome.theUser);
+	}
+	
+	protected static void goToStudentNotes() {
+		
+		guiStudentNotes.ViewStudentNotes.displayStudentNotes(ViewStaffHome.theStage, 
+				ViewStaffHome.theUser);
+	}
 
 }

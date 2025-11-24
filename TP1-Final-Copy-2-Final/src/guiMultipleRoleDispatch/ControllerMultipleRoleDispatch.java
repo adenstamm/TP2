@@ -1,7 +1,5 @@
 package guiMultipleRoleDispatch;
 
-import database.Database;
-
 public class ControllerMultipleRoleDispatch {
 
 	/*-********************************************************************************************
@@ -13,9 +11,6 @@ public class ControllerMultipleRoleDispatch {
 	the Model is often just a stub, or will be a singleton instantiated object.
 
 	 */
-	
-	// Reference for the in-memory database so this package has access
-		private static Database theDatabase = applicationMain.FoundationsMain.database;
 	
 	
 	/**********

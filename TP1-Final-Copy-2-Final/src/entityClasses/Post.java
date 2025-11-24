@@ -39,6 +39,7 @@ public class Post {
     private boolean softDelete;
     /**Specifies the searchable tags that the user associates with this posts*/
     private String tags;
+
     
     /*****
      * <p> Method: Post(String mainUser, String postText, boolean adminRole, boolean studentRole, boolean staffRole, String likes, int views,

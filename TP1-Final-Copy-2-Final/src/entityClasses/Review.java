@@ -189,6 +189,3 @@ public class Review {
     public String getReviewTime() { return reviewTime; }
     
 }
-
-
-

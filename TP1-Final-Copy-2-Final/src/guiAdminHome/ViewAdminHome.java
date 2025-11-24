@@ -165,7 +165,7 @@ public class ViewAdminHome {
 		theStage = ps;
 		theUser = user;
 		theUser.setCurrentRole(0);
-
+		
 		// If not yet established, populate the static aspects of the GUI
 		if (theView == null) theView = new ViewAdminHome();		// Instantiate singleton if needed
 		

@@ -23,6 +23,14 @@ import entityClasses.ManagePost;
 
 public class PostTest {
 
+	/**
+	 * Default constructor for PostTest.
+	 * Initializes the controller with default values and no special setup.
+	 */
+	public PostTest() {
+		// No initialization required at this time
+	}
+	
     /*-*******************************************************************************************
      * Attributes
      *-------------------------------------------------------------------------------------------*/
@@ -200,26 +208,22 @@ public class PostTest {
             ManagePost.registerLike(testPost, testUser);
             System.out.println("Post liked successfully");
 
+            // Verify the user has liked the post.
+            if (verifyUserLikedPost(testPost, testUser)) {
+                System.out.println("User like verification successful");
+            } else {
+                System.out.println("User like verification failed");
+            }
 
             // Test: unlike the post then verify the user has unliked it.
             ManagePost.registerLike(testPost, testUser);
             System.out.println("Post unliked successfully");
 
-            
-            // Verify the post still exists and is accessible
-            List<Post> postsAfterLike = database.getAllPosts();
-            boolean postStillExists = false;
-            for (Post post : postsAfterLike) {
-                if (post.getPostID() == testPost.getPostID()) {
-                    postStillExists = true;
-                    break;
-                }
-            }
-            
-            if (postStillExists) {
-                System.out.println("Post integrity test passed - post still exists after like/unlike operations");
+            // Verify the user has unliked the post.
+            if (!verifyUserLikedPost(testPost, testUser)) {
+                System.out.println("User unlike verification successful");
             } else {
-                System.out.println("Post integrity test failed - post disappeared after like/unlike operations");
+                System.out.println("User unlike verification failed");
             }
         } else {
             System.out.println("Post not found");
@@ -252,18 +256,14 @@ public class PostTest {
                 return false;
             }
             
-            // Get the raw likes string and check if it contains the username
-            String likesString = refreshedPost.getLikes();
-            System.out.println("Debug - Raw likes string: '" + likesString + "'");
-            System.out.println("Debug - Looking for user: '" + user.getUserName() + "'");
-            
-            // Simple string contains check - this is more reliable than splitting
-            if (likesString != null && likesString.contains(user.getUserName())) {
-                System.out.println("Debug - Found match in likes string!");
-                return true;
+            List<String> likesList = database.getLikesToList(refreshedPost);
+            // Filter out empty strings since the database stores likes with spaces
+            // and empty strings can be created when splitting
+            for (String like : likesList) {
+                if (!like.trim().isEmpty() && like.trim().equals(user.getUserName())) {
+                    return true;
+                }
             }
-            
-            System.out.println("Debug - No match found");
             return false;
         } catch (Exception e) {
             System.out.println("Error verifying user like: " + e.getMessage());

@@ -88,33 +88,7 @@ public class FoundationsMain extends Application {
 		try {
 			// Connect to the database
 			database.connectToDatabase();
-//			entityClasses.ManagePost.registerTestCases();
-		/*	
-		Post newPost = new Post("Ian", "Hi There", true, true, true, 12, 12, "", 1);
-		
-		database.register(newPost);
-		
-		List<Post> posts = new ArrayList<>();
-		posts = database.getAllPosts();
-		for (Post post : posts) {
-		    System.out.println(post.getUserName() + ": " + post.getPostText());
-		} 
-		
-		
-		Reply newReply = new Reply(1, "Name", "Name", true, true, true, 12, 12, "");
-
-		database.register(newReply);
-		
-		Reply newReply2 = new Reply(2, "Name", "Name", true, true, true, 12, 12, "");
-
-		database.register(newReply2);
-		
-		List<Reply> replies = new ArrayList<>();
-		replies = database.getRepliesForPost(1);
-		for (Reply reply : replies) {
-		    System.out.println(reply.getUserName() + ": " + reply.getReplyText());
-		} 
-		*/
+//			
 		} catch (SQLException e) {
 			// If the connection request fails, it usually means some other app is using it
 			databaseInUse.setTitle("*** ERROR ***");

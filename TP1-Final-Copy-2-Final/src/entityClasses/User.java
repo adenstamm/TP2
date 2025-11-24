@@ -76,7 +76,19 @@ public class User {
         this.hasOneTimePassword = hotp;
         this.currentRole = 4;
     }
-
+    
+    /*****
+     * <p> Method: void setCurrentRole(int role) </p>
+     * 
+     * <p> Description: This setter defines the staffRole attribute. </p>
+     * 
+     * @param role is an int that specifies what role the user is
+     * 
+     */
+    // Sets the current Role of the user.
+    public void setCurrentRole(int role) {
+    	this.currentRole=role;
+    }
     
     /*****
      * <p> Method: void setAdminRole(boolean role) </p>
@@ -105,19 +117,6 @@ public class User {
     	this.studentRole=role;
     }
 
-    
-    /*****
-     * <p> Method: void setCurrentRole(int role) </p>
-     * 
-     * <p> Description: This setter defines the staffRole attribute. </p>
-     * 
-     * @param role is an int that specifies what role the user is
-     * 
-     */
-    // Sets the current Role of the user.
-    public void setCurrentRole(int role) {
-    	this.currentRole=role;
-    }
     
     /*****
      * <p> Method: void setStaffRole(boolean role) </p>
@@ -264,14 +263,14 @@ public class User {
     // Gets the current value of the staffRole attribute.
     public boolean getStaffRole() { return staffRole; }
 
-        
+    
     /*****
      * <p> Method: int getCurrentRole()) </p>
      * 
      * <p> Description: This getter returns the value of the current role attribute. </p>
      * 
      * @return an int representing 0 = Admin, 1 = Student, 2 = Staff, and other = not current
-	 *
+     *
      */
     // Gets the current value of the staffRole attribute.
     public int getCurrentRole() { return currentRole; }

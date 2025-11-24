@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -92,6 +93,8 @@ public class ViewDiscussion {
 	
 	/** Clears the search area for tags.*/
 	private static Button button_ClearSearch = new Button("Clear");
+	
+
 	/** The area where you input the tags you want associated with your post.*/
 	private static TextField text_PostTags = new TextField();
 	
@@ -182,21 +185,19 @@ public class ViewDiscussion {
 			postContainer.getChildren().clear();
 			buildPostContainer(null, null);
 		}
-		
+
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.
 		theDatabase.getUserAccountDetails(user.getUserName());
 		
 		label_UserDetails.setText("User: " + theUser.getUserName());// Set the username
-		
-		
 
 		// Set the title for the window, display the page, and wait for the Admin to do something
 		theStage.setTitle("CSE 360 Foundations: Discussion Page");
 		theStage.setScene(theDiscussion);						// Set this page onto the stage
 		theStage.show();											// Display it to the user
-		
 	}
+	
 	
 	/**********
 	 * <p> Method: ViewDiscussion() </p>
@@ -226,13 +227,13 @@ public class ViewDiscussion {
 		setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
 		
 		//Set up the selector for which threads are displayed
-				setupComboBoxUI(combobox_SelectThread, "Dialog", 16, 50, 150, 630, 55);
-		 		List<String> threadList = theDatabase.getThreadsListWithAll(true);
+		setupComboBoxUI(combobox_SelectThread, "Dialog", 16, 50, 150, 630, 55);
+		List<String> threadList = theDatabase.getThreadsListWithAll(true);
 		 		
-				combobox_SelectThread.setItems(FXCollections.observableArrayList(threadList));
-				combobox_SelectThread.getSelectionModel().select(0);
-				combobox_SelectThread.getSelectionModel().selectedItemProperty()
-		     	.addListener((ObservableValue<? extends String> observable, 
+		combobox_SelectThread.setItems(FXCollections.observableArrayList(threadList));
+		combobox_SelectThread.getSelectionModel().select(0);
+		combobox_SelectThread.getSelectionModel().selectedItemProperty()
+		.addListener((ObservableValue<? extends String> observable, 
 		     		String oldvalue, String newValue) -> {displayPostsByThread(newValue);});
 		
 		
@@ -406,15 +407,16 @@ public class ViewDiscussion {
 	
 	protected static void enterUserPosts() {
 		postContainer.getChildren().clear();
+		System.out.println("Entering User Posts");
 		button_YourPosts.setVisible(false);
 		button_UnreadPosts.setVisible(false);
 		combobox_SelectThread.setVisible(false);
 		button_Back_Yours.setVisible(true);
 		boolean flag = false;
-		for (var child : theRootPane.getChildren()) {
+		/*for (var child : theRootPane.getChildren()) {
 			if ("Back_User".equals(child.getId()))
 				return;
-		}
+		}*/
 		
 		if (!flag) {
 			button_Back_Yours.setId("Back_User");
@@ -429,6 +431,7 @@ public class ViewDiscussion {
         							button_Back_Yours.setVisible(false);
         							});
 		}
+		System.out.println("About to Enter");
 		displayUsersPosts();
 	}
 	
@@ -551,24 +554,26 @@ public class ViewDiscussion {
         }
         
         for(Reply reply : replies) {
-        	VBox singleReplyBox = new VBox(5);
-        	singleReplyBox.setPadding(new Insets(10));
-        	singleReplyBox.setStyle("-fx-background-color: #f2f2f2; -fx-background-radius: 8;");
-        	singleReplyBox.setMaxWidth(Double.MAX_VALUE);
         	
-        	Label label_User = new Label("User: " + reply.getUserName() + "  " + reply.getReplyTime());
-			label_User.setFont(new Font("Arial", 15));
-			label_User.setTranslateX(30);
+        		VBox singleReplyBox = new VBox(5);
+        		singleReplyBox.setPadding(new Insets(10));
+        		singleReplyBox.setStyle("-fx-background-color: #f2f2f2; -fx-background-radius: 8;");
+        		singleReplyBox.setMaxWidth(Double.MAX_VALUE);
         	
-			Label replyTextLabel = new Label(reply.getReplyText());
-	        replyTextLabel.setFont(new Font("Arial", 14));
-	        replyTextLabel.setWrapText(true);
-	        replyTextLabel.setTranslateX(30);
+        		Label label_User = new Label("User: " + reply.getUserName() + "  " + reply.getReplyTime());
+        		label_User.setFont(new Font("Arial", 15));
+        		label_User.setTranslateX(30);
+        	
+        		Label replyTextLabel = new Label(reply.getReplyText());
+        		replyTextLabel.setFont(new Font("Arial", 14));
+        		replyTextLabel.setWrapText(true);
+        		replyTextLabel.setTranslateX(30);
+		        
+		        singleReplyBox.getChildren().addAll(label_User, replyTextLabel);
 	        
-	        singleReplyBox.getChildren().addAll(label_User, replyTextLabel);
-	        
-	        postContainer.getChildren().addAll(singleReplyBox);
+		        postContainer.getChildren().addAll(singleReplyBox);
         }
+        
 	}
 	/**********
 	 * <p> Method: refreshPosts </p>
@@ -775,12 +780,16 @@ public class ViewDiscussion {
 	 * 
 	 */
 	protected static void displayUsersPosts() {
+		postContainer.getChildren().clear();
 		List<Post> all_posts = new ArrayList<>();
 		all_posts = applicationMain.FoundationsMain.database.getAllPosts();
+		System.out.println("All posts size: " + all_posts.size());
 		List<Post> posts = new ArrayList<>();
+		
 		for (Post post : all_posts) {
+			System.out.println("All posts size: " + all_posts.size());
 			String user = post.getUserName();
-			if (user != null && user.compareTo(theUser.getUserName()) == 0)
+			if (user != null && theUser.getUserName().equals(user))
 				posts.add(post);
 		}
         
@@ -809,8 +818,11 @@ public class ViewDiscussion {
 		List<Post> posts = new ArrayList<>();
 		String userName = theUser.getUserName();
 		for (Post post : all_posts) {
-			if (!applicationMain.FoundationsMain.database.getViewsToList(post).contains(userName))
-				posts.add(post);
+			if (!applicationMain.FoundationsMain.database.getViewsToList(post).contains(userName)){
+				if (!post.getPostText().isEmpty()) {
+					posts.add(post);
+				}
+			}
 		}
         
 		if(posts.size() == 0) {
@@ -838,7 +850,6 @@ public class ViewDiscussion {
 	 * 
 	 */
 	protected static void createPostBoxes(Post post, String searchTag, String thread) {
-		 
 		
 		VBox singlePostBox = new VBox(5);
 		singlePostBox.setPadding(new Insets(10));
@@ -928,8 +939,8 @@ public class ViewDiscussion {
         	    setupButtonUI(button_reply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
         	    editPost.setMargin(button_reply, new Insets(0, 10, 0, 10));
         	    editPost.getChildren().add(button_reply);
+        	   
             });
-        	
 	        setupButtonUI(button_openReply, "Dialog", 16, 50, Pos.BASELINE_RIGHT, 20, 55);
 	        buttons.setMargin(button_openReply, new Insets(0, 10, 0, 10));
 	        buttons.getChildren().addAll(button_openReply);
@@ -1005,7 +1016,7 @@ public class ViewDiscussion {
 		        buttons.setMargin(button_deletePost, new Insets(0, 10, 0, 10));
 		        buttons.getChildren().addAll(button_deletePost);
         	}
-	       System.out.println("Current Role = " + theUser.getCurrentRole());
+	        System.out.println("Current Role = " + theUser.getCurrentRole());
 	        if(theUser.getCurrentRole() == 2) { 
 	        	Button button_openReview = new Button("Create a Review");
 	        	button_openReview.setOnAction((event) -> {
@@ -1033,8 +1044,6 @@ public class ViewDiscussion {
 		        buttons.getChildren().addAll(button_openReview);
 	        
 	        }
-	        
-	        
 	        singlePostBox.getChildren().addAll(tagsLabel, buttons, editPost);
         } 
         
@@ -1047,7 +1056,6 @@ public class ViewDiscussion {
         displayRepliesForPost(post, null);
         postContainer.getChildren().addAll(new Separator());
         
-		
 	}
 	
 	/**********

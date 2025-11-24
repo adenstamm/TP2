@@ -35,6 +35,8 @@ public class Reply {
     /**Specifies the post that the reply is attached to*/
     private int postId;
     
+    private boolean feedback;
+    
     /*****
      * <p> Method: Reply(int postId, String replyUser, String replyText, boolean adminRole, boolean studentRole,
      *  	boolean staffRole, int likes, int views, String replyTime) </p>
@@ -192,7 +194,6 @@ public class Reply {
     public void setReplyTime(String replyTime) {
     	this.replyTime = replyTime;
     }
-    
     
     
     

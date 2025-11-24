@@ -3,3 +3,11 @@
 /guiAdminHome/
 /guiStaff/
 /guiViewClosedRequests/
+/database/
+/guiManageAdminRequests/
+/entityClasses/
+/guiDiscussion/
+/guiManageThreads/
+/guiRequestAdminAction/
+/guiStudent/
+/guiStudentNotes/

@@ -33,11 +33,5 @@ public class ControllerStaffHome {
 		guiManageThreads.ViewManageThreads.displayThreads(ViewStaffHome.theStage, 
 				ViewStaffHome.theUser);
 	}
-	
-	protected static void goToStudentNotes() {
-		
-		guiStudentNotes.ViewStudentNotes.displayStudentNotes(ViewStaffHome.theStage, 
-				ViewStaffHome.theUser);
-	}
 
 }

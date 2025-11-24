@@ -325,14 +325,5 @@ public class ViewStudentNotes {
 	 * @param e		The ability to edit the text
 	 */
 	
-	private void setupTextUI(TextField t, String ff, double f, double w, double x, double y, boolean e){
-		t.setFont(Font.font(ff, f));
-		t.setMinWidth(w);
-		t.setMaxWidth(w);
-		t.setLayoutX(x);
-		t.setLayoutY(y);		
-		t.setEditable(e);
-	}
-	
 	
 }

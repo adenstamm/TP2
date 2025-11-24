@@ -1,18 +1,27 @@
-package guiManageThreads;
+package guiStudentNotes;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import database.Database;
+import entityClasses.Post;
+import entityClasses.StudentNote;
 import entityClasses.User;
+import guiDiscussion.ControllerDiscussion;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -33,7 +42,7 @@ import javafx.stage.Stage;
  *  
  */
 
-public class ViewManageThreads {
+public class ViewStudentNotes {
 	/**
 	 * Default constructor for ControllerDiscussion.
 	 * Initializes the controller with default values and no special setup.
@@ -64,15 +73,13 @@ public class ViewManageThreads {
 	protected static Label label_Thread = new Label();
 
 	/** The area that holds the textfield for the user's new post.*/
-	protected static VBox threadContainer = new VBox(10);
+	protected static VBox studentContainer = new VBox(10);
 	
 	/** This is a separator and it is used to partition the GUI for various tasks */
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
 
 	/** This is a separator and it is used to partition the GUI for various tasks */
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
-	
-	private static Button button_CreateThread = new Button("Create Thread");
 	
 	private static TextField text_ThreadText = new TextField();
 	/**
@@ -87,7 +94,7 @@ public class ViewManageThreads {
 	// This is the end of the GUI objects for the page.
 	
 	/** These attributes are used to configure the page and populate it with this user's information */
-	private static ViewManageThreads theView;		// Used to determine if instantiation of the class
+	private static ViewStudentNotes theView;		// Used to determine if instantiation of the class
 												// is needed
 
 	/** Reference for the in-memory database so this package has access */
@@ -103,14 +110,18 @@ public class ViewManageThreads {
 	/** The shared Scene each invocation populates*/
 	private static Scene theThreads;	
 	
-	public static void displayThreads(Stage ps, User user) {
+	
+	
+	
+	
+	public static void displayStudentNotes(Stage ps, User user) {
 		
 		// Establish the references to the GUI and the current user
 		theStage = ps;
 		theUser = user;
 		
 		// If not yet established, populate the static aspects of the GUI
-		if (theView == null) theView = new ViewManageThreads();		// Instantiate singleton if needed
+		if (theView == null) theView = new ViewStudentNotes();		// Instantiate singleton if needed
 		
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.
@@ -119,12 +130,12 @@ public class ViewManageThreads {
 		label_UserDetails.setText("User: " + theUser.getUserName());// Set the username
 
 		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundations: Manage Threads");
+		theStage.setTitle("CSE 360 Foundations: Student Notes");
 		theStage.setScene(theThreads);						// Set this page onto the stage
 		theStage.show();											// Display it to the user
 	}
 	
-	private ViewManageThreads() {
+	private ViewStudentNotes() {
 		
 		// Create the Pane for the list of widgets and the Scene for the window
 		theRootPane = new Pane();
@@ -134,32 +145,15 @@ public class ViewManageThreads {
 		// Populate the window with the title and other common widgets and set their static state
 		
 		// GUI Area 1
-		label_PageTitle.setText("Manage Threads");
+		label_PageTitle.setText("Student Notes");
 		setupLabelUI(label_PageTitle, "Arial", 28, width, Pos.CENTER, 0, 5);
 
 		label_UserDetails.setText("User: " + theUser.getUserName());
 		setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
 		
-		setupButtonUI(button_CreateThread, "Dialog", 18, 250, Pos.CENTER, 150, 55);
-		
-		setupTextUI(text_ThreadText, "Dialog", 18, 250, 425, 55, true);
-		
-		text_ThreadText.setPromptText("Create a new thread");
-		button_CreateThread.setOnAction((event) -> {
-			String newThread = text_ThreadText.getText();
-			try {
-			theDatabase.registerThread(newThread);
-			} catch (SQLException e) {
-				System.out.println("Failed to create new Thread.");
-			}
-			text_ThreadText.clear();
-			threadContainer.getChildren().clear();
-			buildThreadContainer();
-		});
-		
-		buildThreadContainer();
+		buildStudentContainer();
         
-        ScrollPane scrollPane = new ScrollPane(threadContainer);
+        ScrollPane scrollPane = new ScrollPane(studentContainer);
 		scrollPane.setLayoutX(0);
 		scrollPane.setLayoutY(90);
 		scrollPane.setPrefWidth(width);
@@ -172,37 +166,103 @@ public class ViewManageThreads {
 
 		// GUI Area 3
         setupButtonUI(button_BackToHome, "Dialog", 18, 250, Pos.CENTER, 20, 540);
-        button_BackToHome.setOnAction((event) -> {ControllerManageThreads.goToUserHomePage(theStage, theUser);});
+        button_BackToHome.setOnAction((event) -> {ControllerStudentNotes.goToUserHomePage(theStage, theUser);});
         
         setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
-        button_Quit.setOnAction((event) -> {ControllerManageThreads.performQuit(); });
+        button_Quit.setOnAction((event) -> {ControllerStudentNotes.performQuit(); });
 		// This is the end of the GUI initialization code
 		
 		// Place all of the widget items into the Root Pane's list of children
 
         theRootPane.getChildren().addAll(
 			label_PageTitle, label_UserDetails, line_Separator1,
-	        line_Separator4, button_BackToHome, button_Quit, scrollPane, button_CreateThread, text_ThreadText);
+	        line_Separator4, button_BackToHome, button_Quit, scrollPane);
 	}
 	
-	private static void buildThreadContainer(){
-		List<String> threads = theDatabase.getThreadsListWithAll(false);
+	private static void buildStudentContainer(){
+		List<User> users = theDatabase.getAllUsers();
 		
-		for(String thread : threads){
-			HBox threadBox = new HBox(5);
-			Button button_DeleteThread = new Button("Delete Thread");
-			button_DeleteThread.setOnAction((event) -> {
-				theDatabase.deleteThread(thread);
-				threadContainer.getChildren().clear();
-				buildThreadContainer();
-			});
-			
-			threadBox.getChildren().addAll(new Label(thread), button_DeleteThread);
-			threadContainer.getChildren().addAll(threadBox);
+		for(User user : users){
+			if(user.getStudentRole()) {
+				createNoteBoxes(user);
+				
+			}
 		}
 	}
 	
+	protected static void createNoteBoxes(User student) {
+		VBox singleStudentBox = new VBox();
+		HBox buttons = new HBox();
+		
+		
+		Region spacer = new Region();
+		HBox.setHgrow(spacer, Priority.ALWAYS);
+ 		
+ 		HBox editPost = new HBox(10); 
+ 		editPost.setAlignment(Pos.BASELINE_LEFT);
+        
+ 		
+        buttons.setPadding(new Insets(0, 10, 0, 10));
+        Button button_createNote = new Button("Create a Note");
+        button_createNote.setOnAction((event) -> {
+        	button_createNote.setText("Cancel");
+        	TextArea text_createNote = new TextArea();
+        	text_createNote.setPrefRowCount(5);
+        	text_createNote.setWrapText(true);
+        	text_createNote.setMaxWidth(width);
+        	editPost.getChildren().add(text_createNote);
+        	
+        	button_createNote.setOnAction((eve) -> {
+        		button_createNote.setText("Create a Note");
+    	    	studentContainer.getChildren().clear();
+    	    	buildStudentContainer();
+            });
+        	
+        	Button button_makeNote = new Button("Make Note");
+    	    button_makeNote.setOnAction((ev) -> {
+    	    	ModelStudentNotes.registerNote(student.getUserName(), theUser, text_createNote.getText());
+    	    	studentContainer.getChildren().clear();
+    	    	buildStudentContainer();
+    	    });
+    	    editPost.getChildren().add(button_makeNote);
+        });
+        
+        Button button_viewNotes = new Button("View Notes");
+        button_viewNotes.setOnAction((event) -> {
+        	button_viewNotes.setText("Cancel");
+        	buildNoteUI(student.getUserName(), singleStudentBox);
+        	button_viewNotes.setOnAction((eve) -> {
+        		button_viewNotes.setText("View Notes");
+    	    	studentContainer.getChildren().clear();
+    	    	buildStudentContainer();
+            });
+        });
+        Label label_student = new Label(student.getUserName());
+	    buttons.getChildren().addAll(label_student, spacer, button_createNote, button_viewNotes);
+        
+	   	singleStudentBox.getChildren().addAll(buttons, editPost);
+        
+        studentContainer.getChildren().addAll(singleStudentBox,new Separator());
+        	
+	}
 	
+	protected static void buildNoteUI(String student, VBox theVBox) {
+		List<StudentNote> notes = new ArrayList<>();
+		try {
+			notes = theDatabase.getNotesForStudent(student);
+		} catch (SQLException e) {
+			System.out.println("Failed to fetch student notes.");
+		}
+		for(StudentNote note : notes) {
+			VBox singleNoteBox = new VBox();
+			singleNoteBox.setPadding(new Insets(10));
+			Label label_note = new Label(note.getNote());
+	        label_note.setTranslateX(30);
+	        label_note.setWrapText(true);
+			singleNoteBox.getChildren().addAll(label_note);
+			theVBox.getChildren().addAll(singleNoteBox, new Separator());
+		}
+	}
 	
 	
 	/*-********************************************************************************************

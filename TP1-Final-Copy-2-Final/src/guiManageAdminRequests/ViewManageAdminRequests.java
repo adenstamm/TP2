@@ -35,18 +35,18 @@ public class ViewManageAdminRequests {
     // GUI Widgets
     protected static Label label_PageTitle = new Label("Admin Requests");
     protected static Label label_Status = new Label("");
-    
+
     // Separator lines
     private static Line line_Separator1 = new Line(20, 100, width-20, 100);
     private static Line line_Separator2 = new Line(20, 500, width-20, 500);
-    
+
     protected static Button button_Return = new Button("Return");
     protected static Button button_Logout = new Button("Logout");
     protected static Button button_Quit = new Button("Quit");
-    
+
     // A VBox to hold the request entries
     private static VBox requestDisplayBox = new VBox(15);
-    
+
     // Singleton instance
     private static ViewManageAdminRequests theView;
     private static Database theDatabase = applicationMain.FoundationsMain.database;
@@ -54,7 +54,7 @@ public class ViewManageAdminRequests {
     private static Pane theRootPane;
     protected static User theUser;
     private static Scene theScene;
-    
+
     // MVC Components
     protected static ModelManageAdminRequests model;
     protected static ControllerManageAdminRequests controller;
@@ -72,7 +72,7 @@ public class ViewManageAdminRequests {
             model = new ModelManageAdminRequests(theDatabase);
             controller = new ControllerManageAdminRequests(model);
         }
-        
+
         // Clear previous entries and refresh the list
         requestDisplayBox.getChildren().clear();
         label_Status.setText("");
@@ -89,15 +89,15 @@ public class ViewManageAdminRequests {
     protected static void refreshRequestList() {
         // Clear existing entries
         requestDisplayBox.getChildren().clear();
-        
+
         List<AdminRequest> requests = model.getOpenRequests();
-        
+
         if (requests != null && !requests.isEmpty()) {
             for (int i = 0; i < requests.size(); i++) {
                 AdminRequest request = requests.get(i);
                 VBox requestEntry = createRequestEntry(request);
                 requestDisplayBox.getChildren().add(requestEntry);
-                
+
                 // Add a separator line if it's not the last request
                 if (i < requests.size() - 1) {
                     Line separator = new Line(0, 0, width - 120, 0);
@@ -138,7 +138,7 @@ public class ViewManageAdminRequests {
         descLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         descLabel.setTextFill(Color.BLACK);
         entryVBox.getChildren().add(descLabel);
-        
+
         TextArea descArea = new TextArea(request.getDescription());
         descArea.setEditable(false);
         descArea.setWrapText(true);
@@ -163,7 +163,7 @@ public class ViewManageAdminRequests {
             resolutionLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
             resolutionLabel.setTextFill(Color.BLACK);
             entryVBox.getChildren().add(resolutionLabel);
-            
+
             TextArea resolutionArea = new TextArea(request.getResolutionNote());
             resolutionArea.setEditable(false);
             resolutionArea.setWrapText(true);
@@ -180,7 +180,7 @@ public class ViewManageAdminRequests {
             closeButton.setOnAction(e -> {
                 controller.performCloseRequest(request.getRequestID());
             });
-            
+
             entryVBox.getChildren().add(closeButton);
         }
 
@@ -249,4 +249,3 @@ public class ViewManageAdminRequests {
         );
     }
 }
-

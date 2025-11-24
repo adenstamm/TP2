@@ -1,11 +1,6 @@
 package guiManageThreads;
 
-import java.util.Optional;
-
-import entityClasses.Post;
 import entityClasses.User;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 /*******

@@ -42,11 +42,11 @@ public class ViewRequestAdminAction {
     protected static Pane theRootPane;
     protected static Scene theScene;
     protected static User theUser;
-    
+
     // MVC Components
     protected static ModelRequestAdminAction model;
     protected static ControllerRequestAdminAction controller;
-    
+
     private static Database theDatabase = applicationMain.FoundationsMain.database;
 
     /**
@@ -62,7 +62,7 @@ public class ViewRequestAdminAction {
             model = new ModelRequestAdminAction(theDatabase);
             controller = new ControllerRequestAdminAction(model);
         }
-        
+
         // Reset fields
         statusLabel.setText("");
         descriptionArea.clear();

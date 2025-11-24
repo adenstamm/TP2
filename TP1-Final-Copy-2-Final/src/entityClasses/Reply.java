@@ -64,7 +64,7 @@ public class Reply {
      */
     // Constructor to initialize a new Reply object with replyUser, replyText, and role.
     
-    public Reply(int postId, String replyUser, String replyText, boolean adminRole, boolean studentRole, boolean staffRole, int likes, int views, String replyTime, boolean feedback) {
+    public Reply(int postId, String replyUser, String replyText, boolean adminRole, boolean studentRole, boolean staffRole, int likes, int views, String replyTime) {
     	
     	this.postId = postId;
     	this.replyUser = replyUser;
@@ -75,7 +75,6 @@ public class Reply {
     	this.likes = likes;
     	this.views = views;
     	this.replyTime = replyTime;
-    	this.feedback = feedback;
     }
     
     
@@ -196,10 +195,6 @@ public class Reply {
     	this.replyTime = replyTime;
     }
     
-    public void setFeedback(boolean feedback) {
-    	this.feedback = feedback;
-    }
-    
     
     
     /*****
@@ -310,7 +305,6 @@ public class Reply {
     
     public String getReplyTime() { return replyTime; }
     
-    public boolean getFeedback() { return feedback; }
 }
 
 

@@ -32,24 +32,24 @@ public class ControllerViewClosedRequests {
      */
     public void performReopenRequest(int requestID) {
         boolean success = model.reopenRequest(requestID);
-        
+
         ViewViewClosedRequests.label_Status.setText(model.getStatusMessage());
-        
+
         if (success) {
             ViewViewClosedRequests.label_Status.setTextFill(Color.GREEN);
-            
+
             // Show confirmation alert
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Request Reopened");
             alert.setHeaderText("Success");
             alert.setContentText("The request has been reopened successfully.");
             alert.showAndWait();
-            
+
             // Refresh the list
             ViewViewClosedRequests.refreshRequestList();
         } else {
             ViewViewClosedRequests.label_Status.setTextFill(Color.RED);
-            
+
             // Show error alert
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
@@ -100,29 +100,29 @@ public class ControllerViewClosedRequests {
         });
 
         Optional<String> result = dialog.showAndWait();
-        
+
         if (result.isPresent() && !result.get().trim().isEmpty()) {
             String newDescription = result.get().trim();
-            
+
             boolean success = model.updateRequestDescription(requestID, newDescription);
-            
+
             ViewViewClosedRequests.label_Status.setText(model.getStatusMessage());
-            
+
             if (success) {
                 ViewViewClosedRequests.label_Status.setTextFill(Color.GREEN);
-                
+
                 // Show confirmation alert
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("Description Updated");
                 alert.setHeaderText("Success");
                 alert.setContentText("The request description has been updated successfully.");
                 alert.showAndWait();
-                
+
                 // Refresh the list
                 ViewViewClosedRequests.refreshRequestList();
             } else {
                 ViewViewClosedRequests.label_Status.setTextFill(Color.RED);
-                
+
                 // Show error alert
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error");
@@ -160,4 +160,3 @@ public class ControllerViewClosedRequests {
         System.exit(0);
     }
 }
-

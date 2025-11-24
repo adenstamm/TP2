@@ -1,5 +1,7 @@
 package guiStaff;
 
+import guiStudent.ViewStudentHome;
+
 public class ControllerStaffHome {
 	
 	/*-*******************************************************************************************
@@ -26,17 +28,22 @@ public class ControllerStaffHome {
 		guiDiscussion.ViewDiscussion.displayDiscussion(ViewStaffHome.theStage, 
 				ViewStaffHome.theUser);
 	}
-
-	protected static void performRequestAdminAction() {
-	    guiRequestAdminAction.ViewRequestAdminAction.displayRequestAdminAction(ViewStaffHome.theStage, ViewStaffHome.theUser);
-	}
-
 	protected static void goToManageThreads() {
 		
 		guiManageThreads.ViewManageThreads.displayThreads(ViewStaffHome.theStage, 
 				ViewStaffHome.theUser);
 	}
-
+	
+	protected static void goToStudentNotes() {
+		
+		guiStudentNotes.ViewStudentNotes.displayStudentNotes(ViewStaffHome.theStage, 
+				ViewStaffHome.theUser);
+	}
+	
+	protected static void performRequestAdminAction() {
+	    guiRequestAdminAction.ViewRequestAdminAction.displayRequestAdminAction(ViewStaffHome.theStage, ViewStaffHome.theUser);
+	}
+	
 	protected static void viewClosedRequests() {
 		guiViewClosedRequests.ViewViewClosedRequests.displayViewClosedRequests(ViewStaffHome.theStage, 
 				ViewStaffHome.theUser);

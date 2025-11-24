@@ -4,19 +4,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 import database.Database;
-import entityClasses.Post;
 import entityClasses.User;
-import guiDiscussion.ControllerDiscussion;
-import guiDiscussion.ViewDiscussion;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -279,25 +272,6 @@ public class ViewManageThreads {
 		t.setLayoutX(x);
 		t.setLayoutY(y);		
 		t.setEditable(e);
-	}
-	
-	/**********
-	 * Private local method to initialize the standard fields for a ComboBox
-	 * 
-	 * @param c		The ComboBox object to be initialized
-	 * @param ff	The font to be used
-	 * @param f		The size of the font to be used
-	 * @param w		The width of the ComboBox
-	 * @param mw	The max width of the ComboBox
-	 * @param x		The location from the left edge (x axis)
-	 * @param y		The location from the top (y axis)
-	 */
-	private void setupComboBoxUI(ComboBox <String> c, String ff, double f, double w, double mw, double x, double y){
-		c.setStyle("-fx-font: " + f + " " + ff + ";");
-		c.setMinWidth(w);
-		c.setMaxWidth(mw);
-		c.setLayoutX(x);
-		c.setLayoutY(y);
 	}
 	
 	

@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 
 import entityClasses.User;
 import entityClasses.Invite;
 import entityClasses.Post;
 import entityClasses.Reply;
+import entityClasses.StudentNote;
+import entityClasses.Review;
 import entityClasses.AdminRequest;
-import guiAdminHome.ViewAdminHome;
+
 
 
 /*******
@@ -80,18 +80,23 @@ public class Database {
     private String currentPostTime;
     private String currentThread;
     private boolean currentSoftDelete;
-    private boolean currentHidden;
     
     private String replyUser;
     private String replyText;
     private boolean adminRole;
     private boolean studentRole;
     private boolean staffRole;
+    private int currentRole;
     private int likes;
     private int views;
     private String replyTime;
     private int postId;
-    private boolean feedback;
+
+    
+    private String currentStudent;
+    private String currentStaff;
+    private String currentNote;
+    private boolean currentNoteSoftDelete;
     
 	/*******
 	 * <p> Method: Database </p>
@@ -176,8 +181,7 @@ public class Database {
 	        + "postID INT DEFAULT 0,"
 	        + "thread VARCHAR(100),"
 	        + "softDelete BOOLEAN DEFAULT FALSE, "
-	        + "tags VARCHAR(512),"
-	        + "hidden BOOLEAN DEFAULT FALSE"
+	        + "tags VARCHAR(512)"
 	        + ")";
 	    statement.execute(postTable);
 
@@ -192,8 +196,7 @@ public class Database {
 	        + "adminRole BOOLEAN DEFAULT FALSE, "
 	        + "studentRole BOOLEAN DEFAULT FALSE, "
 	        + "staffRole BOOLEAN DEFAULT FALSE, "
-	        + "postId INT,"
-	        + "feedback BOOLEAN DEFAULT FALSE"
+	        + "postId INT"
 	        + ")";
 	    statement.execute(replyTable);
 	    
@@ -201,16 +204,38 @@ public class Database {
 	    String threadsTable = "CREATE TABLE IF NOT EXISTS threadsDB ("
 	        + "threads VARCHAR(255) PRIMARY KEY)";
 	    statement.execute(threadsTable);
-
+	    
+		 // Review table
+	    String reviewTable = "CREATE TABLE IF NOT EXISTS reviewDB ("
+	        + "id INT AUTO_INCREMENT PRIMARY KEY, "
+	        + "reviewStaff VARCHAR(255), "
+	        + "reviewStudent VARCHAR(255),"
+	        + "reviewText VARCHAR(255), "
+	        + "reviewTime VARCHAR(24), "
+	        + "postId INT"
+	        + ")";
+	    statement.execute(reviewTable);
+	    
+	    String studentNoteTable = "CREATE TABLE IF NOT EXISTS noteDB ("
+		        + "id INT AUTO_INCREMENT PRIMARY KEY, "
+		        + "student VARCHAR(30), "
+		        + "staff VARCHAR(30), "
+		        + "note VARCHAR(255), "
+		        + "softDelete BOOLEAN DEFAULT FALSE"
+		        + ")";
+		statement.execute(studentNoteTable);
+		
 		String adminRequestTable = "CREATE TABLE IF NOT EXISTS adminRequestsDB ("
-            + "requestID INT AUTO_INCREMENT PRIMARY KEY, "
-            + "creatorUsername VARCHAR(255), "
-            + "description VARCHAR(MAX), "
-            + "status VARCHAR(50), "
-            + "resolutionNote VARCHAR(MAX)"
-            + ")";
-	    statement.execute(adminRequestTable);
+	            + "requestID INT AUTO_INCREMENT PRIMARY KEY, "
+	            + "creatorUsername VARCHAR(255), "
+	            + "description VARCHAR(MAX), "
+	            + "status VARCHAR(50), "
+	            + "resolutionNote VARCHAR(MAX)"
+	            + ")";
+		    statement.execute(adminRequestTable);
 	}
+	
+	
 
 
 /*******
@@ -308,8 +333,8 @@ public class Database {
 	
 	public void register(Post post) throws SQLException {
 		String insertPost = "INSERT INTO postDB (mainUser, postText, adminRole, studentRole, "
-				+ "staffRole, likes, views, postTime, postID, thread, softDelete, tags, hidden) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "staffRole, likes, views, postTime, postID, thread, softDelete, tags) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement pstmt = connection.prepareStatement(insertPost)) {
 			currentPostUsername = post.getUserName();
 			pstmt.setString(1, currentPostUsername);
@@ -346,20 +371,16 @@ public class Database {
 			
 			String currentTags = post.getTags();
 			pstmt.setString(12, currentTags);
-			
-			currentHidden = post.getHidden();
-			pstmt.setBoolean(13, currentHidden);
 
 			pstmt.executeUpdate();
 		}
-		
 	}
 	
 	public void register(Reply reply) throws SQLException {
 		
 		String insertReply = "INSERT INTO replyDB (postId, replyUser, replyText, adminRole, "
-				+ "studentRole, staffRole, likes, views, replyTime, feedback) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "studentRole, staffRole, likes, views, replyTime) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		try (PreparedStatement pstmt = connection.prepareStatement(insertReply)) {
 			
@@ -390,50 +411,33 @@ public class Database {
 			replyTime = reply.getReplyTime();
 			pstmt.setString(9, replyTime);
 			
-			feedback = reply.getFeedback();
-			pstmt.setBoolean(10, feedback);
+			pstmt.executeUpdate();
+		}
+	}
+	
+	public void register(StudentNote studentNote) throws SQLException {
+		
+		String insertReply = "INSERT INTO noteDB (student, staff, note, softDelete)"
+				+ "VALUES (?, ?, ?, ?)";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(insertReply)) {
+
+			currentStudent = studentNote.getStudent();
+			pstmt.setString(1, currentStudent);
+
+			currentStaff = studentNote.getStaff();
+			pstmt.setString(2, currentStaff);
 			
+			currentNote = studentNote.getNote();
+			pstmt.setString(3, currentNote);
+			
+			currentNoteSoftDelete = studentNote.getSoftDelete();
+			pstmt.setBoolean(4, currentNoteSoftDelete);
+
 			pstmt.executeUpdate();
 		}
 	}
 
-	/**
-     * <p> Method: register(AdminRequest request) </p>
-     * <p> Description: HW3 Prototype. Saves a new AdminRequest to the database.
-     * This method uses `RETURN_GENERATED_KEYS` to get the new auto-incremented
-     * ID from the database, and then sets it back into the request object. </p>
-     * * @param request The AdminRequest object to be saved.
-     * @throws SQLException
-     */
-    public void register(AdminRequest request) throws SQLException {
-        // This is the "prototype code" to make the TDD test pass.
-        // The internal comments explain *why* we use RETURN_GENERATED_KEYS.
-        // This is critical for TDD, as the test needs to know the new ID.
-        String insertRequest = "INSERT INTO adminRequestsDB (creatorUsername, description, status, resolutionNote) "
-                             + "VALUES (?, ?, ?, ?)";
-        
-        try (PreparedStatement pstmt = connection.prepareStatement(insertRequest, Statement.RETURN_GENERATED_KEYS)) {
-            
-            pstmt.setString(1, request.getCreatorUsername());
-            pstmt.setString(2, request.getDescription());
-            pstmt.setString(3, request.getStatus());
-            pstmt.setString(4, request.getResolutionNote());
-            
-            pstmt.executeUpdate();
-
-            // This part gets the new ID back from the database
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    // Update the original object with the new ID.
-                    // This is what the TDD test asserts.
-                    request.setRequestID(generatedKeys.getInt(1));
-                } else {
-                    throw new SQLException("Creating request failed, no ID obtained.");
-                }
-            }
-        }
-    }
-		
 		/*******
 		 *  <p> Method:  registerThread(string thread) </p>
 		 *  
@@ -450,6 +454,74 @@ public class Database {
 			}
 		
 	}
+	/*******
+	 *  <p> Method:  registerReview(Review review) </p>
+	 *  
+	 *  <P> Description: Creates a row to represent a thread </p>
+	 *  
+	 *  
+	 */
+	public void registerReview(Review review) throws SQLException {
+		String insertReply = "INSERT INTO reviewDB (postId, reviewStaff, reviewStudent,"
+				+ " reviewText, reviewTime) VALUES (?, ?, ?, ?, ?)";
+		try (PreparedStatement pstmt = connection.prepareStatement(insertReply)) {
+		
+			int reviewPostId = review.getPostId();
+			pstmt.setInt(1, reviewPostId);
+
+			String reviewStaff = review.getStaffName();
+			pstmt.setString(2, reviewStaff);
+		
+			String reviewStudent = review.getStudentName();
+			pstmt.setString(3, reviewStudent);
+
+			String reviewText = review.getReviewText();
+			pstmt.setString(4, reviewText);
+		
+			String reviewTime = review.getReviewTime();
+			pstmt.setString(5, reviewTime);
+		
+			pstmt.executeUpdate();
+		}
+	
+	}
+	
+	/**
+     * <p> Method: register(AdminRequest request) </p>
+     * <p> Description: HW3 Prototype. Saves a new AdminRequest to the database.
+     * This method uses `RETURN_GENERATED_KEYS` to get the new auto-incremented
+     * ID from the database, and then sets it back into the request object. </p>
+     * * @param request The AdminRequest object to be saved.
+     * @throws SQLException
+     */
+    public void register(AdminRequest request) throws SQLException {
+        // This is the "prototype code" to make the TDD test pass.
+        // The internal comments explain *why* we use RETURN_GENERATED_KEYS.
+        // This is critical for TDD, as the test needs to know the new ID.
+        String insertRequest = "INSERT INTO adminRequestsDB (creatorUsername, description, status, resolutionNote) "
+                             + "VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(insertRequest, Statement.RETURN_GENERATED_KEYS)) {
+
+            pstmt.setString(1, request.getCreatorUsername());
+            pstmt.setString(2, request.getDescription());
+            pstmt.setString(3, request.getStatus());
+            pstmt.setString(4, request.getResolutionNote());
+
+            pstmt.executeUpdate();
+
+            // This part gets the new ID back from the database
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    // Update the original object with the new ID.
+                    // This is what the TDD test asserts.
+                    request.setRequestID(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating request failed, no ID obtained.");
+                }
+            }
+        }
+    }
 	
 	public void deleteThread(String thread) {
 
@@ -489,7 +561,7 @@ public class Database {
 //		System.out.println(userList);
 		return userList;
 	}
-
+	
 	/**
      * <p> Method: getRequestByID(int id) </p>
      * <p> Description: HW3 Prototype. Retrieves a single AdminRequest from
@@ -501,10 +573,10 @@ public class Database {
      */
     public AdminRequest getRequestByID(int id) throws SQLException {
         String query = "SELECT * FROM adminRequestsDB WHERE requestID = ?";
-        
+
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, id);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     // Use the full constructor to build the object from DB data
@@ -533,7 +605,7 @@ public class Database {
     public List<AdminRequest> getAllClosedRequests() throws SQLException {
         List<AdminRequest> closedRequests = new ArrayList<>();
         String query = "SELECT * FROM adminRequestsDB WHERE status = 'Closed' ORDER BY requestID DESC";
-        
+
         try (Statement stmt = connection.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -591,7 +663,7 @@ public class Database {
     public List<AdminRequest> getAllOpenRequests() throws SQLException {
         List<AdminRequest> openRequests = new ArrayList<>();
         String query = "SELECT * FROM adminRequestsDB WHERE status = 'Open' ORDER BY requestID DESC";
-        
+
         try (Statement stmt = connection.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -617,7 +689,7 @@ public class Database {
     public List<AdminRequest> getAllRequests() throws SQLException {
         List<AdminRequest> allRequests = new ArrayList<>();
         String query = "SELECT * FROM adminRequestsDB ORDER BY requestID DESC";
-        
+
         try (Statement stmt = connection.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -739,8 +811,7 @@ public class Database {
 	                    rs.getInt("postID"),
 	                    rs.getString("thread"),
 	                    rs.getBoolean("softDelete"),
-	                    rs.getString("tags"),
-	                    rs.getBoolean("hidden")
+	                    rs.getString("tags")
 	                    );
 	                List<String> threads = getThreadsListWithAll(false);
 	                if (!threads.contains(post.getThread())) {
@@ -777,8 +848,7 @@ public class Database {
 	                    rs.getInt("postID"),
 	                    rs.getString("thread"),
 	                    rs.getBoolean("softDelete"),
-	                    rs.getString("tags"),
-	                    rs.getBoolean("hidden")
+	                    rs.getString("tags")
 	                );
 	                postList.add(post);
 	            }
@@ -809,8 +879,7 @@ public class Database {
 	                    rs.getBoolean("staffRole"),
 	                    rs.getInt("likes"),
 	                    rs.getInt("views"),
-	                    rs.getString("replyTime"),
-	                    rs.getBoolean("feedback")
+	                    rs.getString("replyTime")
 	                    );
 	                    replies.add(reply);
 	                }
@@ -818,6 +887,33 @@ public class Database {
 	        }
 	        
 	        return replies;
+	    }
+	    
+	   
+	    
+	    public List<StudentNote> getNotesForStudent(String student) throws SQLException {
+	        List<StudentNote> notes = new ArrayList<>();
+	        
+	        String selectQuery = "SELECT * FROM noteDB WHERE student = ? ORDER BY staff ASC";
+	        
+	        try (PreparedStatement pstmt = connection.prepareStatement(selectQuery)) {
+	            pstmt.setString(1, student);
+	            
+	            try (ResultSet rs = pstmt.executeQuery()) {
+	                while (rs.next()) {
+	                    StudentNote note = new StudentNote(
+	                    
+	                    rs.getString("student"),
+	                    rs.getString("staff"),
+	                    rs.getString("note"),
+	                    rs.getBoolean("softDelete")
+	                    );
+	                    notes.add(note);
+	                }
+	            }
+	        }
+	        
+	        return notes;
 	    }
 	    
 	    public ArrayList<String> getLikesToList(Post post){
@@ -1897,6 +1993,31 @@ public class Database {
 	 *  
 	 */
 	public boolean getCurrentStaffRole() { return currentStaffRole;};
+	
+
+	
+	/*******
+	 * <p> Method: int getCurrentRole() </p>
+	 * 
+	 * <p> Description: Get the current user's role attribute.</p>
+	 * 
+	 * @return an int representitve of what the current role is.
+	 *  
+	 */
+	public int getCurrentRole() { return currentRole;};
+	
+	/*******
+	 * <p> Method: void setCurrentRole(int role) </p>
+	 * 
+	 * <p> Description: Set the current user's role attribute.</p>
+	 * 
+	 * @param an int representitve of what the current role is.
+	 *  
+	 */
+	public void setCurrentRole(int role) { 
+		currentRole = role;
+		}
+	
 
 	/*******
 	 * <p> Method: boolean getCurrentHasOneTimePassword() </p>
@@ -2058,7 +2179,32 @@ public class Database {
 		}
 		resultSet.close();
 	}
-
+	
+	public List<Review> getReviewsForPost(int postId) throws SQLException {
+        List<Review> reviews = new ArrayList<>();
+        
+        String selectQuery = "SELECT * FROM reviewDB WHERE postId = ? ORDER BY reviewTime ASC";
+        
+        try (PreparedStatement pstmt = connection.prepareStatement(selectQuery)) {
+            pstmt.setInt(1, postId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Review review = new Review(
+                    
+                    rs.getInt("postId"),
+                    rs.getString("reviewStaff"),
+                    rs.getString("reviewStudent"),
+                    rs.getString("reviewText"),
+                    rs.getString("reviewTime")
+                    );
+                    reviews.add(review);
+                }
+            }
+        }
+        
+        return reviews;
+    }
 
 	/*******
 	 * <p> Method: void closeConnection()</p>

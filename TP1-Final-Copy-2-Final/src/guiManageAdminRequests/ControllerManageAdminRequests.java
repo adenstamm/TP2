@@ -69,29 +69,29 @@ public class ControllerManageAdminRequests {
         });
 
         Optional<String> result = dialog.showAndWait();
-        
+
         if (result.isPresent()) {
             String resolutionNote = result.get().trim();
-            
+
             boolean success = model.closeRequest(requestID, resolutionNote);
-            
+
             ViewManageAdminRequests.label_Status.setText(model.getStatusMessage());
-            
+
             if (success) {
                 ViewManageAdminRequests.label_Status.setTextFill(Color.GREEN);
-                
+
                 // Show confirmation alert
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("Request Closed");
                 alert.setHeaderText("Success");
                 alert.setContentText("The request has been closed successfully.");
                 alert.showAndWait();
-                
+
                 // Refresh the list
                 ViewManageAdminRequests.refreshRequestList();
             } else {
                 ViewManageAdminRequests.label_Status.setTextFill(Color.RED);
-                
+
                 // Show error alert
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error");
@@ -129,4 +129,3 @@ public class ControllerManageAdminRequests {
         System.exit(0);
     }
 }
-

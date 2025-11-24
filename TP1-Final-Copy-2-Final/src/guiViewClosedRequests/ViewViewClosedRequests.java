@@ -36,18 +36,18 @@ public class ViewViewClosedRequests {
     // GUI Widgets
     protected static Label label_PageTitle = new Label("Closed Admin Requests");
     protected static Label label_Status = new Label("");
-    
+
     // Separator lines
     private static Line line_Separator1 = new Line(20, 100, width-20, 100);
     private static Line line_Separator2 = new Line(20, 500, width-20, 500);
-    
+
     protected static Button button_Return = new Button("Return");
     protected static Button button_Logout = new Button("Logout");
     protected static Button button_Quit = new Button("Quit");
-    
+
     // A VBox to hold the request entries
     private static VBox requestDisplayBox = new VBox(15);
-    
+
     // Singleton instance
     private static ViewViewClosedRequests theView;
     private static Database theDatabase = applicationMain.FoundationsMain.database;
@@ -55,7 +55,7 @@ public class ViewViewClosedRequests {
     private static Pane theRootPane;
     protected static User theUser;
     private static Scene theScene;
-    
+
     // MVC Components
     protected static ModelViewClosedRequests model;
     protected static ControllerViewClosedRequests controller;
@@ -73,7 +73,7 @@ public class ViewViewClosedRequests {
             model = new ModelViewClosedRequests(theDatabase);
             controller = new ControllerViewClosedRequests(model);
         }
-        
+
         // Clear previous entries and refresh the list
         requestDisplayBox.getChildren().clear();
         label_Status.setText("");
@@ -90,15 +90,15 @@ public class ViewViewClosedRequests {
     protected static void refreshRequestList() {
         // Clear existing entries
         requestDisplayBox.getChildren().clear();
-        
+
         List<AdminRequest> closedRequests = model.getClosedRequests();
-        
+
         if (closedRequests != null && !closedRequests.isEmpty()) {
             for (int i = 0; i < closedRequests.size(); i++) {
                 AdminRequest request = closedRequests.get(i);
                 VBox requestEntry = createRequestEntry(request);
                 requestDisplayBox.getChildren().add(requestEntry);
-                
+
                 // Add a separator line if it's not the last request
                 if (i < closedRequests.size() - 1) {
                     Line separator = new Line(0, 0, width - 120, 0);
@@ -139,7 +139,7 @@ public class ViewViewClosedRequests {
         descLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         descLabel.setTextFill(Color.BLACK);
         entryVBox.getChildren().add(descLabel);
-        
+
         TextArea descArea = new TextArea(request.getDescription());
         descArea.setEditable(false);
         descArea.setWrapText(true);
@@ -154,7 +154,7 @@ public class ViewViewClosedRequests {
             resolutionLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
             resolutionLabel.setTextFill(Color.BLACK);
             entryVBox.getChildren().add(resolutionLabel);
-            
+
             TextArea resolutionArea = new TextArea(request.getResolutionNote());
             resolutionArea.setEditable(false);
             resolutionArea.setWrapText(true);
@@ -174,19 +174,19 @@ public class ViewViewClosedRequests {
         if (theUser.getStaffRole()) {
             VBox buttonBox = new VBox(10);
             buttonBox.setAlignment(Pos.CENTER_LEFT);
-            
+
             Button reopenButton = new Button("Reopen Request");
             reopenButton.setStyle("-fx-font-size: 12px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
             reopenButton.setOnAction(e -> {
                 controller.performReopenRequest(request.getRequestID());
             });
-            
+
             Button updateDescButton = new Button("Update Description");
             updateDescButton.setStyle("-fx-font-size: 12px; -fx-background-color: #2196F3; -fx-text-fill: white;");
             updateDescButton.setOnAction(e -> {
                 controller.performUpdateDescription(request.getRequestID(), request.getDescription());
             });
-            
+
             buttonBox.getChildren().addAll(reopenButton, updateDescButton);
             entryVBox.getChildren().add(buttonBox);
         }
@@ -256,4 +256,3 @@ public class ViewViewClosedRequests {
         );
     }
 }
-

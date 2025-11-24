@@ -166,7 +166,8 @@ public class ViewAdminHome {
 		// Establish the references to the GUI and the current user
 		theStage = ps;
 		theUser = user;
-
+		theUser.setCurrentRole(0);
+		
 		// If not yet established, populate the static aspects of the GUI
 		if (theView == null) theView = new ViewAdminHome();		// Instantiate singleton if needed
 		
@@ -275,13 +276,15 @@ public class ViewAdminHome {
 		
 		setupButtonUI(button_ViewClosedRequests, "Dialog", 16, 250, Pos.CENTER, 300, 470);
 		button_ViewClosedRequests.setOnAction((event) -> {ControllerAdminHome.viewClosedRequests(); });
-		
-		setupButtonUI(button_ManageAdminRequests, "Dialog", 16, 250, Pos.CENTER, 570, 270);
+
+		setupButtonUI(button_ManageAdminRequests, "Dialog", 16, 250, Pos.CENTER, 300, 420);
 		button_ManageAdminRequests.setOnAction((event) -> {ControllerAdminHome.manageAdminRequests(); });
 		
 		// GUI Area 5
 		setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
-		button_Logout.setOnAction((event) -> {ControllerAdminHome.performLogout(); });
+		button_Logout.setOnAction((event) -> {
+			theUser.setCurrentRole(4);
+			ControllerAdminHome.performLogout(); });
     
 		setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
 		button_Quit.setOnAction((event) -> {ControllerAdminHome.performQuit(); });

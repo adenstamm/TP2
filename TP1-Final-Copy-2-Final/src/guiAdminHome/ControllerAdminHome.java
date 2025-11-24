@@ -243,7 +243,7 @@ public class ControllerAdminHome {
 		guiViewClosedRequests.ViewViewClosedRequests.displayViewClosedRequests(ViewAdminHome.theStage, 
 				ViewAdminHome.theUser);
 	}
-	
+
 	/**********
 	 * <p> 
 	 * 

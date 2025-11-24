@@ -58,6 +58,7 @@ public class ViewStaffHome {
 	
 	protected static Button button_Discussion = new Button("Discussion");
 	protected static Button button_ManageThreads = new Button("Manage Threads");
+	protected static Button button_StudentNotes = new Button("Student Notes");
 	protected static Button button_RequestAdminAction = new Button("Request Admin Action");
 	protected static Button button_ViewClosedRequests = new Button("View Closed Requests");
 	protected static Button button_ManageAdminRequests = new Button("Manage Admin Requests");
@@ -118,6 +119,7 @@ public class ViewStaffHome {
 		// Establish the references to the GUI and the current user
 		theStage = ps;
 		theUser = user;
+		theUser.setCurrentRole(2);
 		
 		// If not yet established, populate the static aspects of the GUI
 		if (theView == null) theView = new ViewStaffHome();		// Instantiate singleton if needed
@@ -168,24 +170,31 @@ public class ViewStaffHome {
 		
 		// GUI Area 2
 		
-		setupButtonUI(button_Discussion, "Dialog", 16, 250, Pos.CENTER, 300, 370);
+		setupButtonUI(button_Discussion, "Dialog", 16, 250, Pos.CENTER, 400, 370);
 		button_Discussion.setOnAction((event) -> {ControllerStaffHome.goToDiscussion(); });
 		
-		setupButtonUI(button_ManageThreads, "Dialog", 16, 250, Pos.CENTER, 300, 300);
+		setupButtonUI(button_ManageThreads, "Dialog", 16, 250, Pos.CENTER, 400, 300);
 		button_ManageThreads.setOnAction((event) -> {ControllerStaffHome.goToManageThreads(); });
-
-		setupButtonUI(button_RequestAdminAction, "Dialog", 18, 250, Pos.CENTER, 275, 200);
+		
+		setupButtonUI(button_StudentNotes, "Dialog", 16, 250, Pos.CENTER, 400, 230);
+		button_StudentNotes.setOnAction((event) -> {ControllerStaffHome.goToStudentNotes(); });
+		
+		setupButtonUI(button_RequestAdminAction, "Dialog", 18, 250, Pos.CENTER, 100, 230);
 		button_RequestAdminAction.setOnAction((event) -> { ControllerStaffHome.performRequestAdminAction(); });
-		
-		setupButtonUI(button_ViewClosedRequests, "Dialog", 18, 250, Pos.CENTER, 275, 250);
+
+		setupButtonUI(button_ViewClosedRequests, "Dialog", 18, 250, Pos.CENTER, 100, 300);
 		button_ViewClosedRequests.setOnAction((event) -> { ControllerStaffHome.viewClosedRequests(); });
-		
-		setupButtonUI(button_ManageAdminRequests, "Dialog", 18, 250, Pos.CENTER, 275, 300);
+
+		setupButtonUI(button_ManageAdminRequests, "Dialog", 18, 250, Pos.CENTER, 100, 370);
 		button_ManageAdminRequests.setOnAction((event) -> { ControllerStaffHome.manageAdminRequests(); });
 		
+		
+		
 		// GUI Area 3
-        setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
-        button_Logout.setOnAction((event) -> {ControllerStaffHome.performLogout(); });
+		setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
+        button_Logout.setOnAction((event) -> {
+        	theUser.setCurrentRole(4);
+        	ControllerStaffHome.performLogout(); });
         
         setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
         button_Quit.setOnAction((event) -> {ControllerStaffHome.performQuit(); });
@@ -195,7 +204,7 @@ public class ViewStaffHome {
 		// Place all of the widget items into the Root Pane's list of children
         theRootPane.getChildren().addAll(
 			label_PageTitle, label_UserDetails, button_UpdateThisUser, line_Separator1,
-	        line_Separator4, button_Logout, button_Quit, button_Discussion, button_ManageThreads, 
+	        line_Separator4, button_Logout, button_Quit, button_Discussion, button_ManageThreads, button_StudentNotes,
 	        button_RequestAdminAction, button_ViewClosedRequests, button_ManageAdminRequests);
 	}
 	

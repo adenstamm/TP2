@@ -20,11 +20,11 @@ public class ControllerRequestAdminAction {
     public void performSubmit() {
         String description = ViewRequestAdminAction.descriptionArea.getText();
         String username = ViewRequestAdminAction.theUser.getUserName();
-        
+
         boolean success = model.submitRequest(description, username);
-        
+
         ViewRequestAdminAction.statusLabel.setText(model.getStatusMessage());
-        
+
         if (success) {
             ViewRequestAdminAction.statusLabel.setTextFill(Color.GREEN);
             ViewRequestAdminAction.descriptionArea.clear();

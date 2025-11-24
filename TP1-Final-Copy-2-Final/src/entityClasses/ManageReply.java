@@ -45,7 +45,7 @@ public class ManageReply {
      * 
      */
 	
-	public static void storeReply(Post mainPost, User user, String replyText, boolean feedback) {
+	public static void storeReply(Post mainPost, User user, String replyText) {
 		
 		if(user.getUserName().isEmpty()) {
 			System.out.println("Reply is missing a Username.");
@@ -67,7 +67,7 @@ public class ManageReply {
 		int likes = 0;
 		int views = 0;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
-		LocalDateTime Time = LocalDateTime.now().plusDays(1).plusHours(0).plusMinutes(0);
+		LocalDateTime Time = LocalDateTime.now().plusDays(0).plusHours(0).plusMinutes(0);
 		String replyTime = Time.format(formatter);
 		
 		if(mainPost.getPostID() == 50) {
@@ -76,7 +76,7 @@ public class ManageReply {
 		postID = mainPost.getPostID();
 		}
 		
-		Reply reply = new Reply(postID, Username, replyText, adminRole, studentRole, staffRole, likes, views, replyTime, feedback);
+		Reply reply = new Reply(postID, Username, replyText, adminRole, studentRole, staffRole, likes, views, replyTime);
 		System.out.println(replyText);
 		try {
 		applicationMain.FoundationsMain.database.register(reply);

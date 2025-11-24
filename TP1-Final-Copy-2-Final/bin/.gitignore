@@ -1,7 +1,3 @@
 /database/
-/guiDiscussion/
 /entityClasses/
-/guiAdminHome/
-/guiMultipleRoleDispatch/
-/guiStaff/
-/guiStudent/
+/guiDiscussion/

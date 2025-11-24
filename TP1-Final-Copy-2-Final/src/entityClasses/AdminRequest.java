@@ -68,7 +68,7 @@ public class AdminRequest {
     	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedDateTime = currentDateTime.format(formatter);
         
-    	this.documentation += "toAdd" + "-*-*-\n";
+    	this.documentation += toAdd + "-*-*-\n";
     }
     
     public List<String> documentationToList() {
@@ -85,7 +85,7 @@ public class AdminRequest {
     		else delimitInd = 0;
     		
     		if (delimiter.length == delimitInd) {
-    			updates.add(documentation.substring(currChunk, currChunk - delimitInd + 1));
+    			updates.add(documentation.substring(currChunk, i - delimitInd + 1));
     			currChunk = i + 1;
     			delimitInd = 0;
     		}

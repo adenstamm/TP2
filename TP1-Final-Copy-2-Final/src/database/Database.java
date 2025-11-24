@@ -209,7 +209,7 @@ public class Database {
             + "status VARCHAR(50), "
             + "resolutionNote VARCHAR(MAX), "
             + "documentation VARCHAR(MAX), "
-            + "originalID INT, "
+            + "originalID INT"
             + ")";
 	    statement.execute(adminRequestTable);
 	}
@@ -411,7 +411,7 @@ public class Database {
         // This is the "prototype code" to make the TDD test pass.
         // The internal comments explain *why* we use RETURN_GENERATED_KEYS.
         // This is critical for TDD, as the test needs to know the new ID.
-        String insertRequest = "INSERT INTO adminRequestsDB (creatorUsername, description, status, resolutionNote, documentation) "
+        String insertRequest = "INSERT INTO adminRequestsDB (creatorUsername, description, status, resolutionNote, documentation, originalID) "
                              + "VALUES (?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement pstmt = connection.prepareStatement(insertRequest, Statement.RETURN_GENERATED_KEYS)) {
@@ -1686,6 +1686,29 @@ public class Database {
 			}
 		}
 		return false;
+	}
+	
+	/*******
+	 * <p> Method: void updateFirstName(int id, String firstName) </p>
+	 * 
+	 * <p> Description: Update the documentation of an admin request.</p>
+	 * 
+	 * @param id is the requestID of the admin request
+	 * 
+	 * @param docs is a string containing the new documentation
+	 *  
+	 */
+	// update the docs
+	public void updateRequestDocs(int id, String docs) {
+		System.out.println("updateRequestDocs: id=" + id + ", docs='" + docs);
+	    String query = "UPDATE adminRequestsDB SET documentation = ? WHERE requestID = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, docs);
+	        pstmt.setInt(2, id);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 	}
 	
 	

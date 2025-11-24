@@ -234,6 +234,19 @@ public class ControllerAdminHome {
 	/**********
 	 * <p> 
 	 * 
+	 * Title: adminRequests () Method. </p>
+	 * 
+	 * <p> Description: Protected method that allows an admin to view and interact with admin
+	 * requests.</p>
+	 */
+	protected static void adminRequests() {
+		guiAdminRequests.ViewAdminRequests.displayAdminRequests(ViewAdminHome.theStage, 
+				ViewAdminHome.theUser);
+	}
+	
+	/**********
+	 * <p> 
+	 * 
 	 * Title: invalidEmailAddress () Method. </p>
 	 * 
 	 * <p> Description: Protected method that is intended to check an email address before it is

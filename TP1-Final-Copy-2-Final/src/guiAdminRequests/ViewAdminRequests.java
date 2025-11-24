@@ -42,16 +42,21 @@ public class ViewAdminRequests {
     // Attributes required by the user interface
     private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
     private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
+    
+    protected static Label titleLabel = new Label();
+	protected static Label label_UserDetails = new Label();
+	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
 
     // UI Widgets
     protected static VBox mainContainer;
-    protected static Label titleLabel;
     protected static Label instructionLabel;
     protected static ComboBox<String> combobox_requestSelect = new ComboBox<>();
     protected static Button button_addDocs = new Button("Add Documentation");
     protected static Button button_viewDocs = new Button("View Documentation");
+    protected static Button button_originalRequest = new Button("Go to Original");
     protected static Button button_back = new Button("Back");
     protected static VBox vbox_docs = new VBox(10);
+    protected static ScrollPane scroll_docs = new ScrollPane(vbox_docs);
     protected static TextArea text_addDocs = new TextArea();
     protected static Button button_submit = new Button("Save");
     
@@ -87,12 +92,8 @@ public class ViewAdminRequests {
         theStage = ps;
         theUser = user;
 
-        if (theView == null) {
+        if (theView == null)
             theView = new ViewAdminRequests();
-            // Initialize Model and Controller here once
-            model = new ModelAdminRequests(theDatabase);
-            controller = new ControllerAdminRequest(model);
-        }
 
         theStage.setTitle("CSE 360 Foundations: Request Admin Action");
         theStage.setScene(theScene);
@@ -111,17 +112,19 @@ public class ViewAdminRequests {
         mainContainer.setAlignment(Pos.TOP_LEFT);
         mainContainer.setPrefWidth(width);
         mainContainer.setPrefHeight(height);
-
-        // Title
-        titleLabel = new Label("Request Admin Action");
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        
+     	titleLabel.setText("Admin Requests");
+     	setupLabelUI(titleLabel, "Arial", 28, width, Pos.CENTER, 0, 5);
+     		
+     	label_UserDetails.setText("User: " + theUser.getUserName());
+     	setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
 
         // Instructions
-        instructionLabel = new Label("Please Select a Request");
-        instructionLabel.setFont(Font.font("Arial", 14));
+        instructionLabel = new Label("Please Select a Request: ");
+        setupLabelUI(instructionLabel, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 130);
         
         // Request drop down
-        setupComboBoxUI(combobox_requestSelect, "Dialog", 16, 250, 280, 125);
+        setupComboBoxUI(combobox_requestSelect, "Dialog", 16, 100, 250, 125);
 		List<String> requestList = controller.loadRequests();
 		combobox_requestSelect.setItems(FXCollections.observableArrayList(requestList));
 		combobox_requestSelect.getSelectionModel().select(0);
@@ -130,17 +133,35 @@ public class ViewAdminRequests {
 	    		String oldvalue, String newValue) -> {controller.doSelectRequest(newValue);});
 		
 		
-		setupButtonUI(button_addDocs, "Dialog", 16, 150, Pos.CENTER, 280, 275);			
+		setupButtonUI(button_addDocs, "Dialog", 14, 130, Pos.CENTER, 460, 125);			
 		ViewAdminRequests.button_addDocs.setOnAction((event) -> 
 			{ControllerAdminRequests.performAddDocumentation(); });
 		
-		setupButtonUI(button_addDocs, "Dialog", 16, 150, Pos.CENTER, 350, 275);			
-		ViewAdminRequests.button_addDocs.setOnAction((event) -> 
+		setupButtonUI(button_viewDocs, "Dialog", 14, 130, Pos.CENTER, 615, 125);			
+		ViewAdminRequests.button_viewDocs.setOnAction((event) -> 
 			{ControllerAdminRequests.performViewDocumentation(); });
 		
-		setupButtonUI(button_back, "Dialog", 16, 150, Pos.CENTER, 350, 600);			
+		setupButtonUI(button_originalRequest, "Dialog", 16, 150, Pos.CENTER, 425, 275);			
+		ViewAdminRequests.button_originalRequest.setOnAction((event) -> 
+			{ControllerAdminRequests.performOriginalRequest(); });
+		
+		setupButtonUI(button_back, "Dialog", 16, 150, Pos.CENTER, 330, 480);			
 		ViewAdminRequests.button_back.setOnAction((event) -> 
 			{ControllerAdminRequests.performBack(); });
+		
+		/*
+		vbox_docs.setAlignment(Pos.CENTER);
+		vbox_docs.setLayoutX(30);
+		vbox_docs.setLayoutY(300);
+		*/
+		
+		scroll_docs.setFitToWidth(true);       // VBox matches width
+		scroll_docs.setPannable(true);
+		scroll_docs.setMaxHeight(280);  
+		scroll_docs.setPrefViewportHeight(280);
+		
+		scroll_docs.setLayoutX(20);
+		scroll_docs.setLayoutY(170);
 		
 		/*
 		setupTextUI(text_docs, "Dialog", 16, 200, Pos.CENTER, 280, 325, false);		
@@ -151,13 +172,13 @@ public class ViewAdminRequests {
 		text_docs.setPrefHeight(300);    // size as needed
 		*/
 		
-		setupTextUI(text_addDocs, "Dialog", 16, 200, Pos.CENTER, 280, 325, true);	
+		setupTextUI(text_addDocs, "Dialog", 16, width - 40, Pos.CENTER, 20, 180, true);	
+		text_addDocs.setWrapText(true);
 		
-		text_addDocs.setEditable(false);    // optional: make it read-only
-		text_addDocs.setWrapText(true);     // optional: wrap lines
-		text_addDocs.setPrefHeight(300);    // size as needed
+		//text_addDocs.setWrapText(true);     // optional: wrap lines
+		//text_addDocs.setPrefHeight(300);    // size as needed
 		
-		setupButtonUI(button_submit, "Dialog", 16, 150, Pos.CENTER, 350, 600);			
+		setupButtonUI(button_submit, "Dialog", 16, 150, Pos.CENTER, 500, 480);			
 		ViewAdminRequests.button_submit.setOnAction((event) -> 
 			{ControllerAdminRequests.performSubmit(); });
         
@@ -170,8 +191,37 @@ public class ViewAdminRequests {
          
      	setupButtonUI(button_Quit, "Dialog", 18, 210, Pos.CENTER, 570, 540);
      	button_Quit.setOnAction((event) -> {ControllerAdminRequests.performQuit(); });
-
+     	
+     	theRootPane.getChildren().addAll(titleLabel, label_UserDetails, instructionLabel, line_Separator1, 
+     			combobox_requestSelect, line_Separator4, button_Return, button_Logout, button_Quit);
     }
+    
+    
+    
+    /*-*******************************************************************************************
+
+	Helper methods used to minimizes the number of lines of code needed above
+	
+	*/
+
+	/**********
+	 * Private local method to initialize the standard fields for a label
+	 * 
+	 * @param l		The Label object to be initialized
+	 * @param ff	The font to be used
+	 * @param f		The size of the font to be used
+	 * @param w		The width of the Button
+	 * @param p		The alignment (e.g. left, centered, or right)
+	 * @param x		The location from the left edge (x axis)
+	 * @param y		The location from the top (y axis)
+	 */
+	private void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x, double y){
+		l.setFont(Font.font(ff, f));
+		l.setMinWidth(w);
+		l.setAlignment(p);
+		l.setLayoutX(x);
+		l.setLayoutY(y);		
+	}
     
     /**********
 	 * Private local method to initialize the standard fields for a button

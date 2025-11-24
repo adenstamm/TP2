@@ -43,6 +43,8 @@ public class ModelAdminRequests {
 		if (text == null) return;
 			
 		selectedRequest.addDocumentation(text);
+		theDatabase.updateRequestDocs(selectedRequest.getRequestID(), selectedRequest.getDocumentation());
+		System.out.println("in");
 	}
 	
 	public static List<String> getDocsList() {

@@ -230,7 +230,8 @@ public class Database {
 	            + "creatorUsername VARCHAR(255), "
 	            + "description VARCHAR(MAX), "
 	            + "status VARCHAR(50), "
-	            + "resolutionNote VARCHAR(MAX)"
+	            + "resolutionNote VARCHAR(MAX), "
+	            + "documentation VARCHAR(MAX)"
 	            + ")";
 		    statement.execute(adminRequestTable);
 	}
@@ -498,8 +499,8 @@ public class Database {
         // This is the "prototype code" to make the TDD test pass.
         // The internal comments explain *why* we use RETURN_GENERATED_KEYS.
         // This is critical for TDD, as the test needs to know the new ID.
-        String insertRequest = "INSERT INTO adminRequestsDB (creatorUsername, description, status, resolutionNote) "
-                             + "VALUES (?, ?, ?, ?)";
+        String insertRequest = "INSERT INTO adminRequestsDB (creatorUsername, description, status, resolutionNote, documentation) "
+                             + "VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = connection.prepareStatement(insertRequest, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -507,6 +508,7 @@ public class Database {
             pstmt.setString(2, request.getDescription());
             pstmt.setString(3, request.getStatus());
             pstmt.setString(4, request.getResolutionNote());
+            pstmt.setString(5, request.getDocumentation());
 
             pstmt.executeUpdate();
 
@@ -585,7 +587,8 @@ public class Database {
                         rs.getString("creatorUsername"),
                         rs.getString("description"),
                         rs.getString("status"),
-                        rs.getString("resolutionNote")
+                        rs.getString("resolutionNote"),
+                        rs.getString("documentation")
                     );
                 }
             }
@@ -614,7 +617,8 @@ public class Database {
                     rs.getString("creatorUsername"),
                     rs.getString("description"),
                     rs.getString("status"),
-                    rs.getString("resolutionNote")
+                    rs.getString("resolutionNote"),
+                    rs.getString("documentation")
                 ));
             }
         }
@@ -672,7 +676,8 @@ public class Database {
                     rs.getString("creatorUsername"),
                     rs.getString("description"),
                     rs.getString("status"),
-                    rs.getString("resolutionNote")
+                    rs.getString("resolutionNote"),
+                    rs.getString("documentation")
                 ));
             }
         }
@@ -698,7 +703,8 @@ public class Database {
                     rs.getString("creatorUsername"),
                     rs.getString("description"),
                     rs.getString("status"),
-                    rs.getString("resolutionNote")
+                    rs.getString("resolutionNote"),
+                    rs.getString("documentation")
                 ));
             }
         }
